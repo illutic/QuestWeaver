@@ -2,4 +2,10 @@
 <resources>
     <string name="onboarding_title">Καλώς ήρθες στο QuestWeaver</string>
     <string name="onboarding_button">Ξεκίνα το ταξίδι</string>
+    <string name="explanation_title">Ας αναλύσουμε τη μαγεία</string>
+    <string name="explanation_header_1">DM η παίχτης</string>
+    <string name="explanation_header_2">Παίζοντας το παιχνίδι</string>
+    <string name="explanation_body_1">Μπορείς είτε να φιλοξενήσεις ένα παιχνίδι, γίνοντας έτσι ο DM είτε να συμμετάσχεις σε ένα παιχνίδι γίνοντας έτσι παίχτης.</string>
+    <string name="explanation_body_2">Όταν συμμετέχεις σε ένα παιχνίδι ως παίχτης μπορείς να αλληλεπιδράσεις με άλλους παίχτες με μηνύματα και αποστολή πολυμέσων. Επιπλέον, ο DM μπορεί να ανεβάσει μια εικόνα και μπορείς να την επεξεργαστείς σαν σε έναν πίνακα!</string>
+    <string name="explanation_cta">Ας ξεκινήσουμε!</string>
 </resources>

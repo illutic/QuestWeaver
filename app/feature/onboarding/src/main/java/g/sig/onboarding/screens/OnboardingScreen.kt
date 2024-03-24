@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -28,6 +30,7 @@ internal fun OnboardingScreen(
 ) {
     Column(
         modifier = Modifier
+            .verticalScroll(rememberScrollState())
             .safeDrawingPadding()
             .padding(largeSize),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -38,7 +41,7 @@ internal fun OnboardingScreen(
             verticalArrangement = Arrangement.spacedBy(mediumSize)
         ) {
             AsyncImage(
-                modifier = Modifier.size(OnboardingSize.logoSize),
+                modifier = Modifier.size(OnboardingSize.imageSize),
                 model = uiR.drawable.ic_logo,
                 contentDescription = null,
                 colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)

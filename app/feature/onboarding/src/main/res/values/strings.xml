@@ -2,4 +2,10 @@
 <resources>
     <string name="onboarding_title">Welcome to QuestWeaver</string>
     <string name="onboarding_button">Start your journey</string>
+    <string name="explanation_title">Let\'s explain the magic</string>
+    <string name="explanation_header_1">DM or Player</string>
+    <string name="explanation_header_2">Interacting in-game</string>
+    <string name="explanation_body_1">You can either host a game, making you the DM or You can join a game making you the player.</string>
+    <string name="explanation_body_2">When joining a game as a Player you can interact with other players by messaging each other and sending media. In addition, the DM can upload an image and you can edit it like on a whiteboard!</string>
+    <string name="explanation_cta">Let\'s get started!</string>
 </resources>
