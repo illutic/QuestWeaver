@@ -3,8 +3,8 @@ package g.sig.onboarding.data
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import g.sig.domain.user.CreateUserUseCase
-import g.sig.domain.user.ShouldShowOnBoardingUseCase
+import g.sig.domain.usecases.user.CreateUserUseCase
+import g.sig.domain.usecases.user.ShouldShowOnBoardingUseCase
 import g.sig.onboarding.state.OnboardingEvent
 import g.sig.onboarding.state.OnboardingIntent
 import g.sig.onboarding.state.OnboardingState
@@ -21,7 +21,7 @@ class OnboardingViewModel @Inject constructor(
     private val shouldShowOnBoardingUseCase: ShouldShowOnBoardingUseCase
 ) : ViewModel() {
     private val _events = Channel<OnboardingEvent>()
-    private val _state = MutableStateFlow<OnboardingState>(OnboardingState.Onboarding)
+    private val _state = MutableStateFlow<OnboardingState>(OnboardingState.NameState(""))
     internal val state = _state.asStateFlow()
     internal val events = _events.receiveAsFlow()
 
@@ -29,9 +29,7 @@ class OnboardingViewModel @Inject constructor(
         viewModelScope.launch {
             when (intent) {
                 is OnboardingIntent.Onboarding -> {
-                    if (shouldShowOnBoardingUseCase()) {
-                        _state.value = OnboardingState.Onboarding
-                    } else {
+                    if (!shouldShowOnBoardingUseCase()) {
                         _events.send(OnboardingEvent.OnboardingComplete)
                     }
                 }
@@ -41,7 +39,7 @@ class OnboardingViewModel @Inject constructor(
                 }
 
                 is OnboardingIntent.UpdateName -> {
-                    _state.value = OnboardingState.NameUpdated(intent.name)
+                    _state.value = OnboardingState.NameState(intent.name)
                 }
 
                 is OnboardingIntent.CompleteOnboarding -> {

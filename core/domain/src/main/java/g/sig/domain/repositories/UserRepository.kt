@@ -1,8 +1,8 @@
-package g.sig.data.datasources.user
+package g.sig.domain.repositories
 
-import g.sig.data.entities.user.User
+import g.sig.domain.entities.User
 
-interface UserDataSource {
+interface UserRepository {
     suspend fun getUser(): User
     suspend fun saveUser(user: User)
     suspend fun deleteUser()

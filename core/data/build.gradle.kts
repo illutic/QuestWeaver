@@ -34,6 +34,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:domain"))
     api(libs.kotlinx.serialization.protobuf)
     api(libs.kotlinx.coroutines.core)
     implementation(libs.androidx.proto.datastore)

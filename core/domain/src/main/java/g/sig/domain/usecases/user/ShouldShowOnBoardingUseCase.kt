@@ -1,6 +1,6 @@
-package g.sig.domain.user
+package g.sig.domain.usecases.user
 
-import g.sig.data.repositories.UserRepository
+import g.sig.domain.repositories.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

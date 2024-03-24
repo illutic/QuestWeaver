@@ -33,7 +33,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:data"))
+    implementation(libs.kotlinx.coroutines.core)
 }
 
 fun Provider<String>.toInt(): Int = get().toInt()

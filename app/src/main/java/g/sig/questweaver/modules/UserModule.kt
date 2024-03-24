@@ -6,13 +6,14 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import g.sig.data.datasources.user.UserDataSource
 import g.sig.data.datasources.user.UserLocalDataSource
-import g.sig.data.repositories.UserRepository
-import g.sig.domain.user.CreateUserUseCase
-import g.sig.domain.user.DeleteUserUseCase
-import g.sig.domain.user.ShouldShowOnBoardingUseCase
-import g.sig.domain.user.UpdateUserUseCase
+import g.sig.data.repositories.UserRepositoryImpl
+import g.sig.domain.datasource.UserDataSource
+import g.sig.domain.repositories.UserRepository
+import g.sig.domain.usecases.user.CreateUserUseCase
+import g.sig.domain.usecases.user.DeleteUserUseCase
+import g.sig.domain.usecases.user.ShouldShowOnBoardingUseCase
+import g.sig.domain.usecases.user.UpdateUserUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Singleton
 
@@ -31,7 +32,7 @@ object UserModule {
     @Provides
     @Singleton
     fun provideUserRepository(dataSource: UserDataSource): UserRepository {
-        return UserRepository(userDataSource = dataSource)
+        return UserRepositoryImpl(userDataSource = dataSource)
     }
 
     @Provides
