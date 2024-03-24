@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -30,8 +32,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
         jvmTarget = libs.versions.jvmTarget.get()
@@ -51,6 +53,13 @@ android {
 
 dependencies {
     implementation(project(":core:ui"))
+    implementation(project(":core:nearby"))
+    implementation(project(":core:domain"))
+    implementation(project(":core:data"))
+    implementation(project(":core:navigation"))
+    implementation(project(":app:feature:onboarding"))
+    implementation(libs.dagger.hilt)
+    ksp(libs.dagger.hilt.compiler)
 }
 
 fun Provider<String>.toInt(): Int = get().toInt()

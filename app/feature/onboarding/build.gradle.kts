@@ -2,10 +2,12 @@ plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
 }
 
 android {
-    namespace = "g.sig.data"
+    namespace = "g.sig.onboarding"
     compileSdk = libs.versions.targetSdk.toInt()
 
     defaultConfig {
@@ -24,6 +26,12 @@ android {
             )
         }
     }
+    buildFeatures {
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -34,9 +42,12 @@ android {
 }
 
 dependencies {
-    api(libs.kotlinx.serialization.protobuf)
-    api(libs.kotlinx.coroutines.core)
-    implementation(libs.androidx.proto.datastore)
+    implementation(project(":core:ui"))
+    implementation(project(":core:domain"))
+    implementation(project(":core:navigation"))
+    implementation(libs.dagger.hilt)
+    implementation(libs.hilt.navigation)
+    ksp(libs.dagger.hilt.compiler)
 }
 
 fun Provider<String>.toInt(): Int = get().toInt()

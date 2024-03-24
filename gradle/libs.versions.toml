@@ -5,8 +5,8 @@ targetSdk = "34"
 minSdk = "24"
 versionCode = "1"
 versionName = "1.0"
-composeCompiler = "1.5.1"
-jvmTarget = "1.8"
+composeCompiler = "1.5.11"
+jvmTarget = "17"
 
 # Google
 playServicesNearby = "19.1.0"
@@ -20,20 +20,22 @@ activityCompose = "1.8.2"
 composeBom = "2024.03.00"
 appcompat = "1.6.1"
 material = "1.11.0"
-hilt = "2.39.1"
-dagger = "2.40.5"
+hilt = "2.51"
+hiltNavigation = "1.2.0"
+navigation = "2.7.7"
+protoDataStore = "1.0.0"
 
 # Kotlin
-kotlin = "1.9.0"
-kotlinxCoroutines = "1.7.1"
-kotlinxSerializationProtobuf = "1.6.2"
-junit = "4.13.2"
-junitVersion = "1.1.5"
-espressoCore = "3.5.1"
+kotlin = "1.9.23"
+kotlinxCoroutines = "1.8.0"
+kotlinxSerializationProtobuf = "1.6.3"
+ksp = "1.9.0-1.0.12"
 
 [libraries]
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
-dagger-hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "dagger" }
+dagger-hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+dagger-hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+hilt-navigation = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigation" }
 
 # Google
 playServicesNearby = { group = "com.google.android.gms", name = "play-services-nearby", version = "19.1.0" }
@@ -51,19 +53,18 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+androidx-navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
+androidx-proto-datastore = { group = "androidx.datastore", name = "datastore", version.ref = "protoDataStore" }
 
 # Kotlin
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
 kotlinx-serialization-protobuf = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-protobuf", version.ref = "kotlinxSerializationProtobuf" }
-junit = { group = "junit", name = "junit", version.ref = "junit" }
-androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
-androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
-
 
 [plugins]
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
-hiltPlugin = { id = "dagger.hilt.android.plugin", version.ref = "hilt" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 

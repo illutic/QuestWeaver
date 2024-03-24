@@ -1,11 +1,10 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-    alias(libs.plugins.kotlinSerialization)
 }
 
 android {
-    namespace = "g.sig.data"
+    namespace = "g.sig.navigation"
     compileSdk = libs.versions.targetSdk.toInt()
 
     defaultConfig {
@@ -24,6 +23,12 @@ android {
             )
         }
     }
+    buildFeatures {
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -34,9 +39,7 @@ android {
 }
 
 dependencies {
-    api(libs.kotlinx.serialization.protobuf)
-    api(libs.kotlinx.coroutines.core)
-    implementation(libs.androidx.proto.datastore)
+    api(libs.androidx.navigation)
 }
 
 fun Provider<String>.toInt(): Int = get().toInt()

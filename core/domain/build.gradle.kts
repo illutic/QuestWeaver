@@ -1,11 +1,10 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-    alias(libs.plugins.kotlinSerialization)
 }
 
 android {
-    namespace = "g.sig.data"
+    namespace = "g.sig.domain"
     compileSdk = libs.versions.targetSdk.toInt()
 
     defaultConfig {
@@ -34,9 +33,7 @@ android {
 }
 
 dependencies {
-    api(libs.kotlinx.serialization.protobuf)
-    api(libs.kotlinx.coroutines.core)
-    implementation(libs.androidx.proto.datastore)
+    implementation(project(":core:data"))
 }
 
 fun Provider<String>.toInt(): Int = get().toInt()

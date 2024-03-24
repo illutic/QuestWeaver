@@ -1,4 +1,4 @@
-package g.sig.data.nearby.serializers
+package g.sig.data.serializers
 
 import android.net.Uri
 import kotlinx.serialization.KSerializer

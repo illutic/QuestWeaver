@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "g.sig.data"
+    namespace = "g.sig.nearby"
     compileSdk = libs.versions.targetSdk.toInt()
 
     defaultConfig {
@@ -36,7 +36,7 @@ android {
 dependencies {
     api(libs.kotlinx.serialization.protobuf)
     api(libs.kotlinx.coroutines.core)
-    implementation(libs.androidx.proto.datastore)
+    api(libs.playServicesNearby)
 }
 
 fun Provider<String>.toInt(): Int = get().toInt()
