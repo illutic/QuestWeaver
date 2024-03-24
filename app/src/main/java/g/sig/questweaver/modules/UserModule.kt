@@ -14,6 +14,7 @@ import g.sig.domain.usecases.user.CreateUserUseCase
 import g.sig.domain.usecases.user.DeleteUserUseCase
 import g.sig.domain.usecases.user.ShouldShowOnBoardingUseCase
 import g.sig.domain.usecases.user.UpdateUserUseCase
+import g.sig.domain.usecases.user.ValidateUserUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Singleton
 
@@ -65,6 +66,12 @@ object UserModule {
         userRepository: UserRepository
     ): ShouldShowOnBoardingUseCase {
         return ShouldShowOnBoardingUseCase(userRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideValidateUserUseCase(): ValidateUserUseCase {
+        return ValidateUserUseCase()
     }
 
 }

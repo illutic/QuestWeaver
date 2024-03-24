@@ -5,7 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import g.sig.onboarding.screens.ExplanationScreen
-import g.sig.onboarding.screens.NameScreen
+import g.sig.onboarding.screens.NameRoute
 
 fun NavGraphBuilder.onboardingGraph(
     navController: NavController,
@@ -33,7 +33,8 @@ fun NavGraphBuilder.onboardingGraph(
             )
         }
         composable(OnboardingRoute.NAME_ROUTE) {
-            NameScreen(
+            NameRoute(
+                onBack = { navController.navigateUp() },
                 onUserCreated = {
                     onOnboardingComplete()
                 }

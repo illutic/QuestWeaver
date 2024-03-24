@@ -8,4 +8,10 @@
     <string name="explanation_body_1">You can either host a game, making you the DM or You can join a game making you the player.</string>
     <string name="explanation_body_2">When joining a game as a Player you can interact with other players by messaging each other and sending media. In addition, the DM can upload an image and you can edit it like on a whiteboard!</string>
     <string name="explanation_cta">Let\'s get started!</string>
+    <string name="user_top_bar_title">User creation</string>
+    <string name="user_alert_1">This is what the other users will see. You can change it later.</string>
+    <string name="user_name_label">Name</string>
+    <string name="user_name_placeholder">Ulturak the destroyer</string>
+    <string name="user_name_error">Please enter a name</string>
+    <string name="user_name_button">Done</string>
 </resources>

@@ -19,9 +19,9 @@ internal fun OnboardingRoute(
 
     LaunchedEffect(event) {
         when (event) {
-            OnboardingEvent.Idle -> {}
             OnboardingEvent.NavigateToExplanation -> onNavigateToExplanation()
             OnboardingEvent.OnboardingComplete -> onOnboardingComplete()
+            else -> {}
         }
     }
 
