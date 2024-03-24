@@ -6,6 +6,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import g.sig.onboarding.data.OnboardingViewModel
+import g.sig.onboarding.screens.OnboardingScreen
 import g.sig.onboarding.state.OnboardingEvent
 
 @Composable
@@ -23,4 +24,6 @@ internal fun OnboardingRoute(
             OnboardingEvent.OnboardingComplete -> onOnboardingComplete()
         }
     }
+
+    OnboardingScreen(onNavigateToExplanation)
 }
