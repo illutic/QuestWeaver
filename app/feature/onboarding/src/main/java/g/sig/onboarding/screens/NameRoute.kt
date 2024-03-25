@@ -30,9 +30,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import g.sig.onboarding.R
 import g.sig.onboarding.data.OnboardingViewModel
+import g.sig.onboarding.state.NameState
 import g.sig.onboarding.state.OnboardingEvent
 import g.sig.onboarding.state.OnboardingIntent
-import g.sig.onboarding.state.OnboardingState
 import g.sig.ui.AppIcons
 import g.sig.ui.LargeRoundedShape
 import g.sig.ui.components.Alert
@@ -80,7 +80,7 @@ private fun NameScreenTopBar(
 
 @Composable
 private fun NameScreen(
-    state: OnboardingState.NameState,
+    state: NameState,
     onIntent: (onBoardingIntent: OnboardingIntent) -> Unit
 ) {
     Scaffold(topBar = { NameScreenTopBar { onIntent(OnboardingIntent.Back) } }) { padding ->
@@ -126,7 +126,7 @@ private fun NameScreen(
 
 @Composable
 private fun OutlinedNameTextField(
-    state: OnboardingState.NameState,
+    state: NameState,
     onIntent: (onBoardingIntent: OnboardingIntent) -> Unit
 ) {
     val keyboardActions = remember {

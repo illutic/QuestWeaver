@@ -4,12 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import g.sig.domain.usecases.user.CreateUserUseCase
-import g.sig.domain.usecases.user.HasUserUseCase
 import g.sig.domain.usecases.user.ValidateUserUseCase
 import g.sig.onboarding.R
+import g.sig.onboarding.state.NameState
 import g.sig.onboarding.state.OnboardingEvent
 import g.sig.onboarding.state.OnboardingIntent
-import g.sig.onboarding.state.OnboardingState
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -19,10 +18,9 @@ import javax.inject.Inject
 class OnboardingViewModel @Inject constructor(
     private val createUserUseCase: CreateUserUseCase,
     private val validateUserUseCase: ValidateUserUseCase,
-    private val hasUserUseCase: HasUserUseCase,
 ) : ViewModel() {
     private val _events = Channel<OnboardingEvent>()
-    internal val state = OnboardingState.NameState
+    internal val state = NameState()
     internal val events = _events.receiveAsFlow()
 
     private fun getErrorStringResource(validationState: ValidateUserUseCase.ValidationState): Int? {
@@ -35,12 +33,6 @@ class OnboardingViewModel @Inject constructor(
     internal fun handleIntent(intent: OnboardingIntent) {
         viewModelScope.launch {
             when (intent) {
-                is OnboardingIntent.Onboarding -> {
-                    if (hasUserUseCase()) {
-                        _events.send(OnboardingEvent.OnboardingComplete)
-                    }
-                }
-
                 is OnboardingIntent.ContinueToExplanation -> {
                     _events.send(OnboardingEvent.NavigateToExplanation)
                 }

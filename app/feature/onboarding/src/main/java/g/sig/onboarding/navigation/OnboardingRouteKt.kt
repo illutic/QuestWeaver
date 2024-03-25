@@ -8,7 +8,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import g.sig.onboarding.data.OnboardingViewModel
 import g.sig.onboarding.screens.OnboardingScreen
 import g.sig.onboarding.state.OnboardingEvent
-import g.sig.onboarding.state.OnboardingIntent
 
 @Composable
 internal fun OnboardingRoute(
@@ -20,7 +19,6 @@ internal fun OnboardingRoute(
 
     LaunchedEffect(event) {
         when (event) {
-            OnboardingEvent.Idle -> viewModel.handleIntent(OnboardingIntent.Onboarding)
             OnboardingEvent.NavigateToExplanation -> onNavigateToExplanation()
             OnboardingEvent.OnboardingComplete -> onOnboardingComplete()
             else -> {}
