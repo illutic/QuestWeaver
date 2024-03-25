@@ -20,8 +20,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,13 +43,14 @@ internal fun NameRoute(
     onUserCreated: () -> Unit
 ) {
     val viewModel = hiltViewModel<OnboardingViewModel>()
-    val event by viewModel.events.collectAsState(OnboardingEvent.Idle)
 
-    LaunchedEffect(event) {
-        when (event) {
-            OnboardingEvent.OnboardingComplete -> onUserCreated()
-            OnboardingEvent.Back -> onBack()
-            else -> {}
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when (event) {
+                OnboardingEvent.OnboardingComplete -> onUserCreated()
+                OnboardingEvent.Back -> onBack()
+                else -> {}
+            }
         }
     }
 

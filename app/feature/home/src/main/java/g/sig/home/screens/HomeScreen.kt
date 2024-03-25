@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -18,6 +19,7 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,33 +42,37 @@ import g.sig.ui.mediumSize
 
 @Composable
 internal fun HomeScreen(
-    modifier: Modifier = Modifier,
     homeState: HomeState,
     onIntent: (HomeIntent) -> Unit
 ) {
-    Column(
-        modifier = modifier.padding(largeSize),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        HomeScreenTopContent(
+    Scaffold {
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-                .weight(1f),
-            state = homeState,
-            onNavigateToHostGame = { onIntent(HomeIntent.NavigateToHost) },
-            onNavigateToJoinGame = { onIntent(HomeIntent.NavigateToJoin) },
-            onNavigateToGame = { gameId -> onIntent(HomeIntent.NavigateToGame(gameId)) }
-        )
-        HomeScreenBottomContent(
-            modifier = Modifier
-                .width(IntrinsicSize.Max)
-                .padding(top = mediumSize),
-            state = homeState,
-            onNavigateToProfile = { onIntent(HomeIntent.NavigateToProfile) },
-            onNavigateToSettings = { onIntent(HomeIntent.NavigateToSettings) },
-            onNavigateToPermissions = { onIntent(HomeIntent.NavigateToPermissions) }
-        )
+                .fillMaxSize()
+                .padding(it)
+                .padding(largeSize),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            HomeScreenTopContent(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+                    .weight(1f),
+                state = homeState,
+                onNavigateToHostGame = { onIntent(HomeIntent.NavigateToHost) },
+                onNavigateToJoinGame = { onIntent(HomeIntent.NavigateToJoin) },
+                onNavigateToGame = { gameId -> onIntent(HomeIntent.NavigateToGame(gameId)) }
+            )
+            HomeScreenBottomContent(
+                modifier = Modifier
+                    .width(IntrinsicSize.Max)
+                    .padding(top = mediumSize),
+                state = homeState,
+                onNavigateToProfile = { onIntent(HomeIntent.NavigateToProfile) },
+                onNavigateToSettings = { onIntent(HomeIntent.NavigateToSettings) },
+                onNavigateToPermissions = { onIntent(HomeIntent.NavigateToPermissions) }
+            )
+        }
     }
 }
 
@@ -133,7 +139,7 @@ private fun HomeScreenTopContent(
 
         Text(
             text = stringResource(R.string.home_title, state.userName),
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleMedium,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(vertical = mediumSize),
             color = MaterialTheme.colorScheme.onBackground

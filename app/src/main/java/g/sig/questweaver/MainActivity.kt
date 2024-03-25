@@ -6,7 +6,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -37,7 +36,7 @@ class MainActivity : ComponentActivity() {
 
             AppTheme {
                 AppNavHost(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier,
                     startDestination = startDestination,
                     navController
                 )
