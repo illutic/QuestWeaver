@@ -59,6 +59,7 @@ dependencies {
     implementation(project(":core:navigation"))
     implementation(project(":app:feature:onboarding"))
     implementation(project(":app:feature:home"))
+    implementation(libs.androidx.splashscreen)
     implementation(libs.dagger.hilt)
     ksp(libs.dagger.hilt.compiler)
 }
