@@ -7,5 +7,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PermissionViewModel @Inject constructor(
-    private val nearbyPermissions: GetNearbyPermissionUseCase
-) : ViewModel()
+    nearbyPermissions: GetNearbyPermissionUseCase
+) : ViewModel() {
+    val permissions = nearbyPermissions().map { it.permission }
+}

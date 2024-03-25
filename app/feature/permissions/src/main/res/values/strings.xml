@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="permission_top_title">Permissions</string>
+    <string name="permission_title">Weaving the magic</string>
+    <string name="permission_title_denied">Permissions Denied</string>
+    <string name="permission_header_1">Location/Nearby permissions</string>
+    <string name="permission_header_2">Storage permissions</string>
+    <string name="permission_body_1">The app uses the nearby connections permission to look for and connect to nearby devices. Without it, the app simply won’t work.\n\n
+
+        Be mindful, that using this permission the app will turn on Wi-Fi and Bluetooth. Wi-Fi and Bluetooth are the technologies responsible for this magic.</string>
+    <string name="permission_body_2">We need this permission to read any files that are sent from other players. Rest assured we won’t be snooping around other files unless you specifically request us to. \n\n
+
+        Also, any files you send to other devices can be intercepted and stolen. It goes without saying that you should not send sensitive data.</string>
+    <string name="permission_cta">Request permissions</string>
+</resources>

@@ -12,6 +12,8 @@ import g.sig.home.navigation.homeGraph
 import g.sig.navigation.Route
 import g.sig.onboarding.navigation.OnboardingRoute
 import g.sig.onboarding.navigation.onboardingGraph
+import g.sig.permissions.navigation.PermissionRoute
+import g.sig.permissions.navigation.permissionGraph
 
 @Composable
 fun AppNavHost(
@@ -36,9 +38,11 @@ fun AppNavHost(
                 onNavigateToSettings = {},
                 onNavigateToHostGame = {},
                 onNavigateToJoinGame = {},
-                onNavigateToPermissions = {},
+                onNavigateToPermissions = { navController.navigate(PermissionRoute.path) },
                 onNavigateToGame = {}
             )
+
+            permissionGraph(navController)
         }
     } else {
         Box(modifier, contentAlignment = Alignment.Center) { CircularProgressIndicator() }

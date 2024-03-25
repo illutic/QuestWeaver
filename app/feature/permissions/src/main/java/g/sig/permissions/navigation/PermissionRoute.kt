@@ -1,4 +1,4 @@
-package g.sig.permissions
+package g.sig.permissions.navigation
 
 import g.sig.navigation.Route
 
