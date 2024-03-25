@@ -13,6 +13,7 @@
             <option value="$PROJECT_DIR$/app/feature" />
             <option value="$PROJECT_DIR$/app/feature/home" />
             <option value="$PROJECT_DIR$/app/feature/onboarding" />
+            <option value="$PROJECT_DIR$/app/feature/permissions" />
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/core/data" />
             <option value="$PROJECT_DIR$/core/domain" />

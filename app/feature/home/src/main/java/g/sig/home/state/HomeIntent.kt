@@ -7,5 +7,6 @@ internal sealed interface HomeIntent {
     data object NavigateToPermissions : HomeIntent
     data object NavigateToHost : HomeIntent
     data object NavigateToJoin : HomeIntent
+    data class NavigateToGame(val gameId: String) : HomeIntent
 
 }

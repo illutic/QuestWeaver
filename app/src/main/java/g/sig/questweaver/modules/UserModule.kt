@@ -23,7 +23,7 @@ import javax.inject.Singleton
 object UserModule {
     @Provides
     @Singleton
-    fun providesUserLocalDataSource(
+    fun provideUserLocalDataSource(
         @ApplicationContext context: Context,
         @IODispatcher ioDispatcher: CoroutineDispatcher
     ): UserDataSource {

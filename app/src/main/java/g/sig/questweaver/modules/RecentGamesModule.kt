@@ -19,7 +19,7 @@ object RecentGamesModule {
 
     @Provides
     @Singleton
-    fun providesRecentGamesDataSource(
+    fun provideRecentGamesDataSource(
         @ApplicationContext context: Context,
         @IODispatcher ioDispatcher: CoroutineDispatcher
     ): RecentGamesDataSource {
@@ -28,7 +28,7 @@ object RecentGamesModule {
 
     @Provides
     @Singleton
-    fun providesRecentGamesRepository(
+    fun provideRecentGamesRepository(
         recentGamesDataSource: RecentGamesDataSource
     ): RecentGamesRepository {
         return RecentGamesRepositoryImpl(recentGamesDataSource)

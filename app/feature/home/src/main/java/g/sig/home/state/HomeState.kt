@@ -9,6 +9,7 @@ import g.sig.domain.entities.RecentGame
 @Stable
 internal class HomeState {
     var userName: String by mutableStateOf("")
+    var permissions: List<String> by mutableStateOf(emptyList())
     var hasPermissions: Boolean by mutableStateOf(false)
     var recentGames: List<RecentGame> by mutableStateOf(emptyList())
 }

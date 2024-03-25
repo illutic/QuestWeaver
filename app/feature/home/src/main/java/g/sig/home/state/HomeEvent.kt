@@ -8,4 +8,5 @@ internal sealed interface HomeEvent {
     data object NavigateToPermissions : HomeEvent
     data object NavigateToHost : HomeEvent
     data object NavigateToJoin : HomeEvent
+    data class NavigateToGame(val gameId: String) : HomeEvent
 }

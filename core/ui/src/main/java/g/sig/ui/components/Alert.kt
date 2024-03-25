@@ -2,6 +2,7 @@ package g.sig.ui.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.LocalContentColor
@@ -48,7 +49,9 @@ fun Alert(
             }
 
             CompositionLocalProvider(LocalContentColor provides contentColor) {
-                content?.invoke()
+                Box(modifier = Modifier.weight(1f)) {
+                    content?.invoke()
+                }
                 trailingContent?.invoke()
             }
         }

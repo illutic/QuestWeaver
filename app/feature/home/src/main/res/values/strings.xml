@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_title">Hi %s, what do you want to do today?</string>
+    <string name="home_cta_1">I want to host a game</string>
+    <string name="home_cta_2">I want to join a game</string>
+    <string name="home_permission_alert">The app doesn’t have permission to look and connect to nearby devices.</string>
+    <string name="home_profile">Profile</string>
+    <string name="home_settings">Settings</string>
+</resources>

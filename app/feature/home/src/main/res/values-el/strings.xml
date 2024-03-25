@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_title">Γεια σου %s, τι θες να κάνεις σήμερα?</string>
+    <string name="home_cta_1">Θέλω να φτιάξω παιχνίδι</string>
+    <string name="home_cta_2">Θέλω να μπώ σε παιχνίδι</string>
+    <string name="home_permission_alert">Η εφαρμογή δεν άδεια να δεί και να συνδεθεί σε άλλες συσκευές</string>
+    <string name="home_profile">Προφίλ</string>
+    <string name="home_settings">Ρυθμίσεις</string>
+</resources>

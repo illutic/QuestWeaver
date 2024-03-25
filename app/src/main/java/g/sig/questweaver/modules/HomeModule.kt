@@ -7,6 +7,8 @@ import dagger.hilt.components.SingletonComponent
 import g.sig.domain.repositories.RecentGamesRepository
 import g.sig.domain.repositories.UserRepository
 import g.sig.domain.usecases.home.GetHomeUseCase
+import g.sig.domain.usecases.permissions.GetNearbyPermissionUseCase
+import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Singleton
 
 
@@ -16,10 +18,12 @@ object HomeModule {
 
     @Provides
     @Singleton
-    fun providesGetHomeUseCase(
+    fun provideGetHomeUseCase(
+        getNearbyPermissionUseCase: GetNearbyPermissionUseCase,
         recentGamesRepository: RecentGamesRepository,
-        userRepository: UserRepository
+        userRepository: UserRepository,
+        @DefaultDispatcher mainDispatcher: CoroutineDispatcher
     ): GetHomeUseCase {
-        return GetHomeUseCase(recentGamesRepository, userRepository)
+        return GetHomeUseCase(getNearbyPermissionUseCase, recentGamesRepository, userRepository, mainDispatcher)
     }
 }

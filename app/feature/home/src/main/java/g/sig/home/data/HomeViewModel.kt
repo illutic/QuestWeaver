@@ -27,8 +27,39 @@ class HomeViewModel @Inject constructor(
                     _events.send(HomeEvent.Back)
                 }
 
-                else -> {}
+                is HomeIntent.NavigateToGame -> {
+                    _events.send(HomeEvent.NavigateToGame(intent.gameId))
+                }
+
+                HomeIntent.NavigateToHost -> {
+                    _events.send(HomeEvent.NavigateToHost)
+                }
+
+                HomeIntent.NavigateToJoin -> {
+                    _events.send(HomeEvent.NavigateToJoin)
+                }
+
+                HomeIntent.NavigateToPermissions -> {
+                    _events.send(HomeEvent.NavigateToPermissions)
+                }
+
+                HomeIntent.NavigateToProfile -> {
+                    _events.send(HomeEvent.NavigateToProfile)
+                }
+
+                HomeIntent.NavigateToSettings -> {
+                    _events.send(HomeEvent.NavigateToSettings)
+                }
             }
+        }
+    }
+
+    init {
+        viewModelScope.launch {
+            val home = getHomeUseCase()
+            state.userName = home.user.name
+            state.permissions = home.permissions.map { it.permission }
+            state.recentGames = home.recentGames
         }
     }
 }
