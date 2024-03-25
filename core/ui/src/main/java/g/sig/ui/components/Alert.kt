@@ -49,7 +49,10 @@ fun Alert(
             }
 
             CompositionLocalProvider(LocalContentColor provides contentColor) {
-                Box(modifier = Modifier.weight(1f)) {
+                Box(
+                    modifier = Modifier.weight(1f, false),
+                    propagateMinConstraints = true
+                ) {
                     content?.invoke()
                 }
                 trailingContent?.invoke()
