@@ -26,7 +26,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import g.sig.onboarding.R
@@ -158,16 +157,5 @@ private fun OutlinedNameTextField(
         keyboardActions = keyboardActions,
         singleLine = true,
         shape = LargeRoundedShape
-    )
-}
-
-@Preview
-@Composable
-private fun NameScreenPreview() {
-    NameScreen(
-        state = OnboardingState.NameState.apply {
-            name = "John Doe"
-        },
-        onIntent = {}
     )
 }

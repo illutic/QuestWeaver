@@ -6,13 +6,13 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import g.sig.data.datasources.user.UserDataSource
 import g.sig.data.datasources.user.UserLocalDataSource
 import g.sig.data.repositories.UserRepositoryImpl
-import g.sig.domain.datasource.UserDataSource
 import g.sig.domain.repositories.UserRepository
 import g.sig.domain.usecases.user.CreateUserUseCase
 import g.sig.domain.usecases.user.DeleteUserUseCase
-import g.sig.domain.usecases.user.ShouldShowOnBoardingUseCase
+import g.sig.domain.usecases.user.HasUserUseCase
 import g.sig.domain.usecases.user.UpdateUserUseCase
 import g.sig.domain.usecases.user.ValidateUserUseCase
 import kotlinx.coroutines.CoroutineDispatcher
@@ -64,8 +64,8 @@ object UserModule {
     @Singleton
     fun provideShouldShowOnBoardingUseCase(
         userRepository: UserRepository
-    ): ShouldShowOnBoardingUseCase {
-        return ShouldShowOnBoardingUseCase(userRepository)
+    ): HasUserUseCase {
+        return HasUserUseCase(userRepository)
     }
 
     @Provides

@@ -1,4 +1,4 @@
-package g.sig.data.serializers.proto
+package g.sig.data.datasources.user
 
 import androidx.datastore.core.Serializer
 import g.sig.data.entities.user.User

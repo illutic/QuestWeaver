@@ -5,9 +5,9 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class ShouldShowOnBoardingUseCase(
+class GetUserUseCase(
     private val userRepository: UserRepository,
     private val mainDispatcher: CoroutineDispatcher = Dispatchers.Default
 ) {
-    suspend operator fun invoke() = withContext(mainDispatcher) { userRepository.hasUser() }
+    suspend operator fun invoke() = withContext(mainDispatcher) { userRepository.getUser() }
 }

@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import g.sig.domain.usecases.user.CreateUserUseCase
-import g.sig.domain.usecases.user.ShouldShowOnBoardingUseCase
+import g.sig.domain.usecases.user.HasUserUseCase
 import g.sig.domain.usecases.user.ValidateUserUseCase
 import g.sig.onboarding.R
 import g.sig.onboarding.state.OnboardingEvent
@@ -19,7 +19,7 @@ import javax.inject.Inject
 class OnboardingViewModel @Inject constructor(
     private val createUserUseCase: CreateUserUseCase,
     private val validateUserUseCase: ValidateUserUseCase,
-    private val shouldShowOnBoardingUseCase: ShouldShowOnBoardingUseCase
+    private val hasUserUseCase: HasUserUseCase,
 ) : ViewModel() {
     private val _events = Channel<OnboardingEvent>()
     internal val state = OnboardingState.NameState
@@ -36,7 +36,7 @@ class OnboardingViewModel @Inject constructor(
         viewModelScope.launch {
             when (intent) {
                 is OnboardingIntent.Onboarding -> {
-                    if (!shouldShowOnBoardingUseCase()) {
+                    if (hasUserUseCase()) {
                         _events.send(OnboardingEvent.OnboardingComplete)
                     }
                 }

@@ -8,6 +8,9 @@ import androidx.compose.runtime.setValue
 
 @Stable
 internal sealed interface OnboardingState {
+    data object Loading : OnboardingState
+
+    data object Onboarding : OnboardingState
 
     @Stable
     data object NameState : OnboardingState {
