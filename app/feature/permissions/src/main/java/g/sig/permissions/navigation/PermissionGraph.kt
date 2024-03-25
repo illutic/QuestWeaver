@@ -1,5 +1,9 @@
 package g.sig.permissions.navigation
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -15,8 +19,11 @@ fun NavGraphBuilder.permissionGraph(
 ) {
     composable(PermissionRoute.path) {
         val viewModel = hiltViewModel<PermissionViewModel>()
-        val permissionState = rememberMultiplePermissionsState(permissions = viewModel.permissions)
+        var userDeniedSomePermission by rememberSaveable { mutableStateOf(false) }
+        val permissionState = rememberMultiplePermissionsState(permissions = viewModel.permissions) {
+            userDeniedSomePermission = it.any { permissionState -> !permissionState.value }
+        }
 
-        PermissionScreen(permissionState) { navController.popBackStack() }
+        PermissionScreen(permissionState, userDeniedSomePermission) { navController.popBackStack() }
     }
 }

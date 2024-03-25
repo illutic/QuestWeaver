@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="Theme.QuestWeaver" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.QuestWeaver.SplashScreen" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_logo</item>
+        <item name="windowSplashScreenBackground">@color/background</item>
+        <item name="postSplashScreenTheme">@style/Theme.QuestWeaver</item>
+    </style>
 </resources>

@@ -13,4 +13,5 @@
 
         Also, any files you send to other devices can be intercepted and stolen. It goes without saying that you should not send sensitive data.</string>
     <string name="permission_cta">Request permissions</string>
+    <string name="permission_cta_denied">Open settings</string>
 </resources>

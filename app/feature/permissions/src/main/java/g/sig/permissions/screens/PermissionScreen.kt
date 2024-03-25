@@ -43,10 +43,9 @@ import g.sig.ui.largeSize
 @Composable
 internal fun PermissionScreen(
     permissionsState: MultiplePermissionsState,
+    userDeniedPermission: Boolean = false,
     onBack: () -> Unit
 ) {
-    val context = LocalContext.current
-
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = { PermissionTopBar(onBack) }
@@ -68,19 +67,19 @@ internal fun PermissionScreen(
             ) {
                 AsyncImage(
                     modifier = Modifier.size(graphicSize),
-                    model = if (permissionsState.shouldShowRationale) {
-                        R.drawable.graphic_4
-                    } else {
+                    model = if (userDeniedPermission) {
                         R.drawable.graphic_5
+                    } else {
+                        R.drawable.graphic_4
                     },
                     contentDescription = ""
                 )
 
                 Text(
-                    text = if (permissionsState.shouldShowRationale) {
-                        stringResource(id = R.string.permission_title)
-                    } else {
+                    text = if (userDeniedPermission) {
                         stringResource(id = R.string.permission_title_denied)
+                    } else {
+                        stringResource(id = R.string.permission_title)
                     },
                     style = MaterialTheme.typography.headlineLarge,
                     color = MaterialTheme.colorScheme.primary
@@ -102,17 +101,24 @@ internal fun PermissionScreen(
                 modifier = Modifier.width(IntrinsicSize.Max),
                 contentAlignment = Alignment.Center
             ) {
+                val context = LocalContext.current
                 Button(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
-                        if (!permissionsState.shouldShowRationale && !permissionsState.allPermissionsGranted) {
+                        if (userDeniedPermission) {
                             context.launchSystemSettings()
                         } else {
                             permissionsState.launchMultiplePermissionRequest()
                         }
                     }
                 ) {
-                    Text(text = stringResource(id = R.string.permission_cta))
+                    Text(
+                        text = if (userDeniedPermission) {
+                            stringResource(id = R.string.permission_cta_denied)
+                        } else {
+                            stringResource(id = R.string.permission_cta)
+                        }
+                    )
                 }
             }
         }

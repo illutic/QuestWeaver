@@ -12,14 +12,14 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
-        android:theme="@style/Theme.QuestWeaver"
+        android:theme="@style/Theme.QuestWeaver.SplashScreen"
         tools:targetApi="34">
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:resizeableActivity="true"
-            android:theme="@style/Theme.QuestWeaver">
+            android:theme="@style/Theme.QuestWeaver.SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
