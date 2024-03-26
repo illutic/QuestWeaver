@@ -1,8 +1,8 @@
 package g.sig.home.state
 
 internal sealed interface HomeEvent {
-    data object Idle : HomeEvent
     data object Back : HomeEvent
+    data object NavigateToOnboarding : HomeEvent
     data object NavigateToProfile : HomeEvent
     data object NavigateToSettings : HomeEvent
     data object NavigateToPermissions : HomeEvent

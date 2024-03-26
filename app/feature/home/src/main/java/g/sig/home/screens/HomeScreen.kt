@@ -3,6 +3,7 @@ package g.sig.home.screens
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +16,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -30,6 +32,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.AsyncImage
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import g.sig.domain.entities.RecentGame
 import g.sig.home.R
 import g.sig.home.state.HomeIntent
@@ -51,33 +55,50 @@ internal fun HomeScreen(
                 .fillMaxSize()
                 .padding(it)
                 .padding(largeSize),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            HomeScreenTopContent(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
-                    .weight(1f),
-                state = homeState,
-                onNavigateToHostGame = { onIntent(HomeIntent.NavigateToHost) },
-                onNavigateToJoinGame = { onIntent(HomeIntent.NavigateToJoin) },
-                onNavigateToGame = { gameId -> onIntent(HomeIntent.NavigateToGame(gameId)) }
-            )
-            HomeScreenBottomContent(
-                modifier = Modifier
-                    .width(IntrinsicSize.Max)
-                    .padding(top = mediumSize),
-                state = homeState,
-                onNavigateToProfile = { onIntent(HomeIntent.NavigateToProfile) },
-                onNavigateToSettings = { onIntent(HomeIntent.NavigateToSettings) },
-                onNavigateToPermissions = { onIntent(HomeIntent.NavigateToPermissions) }
-            )
+            when (homeState) {
+                HomeState.Idle -> {}
+                is HomeState.Loaded -> HomeScreenContent(homeState = homeState, onIntent = onIntent)
+                HomeState.Loading -> CircularProgressIndicator()
+            }
         }
     }
 }
 
 @Composable
-private fun RecentGameCard(modifier: Modifier = Modifier, recentGame: RecentGame, onNavigateToGame: (String) -> Unit) {
+private fun ColumnScope.HomeScreenContent(
+    homeState: HomeState.Loaded,
+    onIntent: (HomeIntent) -> Unit
+) {
+    HomeScreenTopContent(
+        modifier = Modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
+            .weight(1f),
+        state = homeState,
+        onNavigateToHostGame = { onIntent(HomeIntent.NavigateToHost) },
+        onNavigateToJoinGame = { onIntent(HomeIntent.NavigateToJoin) },
+        onNavigateToGame = { gameId -> onIntent(HomeIntent.NavigateToGame(gameId)) }
+    )
+    HomeScreenBottomContent(
+        modifier = Modifier
+            .width(IntrinsicSize.Max)
+            .padding(top = mediumSize),
+        state = homeState,
+        onNavigateToProfile = { onIntent(HomeIntent.NavigateToProfile) },
+        onNavigateToSettings = { onIntent(HomeIntent.NavigateToSettings) },
+        onNavigateToPermissions = { onIntent(HomeIntent.NavigateToPermissions) }
+    )
+}
+
+@Composable
+private fun RecentGameCard(
+    modifier: Modifier = Modifier,
+    recentGame: RecentGame,
+    onNavigateToGame: (String) -> Unit
+) {
     Surface(
         modifier = modifier,
         onClick = { onNavigateToGame(recentGame.id) },
@@ -103,7 +124,11 @@ private fun RecentGameCard(modifier: Modifier = Modifier, recentGame: RecentGame
 }
 
 @Composable
-private fun HomeScreenRecentGamesCarousel(modifier: Modifier = Modifier, recentGames: List<RecentGame>, onNavigateToGame: (String) -> Unit) {
+private fun HomeScreenRecentGamesCarousel(
+    modifier: Modifier = Modifier,
+    recentGames: List<RecentGame>,
+    onNavigateToGame: (String) -> Unit
+) {
     LazyRow(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(mediumSize),
@@ -121,7 +146,7 @@ private fun HomeScreenRecentGamesCarousel(modifier: Modifier = Modifier, recentG
 @Composable
 private fun HomeScreenTopContent(
     modifier: Modifier = Modifier,
-    state: HomeState,
+    state: HomeState.Loaded,
     onNavigateToHostGame: () -> Unit,
     onNavigateToJoinGame: () -> Unit,
     onNavigateToGame: (String) -> Unit
@@ -166,20 +191,22 @@ private fun HomeScreenTopContent(
     }
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 private fun HomeScreenBottomContent(
     modifier: Modifier = Modifier,
-    state: HomeState,
+    state: HomeState.Loaded,
     onNavigateToProfile: () -> Unit,
     onNavigateToSettings: () -> Unit,
     onNavigateToPermissions: () -> Unit
 ) {
+    val permissionsState = rememberMultiplePermissionsState(state.permissions)
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(mediumSize),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (!state.hasPermissions) {
+        if (!permissionsState.allPermissionsGranted) {
             Alert(
                 primaryColor = MaterialTheme.colorScheme.error,
                 onClick = onNavigateToPermissions,
@@ -222,14 +249,15 @@ private fun HomeScreenBottomContent(
 @Composable
 private fun HomeScreenPreview() {
     HomeScreen(
-        homeState = HomeState().apply {
-            userName = "John Doe"
+        homeState = HomeState.Loaded(
+            userName = "John Doe",
+            permissions = emptyList(),
             recentGames = listOf(
                 RecentGame("1", "Game 1", ""),
                 RecentGame("2", "Game 2", ""),
                 RecentGame("3", "Game 3", "")
             )
-        },
+        ),
         onIntent = {}
     )
 }

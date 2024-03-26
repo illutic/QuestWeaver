@@ -1,17 +1,17 @@
 package g.sig.home.navigation
 
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import g.sig.home.data.HomeViewModel
 import g.sig.home.screens.HomeScreen
 import g.sig.home.state.HomeEvent
 
-@OptIn(ExperimentalPermissionsApi::class)
 fun NavGraphBuilder.homeGraph(
+    onNavigateToOnboarding: () -> Unit,
     onNavigateToProfile: () -> Unit,
     onNavigateToSettings: () -> Unit,
     onNavigateToHostGame: () -> Unit,
@@ -21,11 +21,12 @@ fun NavGraphBuilder.homeGraph(
 ) {
     composable(HomeRoute.path) {
         val viewModel = hiltViewModel<HomeViewModel>()
-        val permissionState = rememberMultiplePermissionsState(permissions = viewModel.state.permissions)
+        val state by viewModel.state.collectAsState()
 
         LaunchedEffect(Unit) {
             viewModel.events.collect { event ->
                 when (event) {
+                    HomeEvent.NavigateToOnboarding -> onNavigateToOnboarding()
                     HomeEvent.NavigateToProfile -> onNavigateToProfile()
                     HomeEvent.NavigateToSettings -> onNavigateToSettings()
                     HomeEvent.NavigateToHost -> onNavigateToHostGame()
@@ -40,12 +41,8 @@ fun NavGraphBuilder.homeGraph(
             }
         }
 
-        LaunchedEffect(permissionState.allPermissionsGranted) {
-            viewModel.state.hasPermissions = permissionState.allPermissionsGranted
-        }
-
         HomeScreen(
-            homeState = viewModel.state,
+            homeState = state,
             onIntent = viewModel::handleIntent
         )
     }
