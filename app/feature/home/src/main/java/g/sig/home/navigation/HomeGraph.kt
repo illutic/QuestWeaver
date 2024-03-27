@@ -31,9 +31,7 @@ fun NavGraphBuilder.homeGraph(
                     HomeEvent.NavigateToSettings -> onNavigateToSettings()
                     HomeEvent.NavigateToHost -> onNavigateToHostGame()
                     HomeEvent.NavigateToJoin -> onNavigateToJoinGame()
-                    HomeEvent.NavigateToPermissions -> {
-                        onNavigateToPermissions()
-                    }
+                    HomeEvent.NavigateToPermissions -> onNavigateToPermissions()
 
                     is HomeEvent.NavigateToGame -> onNavigateToGame(event.gameId)
                     else -> {}

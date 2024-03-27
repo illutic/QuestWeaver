@@ -4,18 +4,20 @@ import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
 private val AlegryaFontFamily = FontFamily(
     Font(R.font.alegreya, FontWeight.Normal),
-    Font(R.font.alegreya, FontWeight.Bold),
-    Font(R.font.alegreya, FontWeight.Medium)
+    Font(R.font.alegreya_italic, style = FontStyle.Italic),
+    Font(R.font.alegreya_black, FontWeight.Bold),
+    Font(R.font.alegreya_bold, FontWeight.Medium)
 )
 
 private val displayLarge = TextStyle(
     fontFamily = AlegryaFontFamily,
-    fontWeight = FontWeight.Normal,
+    fontWeight = FontWeight.Bold,
     fontSize = 57.sp
 )
 
@@ -33,13 +35,13 @@ private val displaySmall = TextStyle(
 
 private val headlineLarge = TextStyle(
     fontFamily = AlegryaFontFamily,
-    fontWeight = FontWeight.Normal,
+    fontWeight = FontWeight.Bold,
     fontSize = 24.sp
 )
 
 private val headlineMedium = TextStyle(
     fontFamily = AlegryaFontFamily,
-    fontWeight = FontWeight.Normal,
+    fontWeight = FontWeight.Medium,
     fontSize = 20.sp
 )
 
@@ -51,7 +53,7 @@ private val headlineSmall = TextStyle(
 
 private val titleLarge = TextStyle(
     fontFamily = AlegryaFontFamily,
-    fontWeight = FontWeight.Normal,
+    fontWeight = FontWeight.Bold,
     fontSize = 24.sp
 )
 

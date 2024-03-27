@@ -28,7 +28,11 @@ fun AppNavHost(
         }
 
         homeGraph(
-            onNavigateToOnboarding = { navController.navigate(OnboardingRoute.path) },
+            onNavigateToOnboarding = {
+                navController.navigate(OnboardingRoute.path) {
+                    popUpTo(HomeRoute.path) { inclusive = true }
+                }
+            },
             onNavigateToProfile = {},
             onNavigateToSettings = {},
             onNavigateToHostGame = {},
