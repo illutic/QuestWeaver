@@ -10,6 +10,8 @@ import g.sig.onboarding.navigation.OnboardingRoute
 import g.sig.onboarding.navigation.onboardingGraph
 import g.sig.permissions.navigation.PermissionRoute
 import g.sig.permissions.navigation.permissionGraph
+import g.sig.user.navigation.UserRoute
+import g.sig.user.navigation.userGraph
 
 @Composable
 fun AppNavHost(
@@ -21,11 +23,21 @@ fun AppNavHost(
         navController = navController,
         startDestination = HomeRoute.path
     ) {
-        onboardingGraph(navController) {
-            navController.navigate(HomeRoute.path) {
-                popUpTo(OnboardingRoute.path) { inclusive = true }
+        onboardingGraph(
+            onNavigateToUserCreation = {
+                navController.navigate(UserRoute.path)
             }
-        }
+        )
+
+        userGraph(
+            onBack = { navController.popBackStack() },
+            onUserSaved = {
+                navController.navigate(HomeRoute.path) {
+                    launchSingleTop = true
+                    popUpTo(UserRoute.path) { inclusive = true }
+                }
+            }
+        )
 
         homeGraph(
             onNavigateToOnboarding = {
@@ -33,14 +45,20 @@ fun AppNavHost(
                     popUpTo(HomeRoute.path) { inclusive = true }
                 }
             },
-            onNavigateToProfile = {},
+            onNavigateToProfile = {
+                navController.navigate(UserRoute.path)
+            },
             onNavigateToSettings = {},
             onNavigateToHostGame = {},
             onNavigateToJoinGame = {},
-            onNavigateToPermissions = { navController.navigate(PermissionRoute.path) },
+            onNavigateToPermissions = {
+                navController.navigate(PermissionRoute.path)
+            },
             onNavigateToGame = {}
         )
 
-        permissionGraph(navController)
+        permissionGraph(navController) {
+            navController.popBackStack()
+        }
     }
 }

@@ -28,6 +28,22 @@ class HomeViewModel @Inject constructor(
     internal fun handleIntent(intent: HomeIntent) {
         viewModelScope.launch {
             when (intent) {
+                is HomeIntent.FetchHome -> {
+                    _state.value = HomeState.Loading
+                    val hasUser = hasUser()
+
+                    if (!hasUser) {
+                        _events.send(HomeEvent.NavigateToOnboarding)
+                    } else {
+                        val home = getHomeUseCase()
+                        _state.value = HomeState.Loaded(
+                            userName = home.user.name,
+                            permissions = home.permissions.map { it.permission },
+                            recentGames = home.recentGames
+                        )
+                    }
+                }
+
                 is HomeIntent.Back -> {
                     _events.send(HomeEvent.Back)
                 }
@@ -55,24 +71,6 @@ class HomeViewModel @Inject constructor(
                 HomeIntent.NavigateToSettings -> {
                     _events.send(HomeEvent.NavigateToSettings)
                 }
-            }
-        }
-    }
-
-    init {
-        viewModelScope.launch {
-            _state.value = HomeState.Loading
-            val hasUser = hasUser()
-
-            if (!hasUser) {
-                _events.send(HomeEvent.NavigateToOnboarding)
-            } else {
-                val home = getHomeUseCase()
-                _state.value = HomeState.Loaded(
-                    userName = home.user.name,
-                    permissions = home.permissions.map { it.permission },
-                    recentGames = home.recentGames
-                )
             }
         }
     }

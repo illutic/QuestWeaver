@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import g.sig.home.data.HomeViewModel
 import g.sig.home.screens.HomeScreen
 import g.sig.home.state.HomeEvent
+import g.sig.home.state.HomeIntent
 
 fun NavGraphBuilder.homeGraph(
     onNavigateToOnboarding: () -> Unit,
@@ -24,6 +25,7 @@ fun NavGraphBuilder.homeGraph(
         val state by viewModel.state.collectAsState()
 
         LaunchedEffect(Unit) {
+            viewModel.handleIntent(HomeIntent.FetchHome)
             viewModel.events.collect { event ->
                 when (event) {
                     HomeEvent.NavigateToOnboarding -> onNavigateToOnboarding()

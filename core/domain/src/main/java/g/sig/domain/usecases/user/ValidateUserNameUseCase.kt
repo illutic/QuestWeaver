@@ -1,6 +1,6 @@
 package g.sig.domain.usecases.user
 
-class ValidateUserUseCase {
+class ValidateUserNameUseCase {
     operator fun invoke(name: String) = when {
         name.trim().isEmpty() -> ValidationState.EmptyName
         else -> ValidationState.Valid

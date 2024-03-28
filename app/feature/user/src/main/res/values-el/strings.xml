@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="user_top_bar_creation_title">Δημιουργία χρήστη</string>
+    <string name="user_alert_1">Αυτό θα βλέπουν οι άλλοι χρήστες. Μπορείς να το αλλάξεις μετά.</string>
+    <string name="user_name_error">Μη έγκυρο όνομα</string>
+    <string name="user_name_label">Όνομα</string>
+    <string name="user_name_button">Τέλος</string>
+    <string name="user_top_bar_update_title">Προφίλ χρήστη</string>
+</resources>

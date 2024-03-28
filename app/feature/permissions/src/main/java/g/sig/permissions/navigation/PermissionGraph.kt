@@ -15,13 +15,15 @@ import g.sig.permissions.screens.PermissionScreen
 
 @OptIn(ExperimentalPermissionsApi::class)
 fun NavGraphBuilder.permissionGraph(
-    navController: NavController
+    navController: NavController,
+    onPermissionsGranted: () -> Unit
 ) {
     composable(PermissionRoute.path) {
         val viewModel = hiltViewModel<PermissionViewModel>()
         var userDeniedSomePermission by rememberSaveable { mutableStateOf(false) }
         val permissionState = rememberMultiplePermissionsState(permissions = viewModel.permissions) {
             userDeniedSomePermission = it.any { permissionState -> !permissionState.value }
+            if (!userDeniedSomePermission) onPermissionsGranted()
         }
 
         PermissionScreen(permissionState, userDeniedSomePermission) { navController.popBackStack() }

@@ -12,9 +12,10 @@ import g.sig.data.repositories.UserRepositoryImpl
 import g.sig.domain.repositories.UserRepository
 import g.sig.domain.usecases.user.CreateUserUseCase
 import g.sig.domain.usecases.user.DeleteUserUseCase
+import g.sig.domain.usecases.user.GetUserUseCase
 import g.sig.domain.usecases.user.HasUserUseCase
-import g.sig.domain.usecases.user.UpdateUserUseCase
-import g.sig.domain.usecases.user.ValidateUserUseCase
+import g.sig.domain.usecases.user.UpdateUserNameUseCase
+import g.sig.domain.usecases.user.ValidateUserNameUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Singleton
 
@@ -38,40 +39,53 @@ object UserModule {
 
     @Provides
     @Singleton
+    fun providesGetUserUseCase(
+        userRepository: UserRepository,
+        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
+    ): GetUserUseCase {
+        return GetUserUseCase(userRepository, defaultDispatcher)
+    }
+
+    @Provides
+    @Singleton
     fun provideCreateUserUseCase(
-        userRepository: UserRepository
+        userRepository: UserRepository,
+        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
     ): CreateUserUseCase {
-        return CreateUserUseCase(userRepository)
+        return CreateUserUseCase(userRepository, defaultDispatcher)
     }
 
     @Provides
     @Singleton
     fun provideDeleteUserUseCase(
-        userRepository: UserRepository
+        userRepository: UserRepository,
+        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
     ): DeleteUserUseCase {
-        return DeleteUserUseCase(userRepository)
+        return DeleteUserUseCase(userRepository, defaultDispatcher)
     }
 
     @Provides
     @Singleton
     fun provideUpdateUserUseCase(
-        userRepository: UserRepository
-    ): UpdateUserUseCase {
-        return UpdateUserUseCase(userRepository)
+        userRepository: UserRepository,
+        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
+    ): UpdateUserNameUseCase {
+        return UpdateUserNameUseCase(userRepository, defaultDispatcher)
     }
 
     @Provides
     @Singleton
     fun provideShouldShowOnBoardingUseCase(
-        userRepository: UserRepository
+        userRepository: UserRepository,
+        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
     ): HasUserUseCase {
-        return HasUserUseCase(userRepository)
+        return HasUserUseCase(userRepository, defaultDispatcher)
     }
 
     @Provides
     @Singleton
-    fun provideValidateUserUseCase(): ValidateUserUseCase {
-        return ValidateUserUseCase()
+    fun provideValidateUserUseCase(): ValidateUserNameUseCase {
+        return ValidateUserNameUseCase()
     }
 
 }

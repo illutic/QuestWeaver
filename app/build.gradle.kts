@@ -81,6 +81,7 @@ dependencies {
     implementation(project(":app:feature:onboarding"))
     implementation(project(":app:feature:home"))
     implementation(project(":app:feature:permissions"))
+    implementation(project(":app:feature:user"))
     implementation(libs.androidx.splashscreen)
     implementation(libs.dagger.hilt)
     ksp(libs.dagger.hilt.compiler)

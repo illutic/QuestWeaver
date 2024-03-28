@@ -2,10 +2,12 @@ plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
 }
 
 android {
-    namespace = "g.sig.onboarding"
+    namespace = "g.sig.user"
     compileSdk = libs.versions.targetSdk.toInt()
 
     defaultConfig {
@@ -43,6 +45,9 @@ dependencies {
     implementation(project(":core:ui"))
     implementation(project(":core:domain"))
     implementation(project(":core:navigation"))
+    implementation(libs.dagger.hilt)
+    implementation(libs.hilt.navigation)
+    ksp(libs.dagger.hilt.compiler)
 }
 
 fun Provider<String>.toInt(): Int = get().toInt()
