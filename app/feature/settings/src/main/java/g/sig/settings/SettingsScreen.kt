@@ -1,0 +1,106 @@
+package g.sig.settings
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import coil.compose.AsyncImage
+import g.sig.settings.state.SettingsIntent
+import g.sig.settings.state.SettingsState
+import g.sig.ui.AppIcons
+import g.sig.ui.components.CenteredProgressBar
+import g.sig.ui.largeSize
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SettingsTopBar(
+    onBack: () -> Unit
+) {
+    TopAppBar(modifier = Modifier.fillMaxWidth(),
+        scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(),
+        title = {
+            Text(
+                text = stringResource(id = R.string.settings_title),
+            )
+        },
+        navigationIcon = {
+            IconButton(onClick = onBack) {
+                Icon(AppIcons.Back, contentDescription = null)
+            }
+        })
+}
+
+@Composable
+private fun SettingsScreenContent(
+    modifier: Modifier = Modifier,
+    onIntent: (intent: SettingsIntent) -> Unit
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            text = stringResource(id = R.string.app_name),
+            style = MaterialTheme.typography.displayMedium,
+            color = MaterialTheme.colorScheme.primary,
+        )
+
+        Text(
+            text = stringResource(id = R.string.app_notice),
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(vertical = largeSize)
+        )
+
+        TextButton(onClick = { onIntent(SettingsIntent.OpenPrivacyPolicy) }) {
+            Text(text = stringResource(id = R.string.privacy_policy))
+        }
+
+        AsyncImage(
+            modifier = Modifier
+                .padding(top = largeSize)
+                .size(SettingsSize.imageSize),
+            model = R.drawable.graphic_7,
+            contentDescription = null,
+        )
+    }
+}
+
+@Composable
+internal fun SettingsScreen(
+    state: SettingsState,
+    onIntent: (intent: SettingsIntent) -> Unit
+) {
+    Scaffold(topBar = { SettingsTopBar { onIntent(SettingsIntent.Back) } }) { padding ->
+        when (state) {
+            SettingsState.Loading -> CenteredProgressBar()
+
+            SettingsState.Idle,
+            is SettingsState.Loaded -> {
+                SettingsScreenContent(
+                    modifier = Modifier
+                        .verticalScroll(rememberScrollState())
+                        .fillMaxSize()
+                        .padding(padding)
+                        .padding(largeSize),
+                    onIntent = onIntent
+                )
+            }
+        }
+    }
+}

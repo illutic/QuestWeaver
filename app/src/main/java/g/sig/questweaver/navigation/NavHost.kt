@@ -10,6 +10,8 @@ import g.sig.onboarding.navigation.OnboardingRoute
 import g.sig.onboarding.navigation.onboardingGraph
 import g.sig.permissions.navigation.PermissionRoute
 import g.sig.permissions.navigation.permissionGraph
+import g.sig.settings.SettingsRoute
+import g.sig.settings.settingsGraph
 import g.sig.user.navigation.UserRoute
 import g.sig.user.navigation.userGraph
 
@@ -48,7 +50,9 @@ fun AppNavHost(
             onNavigateToProfile = {
                 navController.navigate(UserRoute.path)
             },
-            onNavigateToSettings = {},
+            onNavigateToSettings = {
+                navController.navigate(SettingsRoute.path)
+            },
             onNavigateToHostGame = {},
             onNavigateToJoinGame = {},
             onNavigateToPermissions = {
@@ -60,5 +64,7 @@ fun AppNavHost(
         permissionGraph(navController) {
             navController.popBackStack()
         }
+
+        settingsGraph { navController.popBackStack() }
     }
 }

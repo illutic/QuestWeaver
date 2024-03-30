@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "868778343615",
+    "project_id": "questweaver-6c65a",
+    "storage_bucket": "questweaver-6c65a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:868778343615:android:f3932dd1dd8e82eab81a0a",
+        "android_client_info": {
+          "package_name": "g.sig.questweaver"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDD6y_xCh_A1YCGppkoznjajxKLfxOn7UA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

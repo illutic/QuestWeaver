@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.googleServices)
 }
 
 val properties: Properties = Properties().apply {
@@ -82,6 +83,12 @@ dependencies {
     implementation(project(":app:feature:home"))
     implementation(project(":app:feature:permissions"))
     implementation(project(":app:feature:user"))
+    implementation(project(":app:feature:settings"))
+
+    implementation(platform(libs.firebaseBom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.config)
     implementation(libs.androidx.splashscreen)
     implementation(libs.dagger.hilt)
     ksp(libs.dagger.hilt.compiler)
