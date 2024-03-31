@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.googleServices)
+    alias(libs.plugins.firebaseCrashlytics)
 }
 
 val properties: Properties = Properties().apply {

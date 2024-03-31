@@ -13,6 +13,7 @@ playServicesNearby = "19.1.0"
 accompanistPermissions = "0.34.0"
 googleServices = "4.4.1"
 firebaseBom = "32.8.0"
+firebaseCrashlytics = "2.9.9"
 
 # Android
 agp = "8.3.1"
@@ -84,4 +85,4 @@ androidLibrary = { id = "com.android.library", version.ref = "agp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 googleServices = { id = "com.google.gms.google-services", version.ref = "googleServices" }
-
+firebaseCrashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlytics" }
