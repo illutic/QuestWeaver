@@ -36,7 +36,7 @@ fun AppNavHost(
             onUserSaved = {
                 navController.navigate(HomeRoute.path) {
                     launchSingleTop = true
-                    popUpTo(UserRoute.path) { inclusive = true }
+                    popUpTo(navController.graph.id) { inclusive = true }
                 }
             }
         )
