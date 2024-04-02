@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="permission_alert">Η εφαρμογή δεν έχει άδεια να δεί και να συνδεθεί σε άλλες συσκευές</string>
+</resources>

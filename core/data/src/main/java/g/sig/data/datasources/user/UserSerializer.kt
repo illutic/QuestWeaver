@@ -1,7 +1,7 @@
 package g.sig.data.datasources.user
 
 import androidx.datastore.core.Serializer
-import g.sig.data.entities.user.User
+import g.sig.data.entities.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi

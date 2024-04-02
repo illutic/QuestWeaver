@@ -1,7 +1,7 @@
 package g.sig.data.repositories
 
 import g.sig.data.datasources.user.UserDataSource
-import g.sig.data.entities.user.User.Companion.fromDomain
+import g.sig.data.entities.User.Companion.fromDomain
 import g.sig.domain.entities.User
 import g.sig.domain.repositories.UserRepository
 

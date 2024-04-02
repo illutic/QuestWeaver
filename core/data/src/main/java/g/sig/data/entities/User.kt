@@ -1,6 +1,6 @@
 @file:UseSerializers(UUIDSerializer::class)
 
-package g.sig.data.entities.user
+package g.sig.data.entities
 
 import g.sig.data.serializers.UUIDSerializer
 import kotlinx.serialization.Serializable

@@ -1,7 +1,7 @@
 package g.sig.data.datasources.user
 
 import android.content.Context
-import g.sig.data.entities.user.User
+import g.sig.data.entities.User
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext

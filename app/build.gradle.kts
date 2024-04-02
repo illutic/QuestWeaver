@@ -85,6 +85,7 @@ dependencies {
     implementation(project(":app:feature:permissions"))
     implementation(project(":app:feature:user"))
     implementation(project(":app:feature:settings"))
+    implementation(project(":app:feature:join_game"))
 
     implementation(platform(libs.firebaseBom))
     implementation(libs.firebase.analytics)

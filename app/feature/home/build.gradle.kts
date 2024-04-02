@@ -45,6 +45,7 @@ dependencies {
     implementation(project(":core:ui"))
     implementation(project(":core:domain"))
     implementation(project(":core:navigation"))
+    implementation(project(":app:common:ui"))
     implementation(libs.accompanistPermissions)
     implementation(libs.dagger.hilt)
     implementation(libs.hilt.navigation)

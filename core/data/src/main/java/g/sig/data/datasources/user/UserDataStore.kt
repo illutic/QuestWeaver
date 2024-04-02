@@ -3,7 +3,7 @@ package g.sig.data.datasources.user
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.dataStore
-import g.sig.data.entities.user.User
+import g.sig.data.entities.User
 import kotlinx.coroutines.flow.Flow
 
 class UserDataStore(private val context: Context) : DataStore<User> {

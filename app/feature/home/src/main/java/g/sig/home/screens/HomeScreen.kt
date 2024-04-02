@@ -34,13 +34,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.AsyncImage
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import g.sig.domain.entities.RecentGame
+import g.sig.common.ui.PermissionsAlert
+import g.sig.domain.entities.Game
 import g.sig.home.R
 import g.sig.home.state.HomeIntent
 import g.sig.home.state.HomeState
 import g.sig.ui.AppIcons
 import g.sig.ui.MediumRoundedShape
-import g.sig.ui.components.Alert
 import g.sig.ui.largeSize
 import g.sig.ui.mediumSize
 
@@ -96,7 +96,7 @@ private fun ColumnScope.HomeScreenContent(
 @Composable
 private fun RecentGameCard(
     modifier: Modifier = Modifier,
-    recentGame: RecentGame,
+    recentGame: Game,
     onNavigateToGame: (String) -> Unit
 ) {
     Surface(
@@ -126,7 +126,7 @@ private fun RecentGameCard(
 @Composable
 private fun HomeScreenRecentGamesCarousel(
     modifier: Modifier = Modifier,
-    recentGames: List<RecentGame>,
+    recentGames: List<Game>,
     onNavigateToGame: (String) -> Unit
 ) {
     LazyRow(
@@ -207,19 +207,7 @@ private fun HomeScreenBottomContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if (!permissionsState.allPermissionsGranted) {
-            Alert(
-                primaryColor = MaterialTheme.colorScheme.error,
-                onClick = onNavigateToPermissions,
-                trailingContent = {
-                    Icon(painter = AppIcons.ChevronRight, contentDescription = "")
-                },
-                leadingContent = {
-                    Icon(painter = AppIcons.Info, contentDescription = "")
-                },
-                content = {
-                    Text(text = stringResource(id = R.string.home_permission_alert))
-                }
-            )
+            PermissionsAlert(onClick = onNavigateToPermissions)
         }
 
         Row(
@@ -253,9 +241,9 @@ private fun HomeScreenPreview() {
             userName = "John Doe",
             permissions = emptyList(),
             recentGames = listOf(
-                RecentGame("1", "Game 1", ""),
-                RecentGame("2", "Game 2", ""),
-                RecentGame("3", "Game 3", "")
+                Game("1", "Game 1", "", "", 0, 0),
+                Game("2", "Game 2", "", "", 0, 0),
+                Game("3", "Game 3", "", "", 0, 0)
             )
         ),
         onIntent = {}

@@ -1,6 +1,6 @@
 package g.sig.data.datasources.user
 
-import g.sig.data.entities.user.User
+import g.sig.data.entities.User
 
 interface UserDataSource {
     suspend fun getUser(): User

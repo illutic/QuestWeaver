@@ -1,12 +1,17 @@
 package g.sig.questweaver.modules
 
+import android.content.Context
 import android.os.Build
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import g.sig.domain.entities.Permission
+import g.sig.domain.repositories.PermissionsRepository
 import g.sig.domain.usecases.permissions.GetNearbyPermissionUseCase
+import g.sig.domain.usecases.permissions.HasPermissionsUseCase
+import g.sig.permissions.PermissionsRepositoryImpl
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
@@ -218,4 +223,12 @@ object PermissionsModule {
 
         return GetNearbyPermissionUseCase(*permissions)
     }
+
+    @Provides
+    @Singleton
+    fun provideHasPermissionsUseCase(repository: PermissionsRepository): HasPermissionsUseCase = HasPermissionsUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun providePermissionsRepository(@ApplicationContext context: Context): PermissionsRepository = PermissionsRepositoryImpl(context)
 }

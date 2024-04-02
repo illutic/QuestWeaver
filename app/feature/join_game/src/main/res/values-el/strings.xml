@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="join_game_title">Συμμετοχή σε παιχνίδι</string>
+    <string name="join_game_players">%1$1d/%2$1d Παίχτες</string>
+    <string name="join_game_empty">Κοντινές συσκευές θα εμφανιστούν εδώ.</string>
+</resources>

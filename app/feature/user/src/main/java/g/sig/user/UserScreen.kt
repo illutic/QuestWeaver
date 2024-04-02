@@ -1,10 +1,13 @@
 package g.sig.user
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.verticalScroll
@@ -70,6 +73,7 @@ private fun UserScreenTopBar(
 
 @Composable
 private fun OutlinedNameTextField(
+    modifier: Modifier = Modifier,
     name: String,
     errorId: Int? = null,
     onSaveUser: () -> Unit,
@@ -83,7 +87,7 @@ private fun OutlinedNameTextField(
     }
 
     OutlinedTextField(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier,
         value = name,
         isError = errorId != null,
         onValueChange = onValueChanged,
@@ -128,22 +132,29 @@ private fun UserScreenContent(
         )
 
         OutlinedNameTextField(
+            modifier = Modifier
+                .defaultMinSize(minWidth = UserSize.minTextSize)
+                .width(IntrinsicSize.Max),
             name = name,
             errorId = state.getError(),
             onSaveUser = saveUserIntent,
             onValueChanged = { name = it }
         )
 
-        Alert(modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = mediumSize), content = {
-            Text(
-                text = stringResource(id = R.string.user_alert_1),
-                style = MaterialTheme.typography.labelLarge
-            )
-        }, leadingContent = {
-            Icon(AppIcons.Info, contentDescription = null)
-        })
+        Alert(
+            modifier = Modifier
+                .width(IntrinsicSize.Max)
+                .padding(vertical = mediumSize),
+            content = {
+                Text(
+                    text = stringResource(id = R.string.user_alert_1),
+                    style = MaterialTheme.typography.labelLarge
+                )
+            },
+            leadingContent = {
+                Icon(AppIcons.Info, contentDescription = null)
+            }
+        )
 
         Button(onClick = saveUserIntent) {
             Text(text = stringResource(id = R.string.user_name_button))

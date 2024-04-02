@@ -1,7 +1,7 @@
 package g.sig.domain.repositories
 
-import g.sig.domain.entities.RecentGame
+import g.sig.domain.entities.Game
 
 interface RecentGamesRepository {
-    suspend fun getRecentGames(): List<RecentGame>
+    suspend fun getRecentGames(): List<Game>
 }

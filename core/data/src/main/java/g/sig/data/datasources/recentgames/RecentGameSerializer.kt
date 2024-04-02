@@ -1,7 +1,7 @@
 package g.sig.data.datasources.recentgames
 
 import androidx.datastore.core.Serializer
-import g.sig.data.entities.recentgames.RecentGames
+import g.sig.data.entities.Games
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -11,15 +11,15 @@ import kotlinx.serialization.protobuf.ProtoBuf
 import java.io.InputStream
 import java.io.OutputStream
 
-object RecentGameSerializer : Serializer<RecentGames> {
-    override val defaultValue: RecentGames = RecentGames(emptyList())
+object RecentGameSerializer : Serializer<Games> {
+    override val defaultValue: Games = Games(emptyList())
 
     @OptIn(ExperimentalSerializationApi::class)
-    override suspend fun readFrom(input: InputStream): RecentGames =
+    override suspend fun readFrom(input: InputStream): Games =
         ProtoBuf.decodeFromByteArray(input.readBytes())
 
     @OptIn(ExperimentalSerializationApi::class)
-    override suspend fun writeTo(t: RecentGames, output: OutputStream) =
+    override suspend fun writeTo(t: Games, output: OutputStream) =
         withContext(Dispatchers.IO) {
             output.write(ProtoBuf.encodeToByteArray(t))
         }

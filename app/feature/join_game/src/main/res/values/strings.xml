@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="join_game_title">Join Game</string>
+    <string name="join_game_players">%1$1d/%2$1d Players</string>
+    <string name="join_game_empty">Nearby devices will appear here.</string>
+</resources>
