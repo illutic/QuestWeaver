@@ -1,126 +1,130 @@
 package g.sig.data.nearby.core
 
 import android.content.Context
-import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.AdvertisingOptions
+import com.google.android.gms.nearby.connection.ConnectionsClient
 import com.google.android.gms.nearby.connection.ConnectionsStatusCodes
 import com.google.android.gms.nearby.connection.DiscoveredEndpointInfo
 import com.google.android.gms.nearby.connection.DiscoveryOptions
 import com.google.android.gms.nearby.connection.EndpointDiscoveryCallback
+import com.google.android.gms.nearby.connection.Payload
 import com.google.android.gms.nearby.connection.Strategy
 import g.sig.data.nearby.entities.AdvertiseState
 import g.sig.data.nearby.entities.ConnectionState
+import g.sig.data.nearby.entities.Data
 import g.sig.data.nearby.entities.DiscoverState
 import g.sig.data.nearby.utils.createConnectionCallback
 import g.sig.data.nearby.utils.doOnFailure
 import g.sig.data.nearby.utils.doOnSuccess
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
+import java.io.InputStream
 
 fun requestConnection(
-    context: Context,
+    client: ConnectionsClient,
     user: String,
-    endpointId: String,
+    endpointId: String
 ) = callbackFlow {
     val connectionLifecycleCallback =
         createConnectionCallback(
-            onConnectionInitiated = { _, connectionInfo ->
-                send(ConnectionState.Initiated(connectionInfo))
+            onConnectionInitiated = { endpointId, connectionInfo ->
+                trySend(ConnectionState.Initiated(endpointId, connectionInfo))
             },
             onConnectionResult = { endpointId, connectionResolution ->
                 when (connectionResolution.status.statusCode) {
                     ConnectionsStatusCodes.STATUS_OK -> {
-                        send(ConnectionState.Connected(endpointId))
+                        trySend(ConnectionState.Connected(endpointId))
                     }
 
                     ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> {
-                        send(ConnectionState.Rejected(endpointId))
+                        trySend(ConnectionState.Rejected(endpointId))
                     }
 
                     ConnectionsStatusCodes.STATUS_ERROR -> {
-                        send(ConnectionState.Error(connectionResolution.status.statusMessage))
+                        trySend(ConnectionState.Error(endpointId, connectionResolution.status.statusMessage))
                     }
                 }
             },
-            onDisconnected = { _ ->
-                send(ConnectionState.Disconnected)
+            onDisconnected = { endpointId ->
+                trySend(ConnectionState.Disconnected(endpointId))
             },
         )
 
-    Nearby.getConnectionsClient(context.applicationContext)
+    client
         .requestConnection(
             user,
             endpointId,
             connectionLifecycleCallback,
         )
-        .doOnSuccess { send(DiscoverState.ConnectionRequested) }
-        .doOnFailure { send(DiscoverState.ConnectionRequestFailed) }
+        .doOnSuccess { trySend(DiscoverState.ConnectionRequested) }
+        .doOnFailure { trySend(DiscoverState.ConnectionRequestFailed) }
 
     awaitClose {
-        Nearby.getConnectionsClient(context.applicationContext).stopDiscovery()
+        client.stopDiscovery()
     }
 }
 
 fun startAdvertising(
-    context: Context,
-    name: String
-): Flow<ConnectionState> =
-    callbackFlow {
-        send(ConnectionState.Idle)
-
-        val options =
-            AdvertisingOptions.Builder()
-                .setStrategy(Strategy.P2P_CLUSTER)
-                .build()
-
-        val connectionLifecycleCallback =
-            createConnectionCallback(
-                onConnectionInitiated = { _, connectionInfo ->
-                    send(ConnectionState.Initiated(connectionInfo))
-                },
-                onConnectionResult = { endpointId, connectionResolution ->
-                    when (connectionResolution.status.statusCode) {
-                        ConnectionsStatusCodes.STATUS_OK -> {
-                            send(ConnectionState.Connected(endpointId))
-                        }
-
-                        ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> {
-                            send(ConnectionState.Rejected(endpointId))
-                        }
-
-                        ConnectionsStatusCodes.STATUS_ERROR -> {
-                            send(ConnectionState.Error(connectionResolution.status.statusMessage))
-                        }
-                    }
-                },
-                onDisconnected = { _ ->
-                    send(ConnectionState.Disconnected)
-                },
-            )
-
-        Nearby.getConnectionsClient(context.applicationContext)
-            .startAdvertising(
-                name,
-                context.packageName,
-                connectionLifecycleCallback,
-                options,
-            )
-            .doOnSuccess { send(AdvertiseState.Advertising) }
-            .doOnFailure { send(ConnectionState.Failure(it)) }
-
-        awaitClose {
-            Nearby.getConnectionsClient(context.applicationContext).stopAdvertising()
-        }
-    }
-
-fun startDiscovery(
-    context: Context,
+    client: ConnectionsClient,
+    name: String,
+    serviceId: String,
     isLowPower: Boolean = false,
 ) = callbackFlow {
-    send(ConnectionState.Idle)
+    val options =
+        AdvertisingOptions.Builder()
+            .setStrategy(Strategy.P2P_CLUSTER)
+            .setLowPower(isLowPower)
+            .build()
 
+    val connectionLifecycleCallback =
+        createConnectionCallback(
+            onConnectionInitiated = { endpointId, connectionInfo ->
+                trySend(ConnectionState.Initiated(endpointId, connectionInfo))
+            },
+            onConnectionResult = { endpointId, connectionResolution ->
+                when (connectionResolution.status.statusCode) {
+                    ConnectionsStatusCodes.STATUS_OK -> {
+                        trySend(ConnectionState.Connected(endpointId))
+                    }
+
+                    ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> {
+                        trySend(ConnectionState.Rejected(endpointId))
+                    }
+
+                    ConnectionsStatusCodes.STATUS_ERROR -> {
+                        trySend(ConnectionState.Error(endpointId, connectionResolution.status.statusMessage))
+                    }
+                }
+            },
+            onDisconnected = { endpointId ->
+                trySend(ConnectionState.Disconnected(endpointId))
+            },
+        )
+
+    client
+        .startAdvertising(
+            name,
+            serviceId,
+            connectionLifecycleCallback,
+            options,
+        )
+        .doOnSuccess { trySend(AdvertiseState.Advertising) }
+        .doOnFailure {
+            trySend(ConnectionState.Failure(it))
+            close()
+        }
+
+    awaitClose {
+        client.stopAdvertising()
+    }
+}
+
+fun startDiscovery(
+    client: ConnectionsClient,
+    serviceId: String,
+    isLowPower: Boolean = false,
+) = callbackFlow {
     val options =
         DiscoveryOptions.Builder()
             .setStrategy(Strategy.P2P_CLUSTER)
@@ -134,27 +138,47 @@ fun startDiscovery(
                 info: DiscoveredEndpointInfo,
             ) {
                 this@callbackFlow.launch {
-                    send(DiscoverState.Discovered(endpointId, info))
+                    trySend(DiscoverState.Discovered(endpointId, info))
                 }
             }
 
             override fun onEndpointLost(endpointId: String) {
                 this@callbackFlow.launch {
-                    send(DiscoverState.Lost(endpointId))
+                    trySend(DiscoverState.Lost(endpointId))
                 }
             }
         }
 
-    Nearby.getConnectionsClient(context)
+    client
         .startDiscovery(
-            context.packageName,
+            serviceId,
             callback,
             options,
         )
-        .doOnSuccess { send(DiscoverState.Discovering) }
-        .doOnFailure { send(ConnectionState.Failure(it)) }
+        .doOnSuccess { trySend(DiscoverState.Discovering) }
+        .doOnFailure { trySend(ConnectionState.Failure(it)) }
 
-    awaitClose {
-        Nearby.getConnectionsClient(context.applicationContext).stopDiscovery()
+    awaitClose { client.stopDiscovery() }
+}
+
+fun ConnectionsClient.sendPayload(
+    context: Context,
+    endpointId: String,
+    data: Data,
+) {
+    when (data) {
+        is Data.File -> context.contentResolver.openInputStream(data.uri)?.use { sendPayload(endpointId, it) }
+        is Data.Message -> sendPayload(endpointId, data.byteArray)
+        is Data.Stream -> sendPayload(endpointId, data.inputStream)
     }
 }
+
+private fun ConnectionsClient.sendPayload(
+    endpointId: String,
+    payload: InputStream,
+) = sendPayload(endpointId, Payload.fromStream(payload))
+
+private fun ConnectionsClient.sendPayload(
+    endpointId: String,
+    payload: ByteArray,
+) = sendPayload(endpointId, Payload.fromBytes(payload))

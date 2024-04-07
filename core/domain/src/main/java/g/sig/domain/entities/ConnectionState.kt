@@ -1,5 +1,9 @@
 package g.sig.domain.entities
 
 enum class ConnectionState {
-    Idle, Connecting, Connected, Disconnected
+    Idle,
+    Loading,
+    Connecting,
+    Connected,
+    Disconnected
 }

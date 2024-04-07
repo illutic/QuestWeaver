@@ -3,6 +3,7 @@ package g.sig.join_game.data
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import g.sig.domain.entities.NearbyAction
 import g.sig.domain.usecases.nearby.GetNearbyGamesUseCase
 import g.sig.domain.usecases.nearby.JoinGameUseCase
 import g.sig.domain.usecases.permissions.GetNearbyPermissionUseCase
@@ -36,8 +37,11 @@ class JoinGameViewModel @Inject constructor(
                     state.hasPermissions = hasPermissions(*getNearbyPermissions().toTypedArray())
                     getGames()
                         .onCompletion { state.isLoading = false }
-                        .collect { game ->
-                            state.games.add(game)
+                        .collect { nearbyAction ->
+                            when (nearbyAction) {
+                                is NearbyAction.AddGame -> state.games.add(nearbyAction.game)
+                                is NearbyAction.RemoveGame -> state.games.removeIf { it.id == nearbyAction.id }
+                            }
                         }
                 }
 

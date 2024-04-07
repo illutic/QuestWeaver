@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="invalid_description">Invalid description</string>
+    <string name="invalid_title">Invalid title</string>
+    <string name="invalid_max_players">Invalid max players</string>
+    <string name="top_bar_title">Host Game</string>
+    <string name="game_title_label">Name</string>
+    <string name="game_title_placeholder">The greatest game ever</string>
+    <string name="game_description_label">Description</string>
+    <string name="game_description_placeholder">A game that will change your life</string>
+    <string name="max_players_label">Max. number of players</string>
+    <string name="max_players_placeholder" translatable="false">4</string>
+    <string name="create_game_button">Start Game</string>
+    <string name="host_game_alert">This is what the other users will see. You can’t change it later.</string>
+    <string name="permissions_error">Nearby devices permissions are not set!</string>
+</resources>

@@ -6,6 +6,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import g.sig.home.navigation.HomeRoute
 import g.sig.home.navigation.homeGraph
+import g.sig.host_game.navigation.HostGameRoute
+import g.sig.host_game.navigation.hostGameGraph
 import g.sig.join_game.navigation.JoinGameRoute
 import g.sig.join_game.navigation.joinGameGraph
 import g.sig.onboarding.navigation.OnboardingRoute
@@ -55,7 +57,9 @@ fun AppNavHost(
             onNavigateToSettings = {
                 navController.navigate(SettingsRoute.path)
             },
-            onNavigateToHostGame = {},
+            onNavigateToHostGame = {
+                navController.navigate(HostGameRoute.path)
+            },
             onNavigateToJoinGame = {
                 navController.navigate(JoinGameRoute.path)
             },
@@ -77,6 +81,16 @@ fun AppNavHost(
                 navController.navigate(PermissionRoute.path)
             },
             onNavigateToGame = { gameId ->
+//                navController.navigate(GameRoute.createRoute(gameId))
+            }
+        )
+
+        hostGameGraph(
+            onBack = { navController.popBackStack() },
+            onNavigateToPermissions = {
+                navController.navigate(PermissionRoute.path)
+            },
+            onGameCreated = {
 //                navController.navigate(GameRoute.createRoute(gameId))
             }
         )

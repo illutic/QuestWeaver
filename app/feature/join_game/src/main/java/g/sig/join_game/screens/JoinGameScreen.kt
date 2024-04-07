@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import g.sig.common.ui.PermissionsAlert
 import g.sig.domain.entities.Game
+import g.sig.domain.entities.Uri
 import g.sig.join_game.R
 import g.sig.join_game.state.JoinGameIntent
 import g.sig.join_game.state.JoinGameState
@@ -54,7 +55,7 @@ internal fun JoinGameScreen(state: JoinGameState, onIntent: (JoinGameIntent) -> 
             item {
                 AsyncImage(
                     modifier = Modifier.width(360.dp),
-                    model = R.drawable.graphic_9,
+                    model = R.drawable.graphic_8,
                     contentDescription = ""
                 )
             }
@@ -138,9 +139,9 @@ private fun JoinGameScreenPreview() {
     JoinGameScreen(
         state = JoinGameState().apply {
             games = mutableStateListOf(
-                Game("1", "Game 1", "", "", 0, 0),
-                Game("2", "Game 2", "", "", 0, 0),
-                Game("3", "Game 3", "", "", 0, 0)
+                Game("1", "Game 1", "", Uri("http://example.com"), 0, 0),
+                Game("2", "Game 2", "", Uri("http://example.com"), 0, 0),
+                Game("3", "Game 3", "", Uri("http://example.com"), 0, 0)
             )
         }
     ) {}

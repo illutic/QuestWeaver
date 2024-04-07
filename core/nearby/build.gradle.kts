@@ -34,8 +34,7 @@ android {
 }
 
 dependencies {
-    api(libs.kotlinx.serialization.protobuf)
-    api(libs.kotlinx.coroutines.core)
+    implementation(project(":core:common:data"))
     api(libs.playServicesNearby)
 }
 

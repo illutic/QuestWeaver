@@ -4,15 +4,14 @@ import com.google.android.gms.nearby.connection.ConnectionInfo
 import com.google.android.gms.nearby.connection.DiscoveredEndpointInfo
 
 sealed interface ConnectionState {
-    data object Idle : ConnectionState
 
-    data object Disconnected : ConnectionState
+    data class Disconnected(val endpointId: String) : ConnectionState
 
     data class Failure(val exception: Exception) : ConnectionState
 
-    data class Error(val message: String? = null) : ConnectionState
+    data class Error(val endpointId: String, val message: String? = null) : ConnectionState
 
-    data class Initiated(val connectionInfo: ConnectionInfo?) : AdvertiseState
+    data class Initiated(val endpointId: String, val connectionInfo: ConnectionInfo?) : AdvertiseState
 
     data class Connected(val endpointId: String) : AdvertiseState
 

@@ -9,6 +9,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import g.sig.navigation.launchInBrowser
 import g.sig.settings.state.SettingsEvent
+import kotlinx.coroutines.flow.collectLatest
 
 fun NavGraphBuilder.settingsGraph(
     onBack: () -> Unit,
@@ -19,7 +20,7 @@ fun NavGraphBuilder.settingsGraph(
         val context = LocalContext.current
 
         LaunchedEffect(Unit) {
-            viewModel.events.collect {
+            viewModel.events.collectLatest {
                 when (it) {
                     is SettingsEvent.Back -> onBack()
                     is SettingsEvent.OpenPrivacyPolicy -> context.launchInBrowser(it.url)

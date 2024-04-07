@@ -4,7 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import g.sig.domain.repositories.RecentGamesRepository
+import g.sig.domain.repositories.NearbyRepository
 import g.sig.domain.repositories.UserRepository
 import g.sig.domain.usecases.home.GetHomeUseCase
 import g.sig.domain.usecases.permissions.GetNearbyPermissionUseCase
@@ -20,10 +20,10 @@ object HomeModule {
     @Singleton
     fun provideGetHomeUseCase(
         getNearbyPermissionUseCase: GetNearbyPermissionUseCase,
-        recentGamesRepository: RecentGamesRepository,
+        nearbyRepository: NearbyRepository,
         userRepository: UserRepository,
         @DefaultDispatcher mainDispatcher: CoroutineDispatcher
     ): GetHomeUseCase {
-        return GetHomeUseCase(getNearbyPermissionUseCase, recentGamesRepository, userRepository, mainDispatcher)
+        return GetHomeUseCase(getNearbyPermissionUseCase, nearbyRepository, userRepository, mainDispatcher)
     }
 }

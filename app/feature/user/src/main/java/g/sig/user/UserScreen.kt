@@ -9,14 +9,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -30,8 +28,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import coil.compose.AsyncImage
+import g.sig.common.ui.AppOutlinedTextField
 import g.sig.ui.AppIcons
-import g.sig.ui.LargeRoundedShape
 import g.sig.ui.components.Alert
 import g.sig.ui.components.CenteredProgressBar
 import g.sig.ui.largeSize
@@ -72,43 +70,6 @@ private fun UserScreenTopBar(
 }
 
 @Composable
-private fun OutlinedNameTextField(
-    modifier: Modifier = Modifier,
-    name: String,
-    errorId: Int? = null,
-    onSaveUser: () -> Unit,
-    onValueChanged: (String) -> Unit
-) {
-    val keyboardActions = remember {
-        KeyboardActions(onDone = {
-            KeyboardActions.Default.onDone?.invoke(this)
-            onSaveUser()
-        })
-    }
-
-    OutlinedTextField(
-        modifier = modifier,
-        value = name,
-        isError = errorId != null,
-        onValueChange = onValueChanged,
-        label = { Text(text = stringResource(id = R.string.user_name_label)) },
-        placeholder = { Text(text = stringResource(id = R.string.user_name_placeholder)) },
-        supportingText = {
-            errorId?.let { error ->
-                Text(
-                    text = stringResource(id = error),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.error
-                )
-            }
-        },
-        keyboardActions = keyboardActions,
-        singleLine = true,
-        shape = LargeRoundedShape
-    )
-}
-
-@Composable
 private fun UserScreenContent(
     modifier: Modifier = Modifier,
     state: UserState.Loaded,
@@ -131,13 +92,16 @@ private fun UserScreenContent(
             contentDescription = null,
         )
 
-        OutlinedNameTextField(
+        AppOutlinedTextField(
             modifier = Modifier
                 .defaultMinSize(minWidth = UserSize.minTextSize)
                 .width(IntrinsicSize.Max),
-            name = name,
-            errorId = state.getError(),
-            onSaveUser = saveUserIntent,
+            value = name,
+            error = state.getError()?.let { stringResource(it) },
+            label = stringResource(R.string.user_name_label),
+            placeholder = stringResource(R.string.user_name_placeholder),
+            isLastField = true,
+            onDone = saveUserIntent,
             onValueChanged = { name = it }
         )
 

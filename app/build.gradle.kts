@@ -3,6 +3,7 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.googleServices)
@@ -80,12 +81,14 @@ dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:data"))
     implementation(project(":core:navigation"))
+    implementation(project(":core:common:data"))
     implementation(project(":app:feature:onboarding"))
     implementation(project(":app:feature:home"))
     implementation(project(":app:feature:permissions"))
     implementation(project(":app:feature:user"))
     implementation(project(":app:feature:settings"))
     implementation(project(":app:feature:join_game"))
+    implementation(project(":app:feature:host_game"))
 
     implementation(platform(libs.firebaseBom))
     implementation(libs.firebase.analytics)

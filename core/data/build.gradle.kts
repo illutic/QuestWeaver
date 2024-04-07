@@ -36,8 +36,7 @@ android {
 dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:nearby"))
-    api(libs.kotlinx.serialization.protobuf)
-    api(libs.kotlinx.coroutines.core)
+    implementation(project(":core:common:data"))
     implementation(libs.androidx.proto.datastore)
 }
 

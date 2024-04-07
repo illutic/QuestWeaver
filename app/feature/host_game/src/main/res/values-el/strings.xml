@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="invalid_description">Μη έγκυρη περιγραφή</string>
+    <string name="invalid_title">Μη έγκυρος τίτλος</string>
+    <string name="invalid_max_players">Μή έγκυρο νούμερο</string>
+    <string name="top_bar_title">Δημιουργία Παιχνιδιού</string>
+    <string name="game_title_label">Όνομα</string>
+    <string name="game_title_placeholder">Το καλύτερο παιχνίδι που υπάρχει</string>
+    <string name="game_description_label">Περιγραφή</string>
+    <string name="game_description_placeholder">Ένα παιχνίδι που θα αλλάξει τη ζωή σας</string>
+    <string name="max_players_label">Μέγιστος αριθμός παικτών</string>
+    <string name="create_game_button">Ξεκίνα το παιχνίδι</string>
+    <string name="host_game_alert">Αυτό είναι αυτό που θα δουν οι άλλοι χρήστες. Δεν μπορείτε να το αλλάξετε αργότερα.</string>
+    <string name="permissions_error">Οι άδειες Κοντινών συσκευών δεν έχουν οριστεί!</string>
+</resources>

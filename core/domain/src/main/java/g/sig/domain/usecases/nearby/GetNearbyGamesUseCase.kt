@@ -1,12 +1,14 @@
 package g.sig.domain.usecases.nearby
 
-import g.sig.domain.repositories.NearbyGamesRepository
+import g.sig.domain.repositories.NearbyRepository
+import g.sig.domain.usecases.user.GetUserUseCase
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.withContext
 
 class GetNearbyGamesUseCase(
-    private val nearbyRepository: NearbyGamesRepository,
+    private val nearbyRepository: NearbyRepository,
+    private val getUser: GetUserUseCase,
     private val mainDispatcher: CoroutineDispatcher
 ) {
-    operator fun invoke() = nearbyRepository.findNearbyGames().flowOn(mainDispatcher)
+    suspend operator fun invoke() = withContext(mainDispatcher) { nearbyRepository.findNearbyGames(getUser()) }
 }

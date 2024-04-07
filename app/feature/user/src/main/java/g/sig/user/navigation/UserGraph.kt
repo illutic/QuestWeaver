@@ -10,6 +10,7 @@ import g.sig.user.UserScreen
 import g.sig.user.UserViewModel
 import g.sig.user.state.UserEvent
 import g.sig.user.state.UserIntent
+import kotlinx.coroutines.flow.collectLatest
 
 fun NavGraphBuilder.userGraph(
     onBack: () -> Unit,
@@ -22,7 +23,7 @@ fun NavGraphBuilder.userGraph(
         LaunchedEffect(Unit) {
             viewModel.handleIntent(UserIntent.LoadUser)
 
-            viewModel.events.collect { event ->
+            viewModel.events.collectLatest { event ->
                 when (event) {
                     UserEvent.Back -> onBack()
                     UserEvent.UserSaved -> onUserSaved()

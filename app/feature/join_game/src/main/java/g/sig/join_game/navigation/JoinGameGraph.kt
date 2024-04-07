@@ -8,6 +8,7 @@ import g.sig.join_game.data.JoinGameViewModel
 import g.sig.join_game.screens.JoinGameScreen
 import g.sig.join_game.state.JoinGameEvent
 import g.sig.join_game.state.JoinGameIntent
+import kotlinx.coroutines.flow.collectLatest
 
 fun NavGraphBuilder.joinGameGraph(onBack: () -> Unit, onNavigateToPermissions: () -> Unit, onNavigateToGame: (String) -> Unit) {
     composable(JoinGameRoute.path) {
@@ -15,7 +16,7 @@ fun NavGraphBuilder.joinGameGraph(onBack: () -> Unit, onNavigateToPermissions: (
 
         LaunchedEffect(Unit) {
             viewModel.handleIntent(JoinGameIntent.LoadGames)
-            viewModel.events.collect { event ->
+            viewModel.events.collectLatest { event ->
                 when (event) {
                     JoinGameEvent.Back -> onBack()
                     JoinGameEvent.NavigateToPermissions -> onNavigateToPermissions()

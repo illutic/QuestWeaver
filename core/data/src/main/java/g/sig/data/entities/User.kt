@@ -2,7 +2,7 @@
 
 package g.sig.data.entities
 
-import g.sig.data.serializers.UUIDSerializer
+import g.sig.common.data.serializers.UUIDSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 import java.util.UUID

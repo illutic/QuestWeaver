@@ -148,38 +148,20 @@ object PermissionsModule {
             readVideos,
             readAudio,
         )
-        if (version >= Build.VERSION_CODES.TIRAMISU) {
-            permissions.remove(readExternalStorage)
-        } else {
-            permissions.remove(readPhotos)
-            permissions.remove(readVideos)
-            permissions.remove(readAudio)
-        }
 
-        if (version < Build.VERSION_CODES.S_V2) {
-            permissions.remove(nearbyWifiDevices)
-        }
-
-        if (version > Build.VERSION_CODES.S) {
-            permissions.remove(accessWifiState)
-            permissions.remove(changeWifiState)
-            permissions.remove(accessFineLocation)
-        } else {
-            permissions.remove(bluetoothAdvertise)
-            permissions.remove(bluetoothConnect)
-            permissions.remove(bluetoothScan)
-        }
-
-        if (version > Build.VERSION_CODES.R) {
+        if (version >= Build.VERSION_CODES.S) {
             permissions.remove(bluetooth)
             permissions.remove(bluetoothAdmin)
         }
 
-        if (version > Build.VERSION_CODES.P) {
+        if (version < Build.VERSION_CODES.TIRAMISU) {
+            permissions.remove(readPhotos)
+            permissions.remove(readVideos)
+            permissions.remove(readAudio)
+            permissions.remove(nearbyWifiDevices)
+        } else {
+            permissions.remove(readExternalStorage)
             permissions.remove(accessCoarseLocation)
-        }
-
-        if (version < Build.VERSION_CODES.Q) {
             permissions.remove(accessFineLocation)
         }
 

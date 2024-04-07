@@ -10,6 +10,7 @@ import g.sig.home.data.HomeViewModel
 import g.sig.home.screens.HomeScreen
 import g.sig.home.state.HomeEvent
 import g.sig.home.state.HomeIntent
+import kotlinx.coroutines.flow.collectLatest
 
 fun NavGraphBuilder.homeGraph(
     onNavigateToOnboarding: () -> Unit,
@@ -26,7 +27,7 @@ fun NavGraphBuilder.homeGraph(
 
         LaunchedEffect(Unit) {
             viewModel.handleIntent(HomeIntent.FetchHome)
-            viewModel.events.collect { event ->
+            viewModel.events.collectLatest { event ->
                 when (event) {
                     HomeEvent.NavigateToOnboarding -> onNavigateToOnboarding()
                     HomeEvent.NavigateToProfile -> onNavigateToProfile()

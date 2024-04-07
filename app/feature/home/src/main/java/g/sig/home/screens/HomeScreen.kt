@@ -36,6 +36,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import g.sig.common.ui.PermissionsAlert
 import g.sig.domain.entities.Game
+import g.sig.domain.entities.Uri
 import g.sig.home.R
 import g.sig.home.state.HomeIntent
 import g.sig.home.state.HomeState
@@ -107,7 +108,7 @@ private fun RecentGameCard(
         Box {
             AsyncImage(
                 modifier = Modifier.matchParentSize(),
-                model = recentGame.imageUri,
+                model = recentGame.imageUri.value,
                 contentDescription = null,
                 contentScale = ContentScale.Crop
             )
@@ -241,9 +242,9 @@ private fun HomeScreenPreview() {
             userName = "John Doe",
             permissions = emptyList(),
             recentGames = listOf(
-                Game("1", "Game 1", "", "", 0, 0),
-                Game("2", "Game 2", "", "", 0, 0),
-                Game("3", "Game 3", "", "", 0, 0)
+                Game("1", "Game 1", "", Uri("https://example.com"), 0, 0),
+                Game("2", "Game 2", "", Uri("https://example.com"), 0, 0),
+                Game("3", "Game 3", "", Uri("https://example.com"), 0, 0)
             )
         ),
         onIntent = {}
