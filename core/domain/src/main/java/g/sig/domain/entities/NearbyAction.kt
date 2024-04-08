@@ -1,6 +1,6 @@
 package g.sig.domain.entities
 
 sealed interface NearbyAction {
-    data class AddGame(val game: Game) : NearbyAction
-    data class RemoveGame(val id: String) : NearbyAction
+    data class AddDevice(val device: Device) : NearbyAction
+    data class RemoveDevice(val id: String) : NearbyAction
 }

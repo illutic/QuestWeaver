@@ -4,7 +4,7 @@ data class Game(
     val id: String,
     val title: String,
     val description: String,
-    val imageUri: Uri,
-    val players: Int,
+    val imageUri: Uri? = null,
+    val players: Int = 0,
     val maxPlayers: Int
 )

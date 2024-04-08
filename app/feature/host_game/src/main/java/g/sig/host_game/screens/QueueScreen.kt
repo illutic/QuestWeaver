@@ -1,4 +1,4 @@
-package g.sig.join_game.screens
+package g.sig.host_game.screens
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
@@ -10,7 +10,6 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,7 +19,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,56 +27,44 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import g.sig.common.ui.PermissionsAlert
 import g.sig.domain.entities.ConnectionState
 import g.sig.domain.entities.Device
-import g.sig.join_game.R
-import g.sig.join_game.state.JoinGameIntent
-import g.sig.join_game.state.JoinGameState
+import g.sig.host_game.R
+import g.sig.host_game.state.QueueIntent
+import g.sig.host_game.state.QueueState
 import g.sig.ui.AppIcons
 import g.sig.ui.largeSize
 import g.sig.ui.mediumSize
 
 @Composable
-internal fun JoinGameScreen(state: JoinGameState, onIntent: (JoinGameIntent) -> Unit) {
+internal fun QueueScreen(
+    state: QueueState,
+    snackbarHostState: SnackbarHostState,
+    onIntent: (QueueIntent) -> Unit
+) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { JoinGameTopBar { onIntent(JoinGameIntent.Back) } },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        topBar = { QueueScreenTopBar { onIntent(QueueIntent.Back) } },
     ) { padding ->
-        var showDeviceConfirmationDialog by remember { mutableStateOf<JoinGameState.ShowDeviceConfirmationDialog?>(null) }
-        showDeviceConfirmationDialog?.let {
-            ConnectionDialog(
-                deviceName = it.device.name,
-                onDismissRequest = { showDeviceConfirmationDialog = null },
-                onConfirm = { onIntent(JoinGameIntent.RequestConnection(it.device)) }
-            )
-        }
-
         JoinGameScreenContent(
             modifier = Modifier.padding(padding),
             state = state,
-            onDeviceClicked = { device ->
-                showDeviceConfirmationDialog = JoinGameState.ShowDeviceConfirmationDialog(device)
-            },
             onIntent = onIntent
         )
     }
@@ -87,103 +73,62 @@ internal fun JoinGameScreen(state: JoinGameState, onIntent: (JoinGameIntent) -> 
 @Composable
 private fun JoinGameScreenContent(
     modifier: Modifier = Modifier,
-    state: JoinGameState,
-    onDeviceClicked: (Device) -> Unit,
-    onIntent: (JoinGameIntent) -> Unit
+    state: QueueState,
+    onIntent: (QueueIntent) -> Unit
 ) {
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = largeSize),
-        verticalArrangement = spacedBy(largeSize),
+        verticalArrangement = Arrangement.spacedBy(largeSize),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         item {
             AsyncImage(
-                modifier = Modifier.width(360.dp),
-                model = R.drawable.graphic_8,
+                modifier = Modifier.width(HostGameSize.imageSize),
+                model = R.drawable.graphic_10,
                 contentDescription = ""
             )
         }
 
-        if (state.discovering && state.hasPermissions) {
+        if (state.advertising) {
             item {
                 LinearProgressIndicator(Modifier.width(IntrinsicSize.Max))
             }
+        }
+
+        if (state.devicesToConnect.isNotEmpty()) {
+            items(state.devicesToConnect) { deviceState ->
+                DeviceCard(
+                    device = deviceState,
+                    onAcceptClicked = { onIntent(QueueIntent.AcceptConnection(it.id)) },
+                    onRejectClicked = { onIntent(QueueIntent.RejectConnection(it.id)) }
+                )
+            }
         } else {
             item {
-                Button(onClick = { onIntent(JoinGameIntent.LoadGames) }) {
-                    Text(text = stringResource(R.string.join_game_refresh))
-                }
-            }
-        }
-
-        if (!state.hasPermissions) {
-            item {
-                PermissionsAlert(onClick = { onIntent(JoinGameIntent.NavigateToPermissions) })
-            }
-        }
-
-        if (state.devices.isNotEmpty()) {
-            items(state.devices) { deviceState ->
-                DeviceCard(device = deviceState, onDeviceClicked = onDeviceClicked)
-            }
-        } else if (state.hasPermissions) {
-            item {
                 Text(
-                    text = stringResource(R.string.join_game_empty),
+                    text = stringResource(R.string.queue_empty),
                     style = MaterialTheme.typography.bodyMedium
                 )
+            }
+        }
+
+        item {
+            Button(onClick = { onIntent(QueueIntent.StartGame) }) {
+                Text(text = stringResource(R.string.queue_game_button))
             }
         }
     }
 }
 
-@Composable
-internal fun ConnectionDialog(
-    deviceName: String,
-    onDismissRequest: () -> Unit,
-    onConfirm: () -> Unit
-) {
-    AlertDialog(
-        icon = {
-            Icon(
-                painter = AppIcons.ConnectingDevice,
-                contentDescription = null
-            )
-        },
-        onDismissRequest = onDismissRequest,
-        title = {
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                style = MaterialTheme.typography.titleLarge,
-                text = stringResource(R.string.join_game_dialog_title, deviceName)
-            )
-        },
-        text = {
-            Text(text = stringResource(R.string.join_game_dialog_message))
-        },
-        dismissButton = {
-            TextButton(onClick = onDismissRequest) {
-                Text(text = stringResource(R.string.join_game_dialog_no))
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = {
-                onConfirm()
-                onDismissRequest()
-            }) {
-                Text(text = stringResource(R.string.join_game_dialog_yes))
-            }
-        }
-    )
-}
 
 @Composable
 private fun DeviceCard(
     modifier: Modifier = Modifier,
     device: Device,
-    onDeviceClicked: (Device) -> Unit
+    onAcceptClicked: (Device) -> Unit,
+    onRejectClicked: (Device) -> Unit
 ) {
     fun <T> defaultAnimation() = tween<T>(1000)
 
@@ -222,10 +167,8 @@ private fun DeviceCard(
         tonalElevation = mediumSize,
         color = backgroundColor,
         contentColor = contentColors,
-        border = BorderStroke(JoinGameSize.borderWidth, contentColors.copy(alpha = 0.5f)),
-        shape = MaterialTheme.shapes.medium,
-        enabled = device.connectionState == ConnectionState.Idle,
-        onClick = { onDeviceClicked(device) }
+        border = BorderStroke(HostGameSize.borderWidth, contentColors.copy(alpha = 0.5f)),
+        shape = MaterialTheme.shapes.medium
     ) {
         Row(
             modifier = Modifier.padding(largeSize),
@@ -248,19 +191,35 @@ private fun DeviceCard(
             ) { state ->
                 when (state) {
                     ConnectionState.Idle -> {
-                        Icon(
-                            modifier = Modifier
-                                .size(JoinGameSize.iconSize)
-                                .padding(start = mediumSize),
-                            painter = AppIcons.ChevronRight,
-                            contentDescription = null
-                        )
+                        Row(horizontalArrangement = Arrangement.spacedBy(mediumSize)) {
+                            IconButton(
+                                onClick = { onAcceptClicked(device) },
+                                modifier = Modifier.size(HostGameSize.iconSize)
+                            ) {
+                                Icon(
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    painter = AppIcons.Check,
+                                    contentDescription = null
+                                )
+                            }
+
+                            IconButton(
+                                onClick = { onRejectClicked(device) },
+                                modifier = Modifier.size(HostGameSize.iconSize)
+                            ) {
+                                Icon(
+                                    tint = MaterialTheme.colorScheme.error,
+                                    painter = AppIcons.Close,
+                                    contentDescription = null
+                                )
+                            }
+                        }
                     }
 
                     is ConnectionState.Connected -> {
                         Icon(
                             modifier = Modifier
-                                .size(JoinGameSize.iconSize)
+                                .size(HostGameSize.iconSize)
                                 .padding(start = mediumSize),
                             painter = AppIcons.Check,
                             contentDescription = null
@@ -270,7 +229,7 @@ private fun DeviceCard(
                     ConnectionState.Loading,
                     is ConnectionState.Connecting -> {
                         CircularProgressIndicator(
-                            modifier = Modifier.size(JoinGameSize.iconSize),
+                            modifier = Modifier.size(HostGameSize.iconSize),
                             color = contentColors,
                             trackColor = contentColors.copy(alpha = 0.2f),
                             strokeCap = StrokeCap.Round,
@@ -281,7 +240,7 @@ private fun DeviceCard(
                     ConnectionState.Failed -> {
                         Icon(
                             modifier = Modifier
-                                .size(JoinGameSize.iconSize)
+                                .size(HostGameSize.iconSize)
                                 .padding(start = mediumSize),
                             painter = AppIcons.Close,
                             contentDescription = null
@@ -295,11 +254,11 @@ private fun DeviceCard(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun JoinGameTopBar(onBack: () -> Unit) {
+private fun QueueScreenTopBar(onBack: () -> Unit) {
     TopAppBar(modifier = Modifier.fillMaxWidth(),
         scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(),
         title = {
-            Text(text = stringResource(R.string.join_game_title))
+            Text(text = stringResource(R.string.queue_title))
         },
         navigationIcon = {
             IconButton(onClick = onBack) {
@@ -310,15 +269,19 @@ private fun JoinGameTopBar(onBack: () -> Unit) {
 
 @Preview
 @Composable
-private fun JoinGameScreenPreview() {
-    JoinGameScreen(
-        state = JoinGameState().apply {
-            devices = mutableStateListOf(
-                Device("1", "Device 1", ConnectionState.Idle),
-                Device("2", "Device 2", ConnectionState.Connecting("2", "Device 2")),
-                Device("3", "Device 3", ConnectionState.Connected("2")),
-                Device("3", "Device 3", ConnectionState.Failed),
+fun PreviewQueueScreen() {
+    QueueScreen(
+        state = QueueState().apply {
+            devicesToConnect.addAll(
+                listOf(
+                    Device("1", "Device 1", ConnectionState.Idle),
+                    Device("2", "Device 2", ConnectionState.Idle),
+                    Device("3", "Device 3", ConnectionState.Idle),
+                )
             )
-        }
-    ) {}
+            advertising = false
+        },
+        snackbarHostState = SnackbarHostState(),
+        onIntent = {}
+    )
 }

@@ -8,7 +8,16 @@ import kotlinx.coroutines.flow.Flow
 
 interface NearbyRepository {
     suspend fun getRecentGames(): List<Game>
-    fun createGame(gameName: String, description: String, maxPlayers: Int): Flow<ConnectionState>
-    fun findNearbyGames(user: User): Flow<NearbyAction>
-    fun joinGame(user: User, game: Game): Flow<ConnectionState>
+
+    fun discoverNearbyDevices(user: User): Flow<NearbyAction>
+
+    fun advertiseGame(game: String): Flow<ConnectionState>
+
+    fun cancelAdvertisement()
+
+    fun requestConnection(user: User, endpointId: String): Flow<ConnectionState>
+
+    fun acceptConnection(endpointId: String): Flow<ConnectionState>
+
+    fun rejectConnection(endpointId: String): Flow<ConnectionState>
 }

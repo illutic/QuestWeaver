@@ -1,13 +1,13 @@
-package g.sig.domain.usecases.host
+package g.sig.domain.usecases.nearby
 
 import g.sig.domain.repositories.NearbyRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 
-class CreateGameUseCase(
+class AdvertiseGameUseCase(
     private val nearbyRepository: NearbyRepository,
     private val mainDispatcher: CoroutineDispatcher
 ) {
-    suspend operator fun invoke(name: String, description: String, players: Int) =
-        withContext(mainDispatcher) { nearbyRepository.createGame(name, description, players) }
+    suspend operator fun invoke(name: String) =
+        withContext(mainDispatcher) { nearbyRepository.advertiseGame(name) }
 }

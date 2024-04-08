@@ -90,6 +90,12 @@ fun AppNavHost(
             onNavigateToPermissions = {
                 navController.navigate(PermissionRoute.path)
             },
+            onNavigateToQueue = {
+                navController.navigate(HostGameRoute.QUEUE_PATH)
+            },
+            onNavigateHome = {
+                navController.popBackStack()
+            },
             onGameCreated = {
 //                navController.navigate(GameRoute.createRoute(gameId))
             }

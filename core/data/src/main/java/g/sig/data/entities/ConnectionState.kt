@@ -7,18 +7,20 @@ import g.sig.domain.entities.ConnectionState as DomainConnectionState
 
 fun ConnectionState.toDomain() = when (this) {
     is DiscoverState.Discovered,
+    ConnectionState.Loading,
     AdvertiseState.Advertising,
+    DiscoverState.ConnectionRequested,
     DiscoverState.Discovering -> DomainConnectionState.Loading
 
-    DiscoverState.ConnectionRequested,
-    is ConnectionState.Initiated -> DomainConnectionState.Connecting
+    is ConnectionState.Initiated -> DomainConnectionState.Connecting(endpointId, connectionInfo?.endpointName.orEmpty())
 
-    is ConnectionState.Connected -> DomainConnectionState.Connected
+    is ConnectionState.Connected -> DomainConnectionState.Connected(endpointId)
+
+    is ConnectionState.Disconnected -> DomainConnectionState.Disconnected(endpointId)
 
     DiscoverState.ConnectionRequestFailed,
-    is ConnectionState.Disconnected,
     is ConnectionState.Error,
     is ConnectionState.Rejected,
     is ConnectionState.Failure,
-    is DiscoverState.Lost -> DomainConnectionState.Disconnected
+    is DiscoverState.Lost -> DomainConnectionState.Failed
 }

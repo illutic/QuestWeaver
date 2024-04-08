@@ -9,6 +9,11 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import g.sig.data.datasources.nearby.PayloadCallback
+import g.sig.domain.repositories.NearbyRepository
+import g.sig.domain.usecases.nearby.AcceptConnectionUseCase
+import g.sig.domain.usecases.nearby.RejectConnectionUseCase
+import g.sig.domain.usecases.nearby.RequestConnectionUseCase
+import g.sig.domain.usecases.user.GetUserUseCase
 import g.sig.questweaver.data.CorePayloadCallback
 import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Qualifier
@@ -22,6 +27,34 @@ object ConnectionsClient {
     @Singleton
     @ServiceId
     fun provideServiceId(@ApplicationContext context: Context) = context.packageName
+
+    @Provides
+    @Singleton
+    fun provideRequestConnectionUseCase(
+        nearbyRepository: NearbyRepository,
+        getUserUseCase: GetUserUseCase,
+        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
+    ): RequestConnectionUseCase {
+        return RequestConnectionUseCase(nearbyRepository, getUserUseCase, defaultDispatcher)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAcceptConnectionUseCase(
+        nearbyRepository: NearbyRepository,
+        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
+    ): AcceptConnectionUseCase {
+        return AcceptConnectionUseCase(nearbyRepository, defaultDispatcher)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRejectConnectionUseCase(
+        nearbyRepository: NearbyRepository,
+        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
+    ): RejectConnectionUseCase {
+        return RejectConnectionUseCase(nearbyRepository, defaultDispatcher)
+    }
 
     @Provides
     @Singleton

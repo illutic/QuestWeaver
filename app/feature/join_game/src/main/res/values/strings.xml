@@ -3,4 +3,9 @@
     <string name="join_game_title">Join Game</string>
     <string name="join_game_players">%1$1d/%2$1d Players</string>
     <string name="join_game_empty">Nearby devices will appear here.</string>
+    <string name="join_game_refresh">Refresh</string>
+    <string name="join_game_dialog_title">Do you want to connect to %1$s?</string>
+    <string name="join_game_dialog_message">You should only connect to trusted devices!</string>
+    <string name="join_game_dialog_yes">Connect</string>
+    <string name="join_game_dialog_no">Cancel</string>
 </resources>

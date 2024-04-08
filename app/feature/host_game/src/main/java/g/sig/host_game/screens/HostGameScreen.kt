@@ -53,94 +53,116 @@ internal fun HostGameScreen(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = { HostGameTopBar { onIntent(HostGameIntent.Back) } }
     ) { padding ->
+
+        if (state.showConnectionDialog) {
+            ConnectionDialog(
+                onDismissRequest = { state.showConnectionDialog = false },
+                onCancel = { onIntent(HostGameIntent.CancelHostGame) },
+                onConfirm = { onIntent(HostGameIntent.NavigateToQueue) }
+            )
+        }
+
+        HostGameContent(
+            modifier = Modifier.padding(padding),
+            state = state,
+            onIntent = onIntent
+        )
+    }
+}
+
+@Composable
+private fun HostGameContent(
+    modifier: Modifier = Modifier,
+    state: HostGameState,
+    onIntent: (HostGameIntent) -> Unit
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = largeSize),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(largeSize)
+    ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(horizontal = largeSize),
+                .verticalScroll(rememberScrollState())
+                .weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(largeSize)
+            verticalArrangement = Arrangement.spacedBy(mediumSize)
         ) {
-            Column(
+            AsyncImage(
+                modifier = Modifier.size(HostGameSize.imageSize),
+                model = R.drawable.graphic_9,
+                contentDescription = ""
+            )
+            AppOutlinedTextField(
                 modifier = Modifier
-                    .verticalScroll(rememberScrollState())
-                    .weight(1f),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(mediumSize)
+                    .defaultMinSize(minWidth = HostGameSize.minTextSize)
+                    .width(IntrinsicSize.Max),
+                value = state.gameName,
+                onValueChanged = { onIntent(HostGameIntent.SetGameName(it)) },
+                label = stringResource(R.string.game_title_label),
+                placeholder = stringResource(R.string.game_title_placeholder),
+                error = state.gameNameError?.let { stringResource(it) },
+                isLastField = false,
+            )
+            AppOutlinedTextField(
+                modifier = Modifier
+                    .defaultMinSize(minWidth = HostGameSize.minTextSize)
+                    .width(IntrinsicSize.Max),
+                value = state.description,
+                onValueChanged = { onIntent(HostGameIntent.SetDescription(it)) },
+                label = stringResource(R.string.game_description_label),
+                placeholder = stringResource(R.string.game_description_placeholder),
+                error = state.descriptionError?.let { stringResource(it) },
+                isLastField = false,
+            )
+            Row(
+                modifier = Modifier
+                    .defaultMinSize(minWidth = HostGameSize.minTextSize)
+                    .width(IntrinsicSize.Max),
+                horizontalArrangement = Arrangement.spacedBy(mediumSize),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                AsyncImage(
-                    modifier = Modifier.size(HostGameSize.imageSize),
-                    model = R.drawable.graphic_9,
-                    contentDescription = ""
+                Text(
+                    text = stringResource(R.string.max_players_label),
+                    style = MaterialTheme.typography.labelLarge
                 )
+                Spacer(modifier = Modifier.weight(1f))
                 AppOutlinedTextField(
-                    modifier = Modifier
-                        .defaultMinSize(minWidth = HostGameSize.minTextSize)
-                        .width(IntrinsicSize.Max),
-                    value = state.gameName,
-                    onValueChanged = { onIntent(HostGameIntent.SetGameName(it)) },
-                    label = stringResource(R.string.game_title_label),
-                    placeholder = stringResource(R.string.game_title_placeholder),
-                    error = state.gameNameError?.let { stringResource(it) },
-                    isLastField = false,
+                    modifier = Modifier.widthIn(min = HostGameSize.numberTextSize),
+                    style = MaterialTheme.typography.labelMedium.copy(textAlign = TextAlign.Center),
+                    value = state.playerCount.toString(),
+                    onValueChanged = { onIntent(HostGameIntent.SetPlayerCount(it.toIntOrNull() ?: 0)) },
+                    placeholder = stringResource(R.string.max_players_placeholder),
+                    error = state.playerCountError?.let { stringResource(it) },
+                    isLastField = true,
                 )
-                AppOutlinedTextField(
-                    modifier = Modifier
-                        .defaultMinSize(minWidth = HostGameSize.minTextSize)
-                        .width(IntrinsicSize.Max),
-                    value = state.description,
-                    onValueChanged = { onIntent(HostGameIntent.SetDescription(it)) },
-                    label = stringResource(R.string.game_description_label),
-                    placeholder = stringResource(R.string.game_description_placeholder),
-                    error = state.descriptionError?.let { stringResource(it) },
-                    isLastField = false,
-                )
-                Row(
-                    modifier = Modifier
-                        .defaultMinSize(minWidth = HostGameSize.minTextSize)
-                        .width(IntrinsicSize.Max),
-                    horizontalArrangement = Arrangement.spacedBy(mediumSize),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+            }
+            Alert(
+                modifier = Modifier.width(IntrinsicSize.Max),
+                content = {
                     Text(
-                        text = stringResource(R.string.max_players_label),
+                        text = stringResource(R.string.host_game_alert),
                         style = MaterialTheme.typography.labelLarge
                     )
-                    Spacer(modifier = Modifier.weight(1f))
-                    AppOutlinedTextField(
-                        modifier = Modifier.widthIn(min = HostGameSize.numberTextSize),
-                        style = MaterialTheme.typography.labelMedium.copy(textAlign = TextAlign.Center),
-                        value = state.playerCount.toString(),
-                        onValueChanged = { onIntent(HostGameIntent.SetPlayerCount(it.toIntOrNull() ?: 0)) },
-                        placeholder = stringResource(R.string.max_players_placeholder),
-                        error = state.playerCountError?.let { stringResource(it) },
-                        isLastField = true,
-                    )
+                },
+                leadingContent = {
+                    Icon(AppIcons.Info, contentDescription = null)
                 }
-                Alert(
-                    modifier = Modifier.width(IntrinsicSize.Max),
-                    content = {
-                        Text(
-                            text = stringResource(R.string.host_game_alert),
-                            style = MaterialTheme.typography.labelLarge
-                        )
-                    },
-                    leadingContent = {
-                        Icon(AppIcons.Info, contentDescription = null)
-                    }
-                )
+            )
 
-                if (!state.hasPermissions) {
-                    PermissionsAlert { onIntent(HostGameIntent.NavigateToPermissions) }
-                }
+            if (!state.hasPermissions) {
+                PermissionsAlert { onIntent(HostGameIntent.NavigateToPermissions) }
             }
+        }
 
-            Button(onClick = { onIntent(HostGameIntent.StartGame) }) {
-                Text(text = stringResource(R.string.create_game_button))
-            }
+        Button(onClick = { onIntent(HostGameIntent.StartHosting) }) {
+            Text(text = stringResource(R.string.create_game_button))
         }
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

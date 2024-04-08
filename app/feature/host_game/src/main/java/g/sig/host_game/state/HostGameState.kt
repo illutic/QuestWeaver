@@ -25,4 +25,6 @@ class HostGameState {
     var playerCountError by mutableStateOf<Int?>(null)
 
     var hasPermissions by mutableStateOf(false)
+
+    var showConnectionDialog by mutableStateOf(false)
 }

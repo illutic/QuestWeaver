@@ -5,10 +5,10 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import g.sig.domain.repositories.NearbyRepository
-import g.sig.domain.usecases.host.CreateGameUseCase
 import g.sig.domain.usecases.host.VerifyDescriptionUseCase
 import g.sig.domain.usecases.host.VerifyGameNameUseCase
 import g.sig.domain.usecases.host.VerifyPlayerCountUseCase
+import g.sig.domain.usecases.nearby.AdvertiseGameUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Singleton
 
@@ -17,8 +17,8 @@ import javax.inject.Singleton
 object HostGameModule {
     @Provides
     @Singleton
-    fun provideCreateGameUseCase(nearbyRepository: NearbyRepository, @DefaultDispatcher defaultDispatcher: CoroutineDispatcher): CreateGameUseCase {
-        return CreateGameUseCase(nearbyRepository, defaultDispatcher)
+    fun provideCreateGameUseCase(nearbyRepository: NearbyRepository, @DefaultDispatcher defaultDispatcher: CoroutineDispatcher): AdvertiseGameUseCase {
+        return AdvertiseGameUseCase(nearbyRepository, defaultDispatcher)
     }
 
     @Provides

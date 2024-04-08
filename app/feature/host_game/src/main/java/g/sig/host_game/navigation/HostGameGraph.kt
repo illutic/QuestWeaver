@@ -8,14 +8,20 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import g.sig.host_game.data.HostGameViewModel
+import g.sig.host_game.data.QueueViewModel
 import g.sig.host_game.screens.HostGameScreen
+import g.sig.host_game.screens.QueueScreen
 import g.sig.host_game.state.HostGameEvent
 import g.sig.host_game.state.HostGameIntent
+import g.sig.host_game.state.QueueEvent
+import g.sig.host_game.state.QueueIntent
 import kotlinx.coroutines.flow.collectLatest
 
 fun NavGraphBuilder.hostGameGraph(
     onBack: () -> Unit,
+    onNavigateHome: () -> Unit,
     onNavigateToPermissions: () -> Unit,
+    onNavigateToQueue: () -> Unit,
     onGameCreated: () -> Unit,
 ) {
     composable(HostGameRoute.path) {
@@ -29,8 +35,9 @@ fun NavGraphBuilder.hostGameGraph(
                 when (event) {
                     HostGameEvent.Back -> onBack()
                     HostGameEvent.NavigateToPermissions -> onNavigateToPermissions()
-                    HostGameEvent.GameCreated -> onGameCreated()
                     is HostGameEvent.Error -> event.messageId?.let { snackbarHostState.showSnackbar(context.getString(event.messageId)) }
+                    HostGameEvent.CancelHostGame -> onNavigateHome()
+                    HostGameEvent.NavigateToQueue -> onNavigateToQueue()
                 }
             }
         }
@@ -40,5 +47,24 @@ fun NavGraphBuilder.hostGameGraph(
             state = viewModel.state,
             onIntent = viewModel::handleIntent
         )
+    }
+
+    composable(HostGameRoute.QUEUE_PATH) {
+        val viewModel = hiltViewModel<QueueViewModel>()
+        val snackbarHostState = remember { SnackbarHostState() }
+
+        LaunchedEffect(Unit) {
+            viewModel.handleIntent(QueueIntent.HostGame)
+            viewModel.events.collectLatest { event ->
+                when (event) {
+                    QueueEvent.Back -> onBack()
+                    is QueueEvent.Error -> snackbarHostState.showSnackbar("Error")
+                    QueueEvent.CancelHostGame -> onNavigateHome()
+                    QueueEvent.GameCreated -> onGameCreated()
+                }
+            }
+        }
+
+        QueueScreen(state = viewModel.state, snackbarHostState = snackbarHostState, onIntent = viewModel::handleIntent)
     }
 }

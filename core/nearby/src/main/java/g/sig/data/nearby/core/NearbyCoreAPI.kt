@@ -8,7 +8,9 @@ import com.google.android.gms.nearby.connection.DiscoveredEndpointInfo
 import com.google.android.gms.nearby.connection.DiscoveryOptions
 import com.google.android.gms.nearby.connection.EndpointDiscoveryCallback
 import com.google.android.gms.nearby.connection.Payload
+import com.google.android.gms.nearby.connection.PayloadCallback
 import com.google.android.gms.nearby.connection.Strategy
+import g.sig.common.data.trySendAndClose
 import g.sig.data.nearby.entities.AdvertiseState
 import g.sig.data.nearby.entities.ConnectionState
 import g.sig.data.nearby.entities.Data
@@ -26,6 +28,8 @@ fun requestConnection(
     user: String,
     endpointId: String
 ) = callbackFlow {
+    trySend(ConnectionState.Loading)
+
     val connectionLifecycleCallback =
         createConnectionCallback(
             onConnectionInitiated = { endpointId, connectionInfo ->
@@ -71,6 +75,8 @@ fun startAdvertising(
     serviceId: String,
     isLowPower: Boolean = false,
 ) = callbackFlow {
+    trySend(ConnectionState.Loading)
+
     val options =
         AdvertisingOptions.Builder()
             .setStrategy(Strategy.P2P_CLUSTER)
@@ -120,11 +126,15 @@ fun startAdvertising(
     }
 }
 
+fun stopAdvertising(client: ConnectionsClient) = client.stopAdvertising()
+
 fun startDiscovery(
     client: ConnectionsClient,
     serviceId: String,
     isLowPower: Boolean = false,
 ) = callbackFlow {
+    trySend(DiscoverState.Discovering)
+
     val options =
         DiscoveryOptions.Builder()
             .setStrategy(Strategy.P2P_CLUSTER)
@@ -159,6 +169,39 @@ fun startDiscovery(
         .doOnFailure { trySend(ConnectionState.Failure(it)) }
 
     awaitClose { client.stopDiscovery() }
+}
+
+fun acceptConnection(
+    client: ConnectionsClient,
+    endpointId: String,
+    payloadCallback: PayloadCallback
+) = callbackFlow {
+    trySend(ConnectionState.Loading)
+
+    client
+        .acceptConnection(endpointId, payloadCallback)
+        .doOnSuccess {
+            trySendAndClose(ConnectionState.Connected(endpointId))
+        }
+        .doOnFailure {
+            trySendAndClose(ConnectionState.Error(endpointId, it.message))
+        }
+    awaitClose()
+}
+
+fun rejectConnection(
+    client: ConnectionsClient,
+    endpointId: String
+) = callbackFlow {
+    client
+        .rejectConnection(endpointId)
+        .doOnSuccess {
+            trySendAndClose(ConnectionState.Rejected(endpointId))
+        }
+        .doOnFailure {
+            trySendAndClose(ConnectionState.Error(endpointId, it.message))
+        }
+    awaitClose()
 }
 
 fun ConnectionsClient.sendPayload(

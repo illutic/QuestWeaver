@@ -4,6 +4,7 @@ import com.google.android.gms.nearby.connection.ConnectionInfo
 import com.google.android.gms.nearby.connection.DiscoveredEndpointInfo
 
 sealed interface ConnectionState {
+    data object Loading : ConnectionState
 
     data class Disconnected(val endpointId: String) : ConnectionState
 

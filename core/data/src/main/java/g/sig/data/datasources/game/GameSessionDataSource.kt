@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.StateFlow
 interface GameSessionDataSource {
     val currentGameSession: StateFlow<Game>
 
-    fun startGameSession(game: Game)
-    fun updateGameSession(game: Game)
-    fun endGameSession()
+    suspend fun startGameSession(game: Game)
+    suspend fun updateGameSession(game: Game)
+    suspend fun endGameSession()
 }

@@ -28,6 +28,6 @@ data class Game(
 
     companion object {
         val Empty = Game("", "", "", Uri.EMPTY, 0, 0)
-        fun GameDomain.fromDomain() = Game(id, title, description, imageUri.toUri(), players, maxPlayers)
+        fun GameDomain.fromDomain() = Game(id, title, description, imageUri?.toUri() ?: Uri.EMPTY, players, maxPlayers)
     }
 }

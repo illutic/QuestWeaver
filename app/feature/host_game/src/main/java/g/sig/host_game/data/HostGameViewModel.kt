@@ -3,8 +3,8 @@ package g.sig.host_game.data
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import g.sig.domain.entities.ConnectionState
-import g.sig.domain.usecases.host.CreateGameUseCase
+import g.sig.domain.usecases.host.CreateGameSessionUseCase
+import g.sig.domain.usecases.host.DeleteGameSessionUseCase
 import g.sig.domain.usecases.host.VerifyDescriptionUseCase
 import g.sig.domain.usecases.host.VerifyGameNameUseCase
 import g.sig.domain.usecases.host.VerifyPlayerCountUseCase
@@ -16,13 +16,14 @@ import g.sig.host_game.state.HostGameIntent
 import g.sig.host_game.state.HostGameState
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
 class HostGameViewModel @Inject constructor(
-    private val createGame: CreateGameUseCase,
+    private val createGame: CreateGameSessionUseCase,
+    private val deleteGame: DeleteGameSessionUseCase,
     private val verifyDescription: VerifyDescriptionUseCase,
     private val verifyGameName: VerifyGameNameUseCase,
     private val verifyPlayerCount: VerifyPlayerCountUseCase,
@@ -32,6 +33,7 @@ class HostGameViewModel @Inject constructor(
     private val _events = MutableSharedFlow<HostGameEvent>()
     val events = _events.asSharedFlow()
     val state = HostGameState()
+
 
     fun handleIntent(intent: HostGameIntent) {
         viewModelScope.launch {
@@ -69,7 +71,7 @@ class HostGameViewModel @Inject constructor(
                     }
                 }
 
-                is HostGameIntent.StartGame -> {
+                is HostGameIntent.StartHosting -> {
                     val verifiedGameTitle = verifyGameName(state.gameName)
                     val verifiedDescription = verifyDescription(state.description)
                     val verifiedPlayerCount = verifyPlayerCount(state.playerCount)
@@ -80,13 +82,18 @@ class HostGameViewModel @Inject constructor(
                     if (!state.hasPermissions) _events.emit(HostGameEvent.Error(R.string.permissions_error))
 
                     if (verifiedGameTitle && verifiedDescription && verifiedPlayerCount && state.hasPermissions) {
-                        createGame(state.gameName, state.description, state.playerCount).collectLatest {
-                            if (it == ConnectionState.Connected) {
-                                _events.emit(HostGameEvent.GameCreated)
-                            }
-                        }
+                        createGame(UUID.randomUUID().toString(), state.gameName, state.description, state.playerCount)
+                        handleIntent(HostGameIntent.ShowConnectionDialog)
                     }
                 }
+
+                HostGameIntent.ShowConnectionDialog -> state.showConnectionDialog = true
+                HostGameIntent.CancelHostGame -> {
+                    deleteGame()
+                    _events.emit(HostGameEvent.CancelHostGame)
+                }
+
+                HostGameIntent.NavigateToQueue -> _events.emit(HostGameEvent.NavigateToQueue)
             }
         }
     }

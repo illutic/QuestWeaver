@@ -108,7 +108,7 @@ private fun RecentGameCard(
         Box {
             AsyncImage(
                 modifier = Modifier.matchParentSize(),
-                model = recentGame.imageUri.value,
+                model = recentGame.imageUri?.value,
                 contentDescription = null,
                 contentScale = ContentScale.Crop
             )

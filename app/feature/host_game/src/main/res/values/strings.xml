@@ -10,7 +10,15 @@
     <string name="game_description_placeholder">A game that will change your life</string>
     <string name="max_players_label">Max. number of players</string>
     <string name="max_players_placeholder" translatable="false">4</string>
-    <string name="create_game_button">Start Game</string>
+    <string name="create_game_button">Advertise Game</string>
+    <string name="queue_game_button">Start Game</string>
     <string name="host_game_alert">This is what the other users will see. You can’t change it later.</string>
     <string name="permissions_error">Nearby devices permissions are not set!</string>
+    <string name="advertising_error">Advertising failed. Please try again later.</string>
+    <string name="queue_title">Players in the queue</string>
+    <string name="queue_empty">No players in the queue</string>
+    <string name="host_game_dialog_title">Privacy notice</string>
+    <string name="host_game_dialog_message">By hosting a game, your device will be visible to nearby players. Only accept requests from people you trust.</string>
+    <string name="host_game_dialog_yes">Host</string>
+    <string name="host_game_dialog_no">Cancel</string>
 </resources>

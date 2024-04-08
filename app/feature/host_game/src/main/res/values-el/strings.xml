@@ -9,7 +9,15 @@
     <string name="game_description_label">Περιγραφή</string>
     <string name="game_description_placeholder">Ένα παιχνίδι που θα αλλάξει τη ζωή σας</string>
     <string name="max_players_label">Μέγιστος αριθμός παικτών</string>
-    <string name="create_game_button">Ξεκίνα το παιχνίδι</string>
+    <string name="create_game_button">Δημοσίευσε το παιχνίδι</string>
+    <string name="queue_game_button">Ξεκίνα το παιχνίδι</string>
     <string name="host_game_alert">Αυτό είναι αυτό που θα δουν οι άλλοι χρήστες. Δεν μπορείτε να το αλλάξετε αργότερα.</string>
     <string name="permissions_error">Οι άδειες Κοντινών συσκευών δεν έχουν οριστεί!</string>
+    <string name="advertising_error">Η διαφήμιση παιχνιδιού απέτυχε. Παρακαλώ δοκιμάστε ξανά αργότερα.</string>
+    <string name="queue_title">Παίκτες στην ουρά</string>
+    <string name="queue_empty">Δεν υπάρχουν παίκτες στην ουρά</string>
+    <string name="host_game_dialog_title">Ειδοποίηση απορρήτου</string>
+    <string name="host_game_dialog_message">Διαφημίζοντας ένα παιχνίδι, η συσκευή σας θα είναι ορατή σε κοντινούς παίκτες. Αποδεχτείτε αιτήσεις μόνο από άτομα που εμπιστεύεστε.</string>
+    <string name="host_game_dialog_yes">Δημιουργία</string>
+    <string name="host_game_dialog_no">Ακύρωση</string>
 </resources>

@@ -2,6 +2,8 @@ package g.sig.ui
 
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Settings
@@ -21,5 +23,8 @@ object AppIcons {
     val ChevronRight @Composable get() = MaterialIcons.AutoMirrored.Filled.KeyboardArrowRight.painter
     val PersonOutline @Composable get() = MaterialIcons.Outlined.Person.painter
     val SettingsOutline @Composable get() = MaterialIcons.Outlined.Settings.painter
+    val Check @Composable get() = MaterialIcons.Filled.Check.painter
+    val Close @Composable get() = MaterialIcons.Filled.Close.painter
+    val ConnectingDevice @Composable get() = R.drawable.ic_connect_without_contact_24.painter
 }
 

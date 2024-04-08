@@ -3,4 +3,9 @@
     <string name="join_game_title">Συμμετοχή σε παιχνίδι</string>
     <string name="join_game_players">%1$1d/%2$1d Παίχτες</string>
     <string name="join_game_empty">Κοντινές συσκευές θα εμφανιστούν εδώ.</string>
+    <string name="join_game_refresh">Επαναφόρτωση</string>
+    <string name="join_game_dialog_title">Θέλετε να συνδεθείτε με τη συσκευή %1$s;</string>
+    <string name="join_game_dialog_message">Συνδεθείτε μόνο με αξιόπιστες συσκευές!</string>
+    <string name="join_game_dialog_yes">Σύνδεση</string>
+    <string name="join_game_dialog_no">Ακύρωση</string>
 </resources>
