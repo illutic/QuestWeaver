@@ -9,6 +9,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import g.sig.data.datasources.nearby.PayloadCallback
+import g.sig.domain.repositories.DeviceRepository
 import g.sig.domain.repositories.NearbyRepository
 import g.sig.domain.usecases.nearby.AcceptConnectionUseCase
 import g.sig.domain.usecases.nearby.RejectConnectionUseCase
@@ -32,19 +33,21 @@ object ConnectionsClient {
     @Singleton
     fun provideRequestConnectionUseCase(
         nearbyRepository: NearbyRepository,
+        deviceRepository: DeviceRepository,
         getUserUseCase: GetUserUseCase,
         @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
     ): RequestConnectionUseCase {
-        return RequestConnectionUseCase(nearbyRepository, getUserUseCase, defaultDispatcher)
+        return RequestConnectionUseCase(nearbyRepository, deviceRepository, getUserUseCase, defaultDispatcher)
     }
 
     @Provides
     @Singleton
     fun provideAcceptConnectionUseCase(
         nearbyRepository: NearbyRepository,
+        deviceRepository: DeviceRepository,
         @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
     ): AcceptConnectionUseCase {
-        return AcceptConnectionUseCase(nearbyRepository, defaultDispatcher)
+        return AcceptConnectionUseCase(nearbyRepository, deviceRepository, defaultDispatcher)
     }
 
     @Provides

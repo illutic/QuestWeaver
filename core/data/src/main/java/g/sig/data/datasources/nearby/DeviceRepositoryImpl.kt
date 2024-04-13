@@ -34,4 +34,23 @@ class DeviceRepositoryImpl : DeviceRepository {
                 ?.copy(connectionState = state) ?: return
         )
     }
+
+    override fun updateState(state: ConnectionState) {
+        val endpointId = when (state) {
+            is ConnectionState.Found -> state.endpointId
+            is ConnectionState.Connecting -> state.endpointId
+            is ConnectionState.Connected -> state.endpointId
+            is ConnectionState.Error.DisconnectionError -> state.endpointId
+            is ConnectionState.Error.RejectError -> state.endpointId
+            is ConnectionState.Error.LostError -> state.endpointId
+            else -> return
+        }
+
+        devices.addOrReplace(
+            { it.id == endpointId },
+            devices
+                .firstOrNull { it.id == endpointId }
+                ?.copy(connectionState = state) ?: return
+        )
+    }
 }

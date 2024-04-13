@@ -1,9 +1,11 @@
 package g.sig.questweaver.modules
 
+import android.content.Context
 import com.google.android.gms.nearby.connection.ConnectionsClient
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import g.sig.data.datasources.nearby.DeviceRepositoryImpl
 import g.sig.data.datasources.nearby.NearbyDataSource
@@ -25,8 +27,12 @@ import javax.inject.Singleton
 object NearbyModule {
     @Provides
     @Singleton
-    fun provideAdvertiseGameUseCase(nearbyRepository: NearbyRepository, @DefaultDispatcher defaultDispatcher: CoroutineDispatcher): AdvertiseGameUseCase {
-        return AdvertiseGameUseCase(nearbyRepository, defaultDispatcher)
+    fun provideAdvertiseGameUseCase(
+        nearbyRepository: NearbyRepository,
+        deviceRepository: DeviceRepository,
+        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
+    ): AdvertiseGameUseCase {
+        return AdvertiseGameUseCase(nearbyRepository, deviceRepository, defaultDispatcher)
     }
 
     @Provides
@@ -41,12 +47,10 @@ object NearbyModule {
     @Provides
     @Singleton
     fun provideNearbyGamesRepository(
-        deviceRepository: DeviceRepository,
         nearbyDataSource: NearbyDataSource,
         recentGamesDataSource: RecentGamesDataSource
     ): NearbyRepository {
         return NearbyRepositoryImpl(
-            deviceRepository,
             nearbyDataSource,
             recentGamesDataSource
         )
@@ -56,20 +60,29 @@ object NearbyModule {
     @Singleton
     fun provideGetNearbyGamesUseCase(
         repository: NearbyRepository,
+        deviceRepository: DeviceRepository,
         getUserUseCase: GetUserUseCase,
         @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
     ): DiscoverNearbyDevicesUseCase {
-        return DiscoverNearbyDevicesUseCase(repository, getUserUseCase, defaultDispatcher)
+        return DiscoverNearbyDevicesUseCase(repository, deviceRepository, getUserUseCase, defaultDispatcher)
     }
 
     @Provides
     @Singleton
     fun provideNearbyGamesDataSource(
+        @ApplicationContext context: Context,
+        deviceRepository: DeviceRepository,
         connectionsClient: ConnectionsClient,
         payloadCallback: PayloadCallback,
         @ServiceId serviceId: String
     ): NearbyDataSource {
-        return NearbyDataSourceImpl(connectionsClient, payloadCallback, serviceId)
+        return NearbyDataSourceImpl(
+            context,
+            deviceRepository,
+            connectionsClient,
+            payloadCallback,
+            serviceId
+        )
     }
 
     @Provides

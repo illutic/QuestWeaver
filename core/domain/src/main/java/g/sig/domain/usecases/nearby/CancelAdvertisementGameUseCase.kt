@@ -9,5 +9,7 @@ class CancelAdvertisementGameUseCase(
     private val mainDispatcher: CoroutineDispatcher
 ) {
     suspend operator fun invoke() =
-        withContext(mainDispatcher) { nearbyRepository.cancelAdvertisement() }
+        withContext(mainDispatcher) {
+            nearbyRepository.cancelAdvertisement()
+        }
 }

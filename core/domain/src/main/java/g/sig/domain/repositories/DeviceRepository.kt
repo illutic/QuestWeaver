@@ -9,4 +9,5 @@ interface DeviceRepository {
     fun getDevices(): List<Device>
     fun updateDevice(device: Device)
     fun updateState(id: String?, state: ConnectionState)
+    fun updateState(state: ConnectionState)
 }

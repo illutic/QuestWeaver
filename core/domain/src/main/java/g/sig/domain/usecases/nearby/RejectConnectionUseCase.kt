@@ -9,5 +9,8 @@ class RejectConnectionUseCase(
     private val nearbyRepository: NearbyRepository,
     private val defaultDispatcher: CoroutineDispatcher
 ) {
-    suspend operator fun invoke(device: Device) = withContext(defaultDispatcher) { nearbyRepository.rejectConnection(device) }
+    suspend operator fun invoke(device: Device) =
+        withContext(defaultDispatcher) {
+            nearbyRepository.rejectConnection(device)
+        }
 }

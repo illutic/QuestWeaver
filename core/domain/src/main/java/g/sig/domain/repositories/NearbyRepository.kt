@@ -9,9 +9,9 @@ import kotlinx.coroutines.flow.Flow
 interface NearbyRepository {
     suspend fun getRecentGames(): List<Game>
 
-    fun discoverNearbyDevices(user: User): Flow<List<Device>>
+    fun discoverNearbyDevices(user: User): Flow<ConnectionState>
 
-    fun advertiseGame(game: String): Flow<List<Device>>
+    fun advertiseGame(game: String): Flow<ConnectionState>
 
     fun cancelAdvertisement()
 

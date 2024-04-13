@@ -134,14 +134,15 @@ private fun DeviceCard(
 
     val contentColors by animateColorAsState(
         targetValue = when (device.connectionState) {
+            is ConnectionState.Found,
             ConnectionState.Idle -> contentColorFor(MaterialTheme.colorScheme.surface)
+
             is ConnectionState.Connected -> contentColorFor(MaterialTheme.colorScheme.primaryContainer)
 
             ConnectionState.Loading,
             is ConnectionState.Connecting -> contentColorFor(MaterialTheme.colorScheme.secondaryContainer)
 
-            is ConnectionState.Disconnected,
-            ConnectionState.Failed -> contentColorFor(MaterialTheme.colorScheme.errorContainer)
+            is ConnectionState.Error -> contentColorFor(MaterialTheme.colorScheme.errorContainer)
         },
         animationSpec = defaultAnimation(),
         label = "content color"
@@ -149,14 +150,15 @@ private fun DeviceCard(
 
     val backgroundColor by animateColorAsState(
         targetValue = when (device.connectionState) {
+            is ConnectionState.Found,
             ConnectionState.Idle -> MaterialTheme.colorScheme.surface
+
             is ConnectionState.Connected -> MaterialTheme.colorScheme.primaryContainer
 
             ConnectionState.Loading,
             is ConnectionState.Connecting -> MaterialTheme.colorScheme.secondaryContainer
 
-            is ConnectionState.Disconnected,
-            ConnectionState.Failed -> MaterialTheme.colorScheme.errorContainer
+            is ConnectionState.Error -> MaterialTheme.colorScheme.errorContainer
         },
         animationSpec = defaultAnimation(),
         label = "background color"
@@ -190,6 +192,7 @@ private fun DeviceCard(
                 }
             ) { state ->
                 when (state) {
+                    is ConnectionState.Found,
                     ConnectionState.Idle -> {
                         Row(horizontalArrangement = Arrangement.spacedBy(mediumSize)) {
                             IconButton(
@@ -236,8 +239,7 @@ private fun DeviceCard(
                         )
                     }
 
-                    is ConnectionState.Disconnected,
-                    ConnectionState.Failed -> {
+                    is ConnectionState.Error -> {
                         Icon(
                             modifier = Modifier
                                 .size(HostGameSize.iconSize)
