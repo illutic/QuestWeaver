@@ -9,19 +9,12 @@ import kotlinx.coroutines.flow.onEach
 fun Flow<ConnectionState>.acceptConnectionOnInitiated(
     connectionsClient: ConnectionsClient,
     payloadCallback: PayloadCallback
-) = onEach {
-    if (it is ConnectionState.Initiated) {
-        connectionsClient.acceptConnection(it.endpointId, payloadCallback)
+) = logOnEach()
+    .onEach {
+        if (it is ConnectionState.Initiated) {
+            connectionsClient.acceptConnection(it.endpointId, payloadCallback)
+        }
     }
-}
-
-inline fun Flow<ConnectionState>.doOnSuccess(
-    crossinline block: suspend (ConnectionState.Connected) -> Unit
-) = onEach {
-    if (it is ConnectionState.Connected) {
-        block(it)
-    }
-}
 
 fun <T> Flow<T>.logOnEach() = onEach {
     println(it)

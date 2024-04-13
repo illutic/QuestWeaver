@@ -5,11 +5,13 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import g.sig.data.datasources.nearby.DeviceRepositoryImpl
 import g.sig.data.datasources.nearby.NearbyDataSource
 import g.sig.data.datasources.nearby.NearbyDataSourceImpl
 import g.sig.data.datasources.nearby.PayloadCallback
 import g.sig.data.datasources.recentgames.RecentGamesDataSource
 import g.sig.data.repositories.NearbyRepositoryImpl
+import g.sig.domain.repositories.DeviceRepository
 import g.sig.domain.repositories.NearbyRepository
 import g.sig.domain.usecases.nearby.AdvertiseGameUseCase
 import g.sig.domain.usecases.nearby.CancelAdvertisementGameUseCase
@@ -39,10 +41,12 @@ object NearbyModule {
     @Provides
     @Singleton
     fun provideNearbyGamesRepository(
+        deviceRepository: DeviceRepository,
         nearbyDataSource: NearbyDataSource,
         recentGamesDataSource: RecentGamesDataSource
     ): NearbyRepository {
         return NearbyRepositoryImpl(
+            deviceRepository,
             nearbyDataSource,
             recentGamesDataSource
         )
@@ -66,5 +70,11 @@ object NearbyModule {
         @ServiceId serviceId: String
     ): NearbyDataSource {
         return NearbyDataSourceImpl(connectionsClient, payloadCallback, serviceId)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDeviceRepository(): DeviceRepository {
+        return DeviceRepositoryImpl()
     }
 }

@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import g.sig.common.utils.update
-import g.sig.domain.entities.Device.Companion.isTheSameAs
 import g.sig.domain.usecases.host.GetGameSessionUseCase
 import g.sig.domain.usecases.nearby.AcceptConnectionUseCase
 import g.sig.domain.usecases.nearby.AdvertiseGameUseCase
@@ -63,7 +62,7 @@ class QueueViewModel @Inject constructor(
                 is QueueIntent.AcceptConnection -> connectionJob = launch {
                     acceptConnection(intent.device).collectLatest { connectionState ->
                         state.devicesToConnect.update(
-                            { it isTheSameAs intent.device },
+                            { it.id == intent.device.id },
                             { it.copy(connectionState = connectionState) }
                         )
                     }
@@ -79,7 +78,7 @@ class QueueViewModel @Inject constructor(
                 is QueueIntent.RejectConnection -> connectionJob = launch {
                     rejectConnection(intent.device).collectLatest {
                         state.devicesToConnect.update(
-                            { it isTheSameAs intent.device },
+                            { it.id == intent.device.id },
                             { it.copy(connectionState = it.connectionState) }
                         )
                     }
