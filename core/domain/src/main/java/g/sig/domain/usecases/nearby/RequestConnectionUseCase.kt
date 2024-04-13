@@ -1,5 +1,6 @@
 package g.sig.domain.usecases.nearby
 
+import g.sig.domain.entities.Device
 import g.sig.domain.repositories.NearbyRepository
 import g.sig.domain.usecases.user.GetUserUseCase
 import kotlinx.coroutines.CoroutineDispatcher
@@ -10,5 +11,7 @@ class RequestConnectionUseCase(
     private val getUser: GetUserUseCase,
     private val defaultDispatcher: CoroutineDispatcher
 ) {
-    suspend operator fun invoke(endpointId: String) = withContext(defaultDispatcher) { nearbyRepository.requestConnection(getUser(), endpointId) }
+    suspend operator fun invoke(device: Device) = withContext(defaultDispatcher) {
+        nearbyRepository.requestConnection(getUser(), device)
+    }
 }

@@ -12,7 +12,7 @@ fun ConnectionState.toDomain() = when (this) {
     DiscoverState.ConnectionRequested,
     DiscoverState.Discovering -> DomainConnectionState.Loading
 
-    is ConnectionState.Initiated -> DomainConnectionState.Connecting(endpointId, connectionInfo?.endpointName.orEmpty())
+    is ConnectionState.Initiated -> DomainConnectionState.Connecting(endpointId, name)
 
     is ConnectionState.Connected -> DomainConnectionState.Connected(endpointId)
 

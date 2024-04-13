@@ -8,6 +8,5 @@ class AdvertiseGameUseCase(
     private val nearbyRepository: NearbyRepository,
     private val mainDispatcher: CoroutineDispatcher
 ) {
-    suspend operator fun invoke(name: String) =
-        withContext(mainDispatcher) { nearbyRepository.advertiseGame(name) }
+    suspend operator fun invoke(name: String) = withContext(mainDispatcher) { nearbyRepository.advertiseGame(name) }
 }

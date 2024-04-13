@@ -101,8 +101,8 @@ private fun JoinGameScreenContent(
             items(state.devicesToConnect) { deviceState ->
                 DeviceCard(
                     device = deviceState,
-                    onAcceptClicked = { onIntent(QueueIntent.AcceptConnection(it.id)) },
-                    onRejectClicked = { onIntent(QueueIntent.RejectConnection(it.id)) }
+                    onAcceptClicked = { onIntent(QueueIntent.AcceptConnection(it)) },
+                    onRejectClicked = { onIntent(QueueIntent.RejectConnection(it)) }
                 )
             }
         } else {

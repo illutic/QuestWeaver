@@ -12,6 +12,7 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/app/common" />
             <option value="$PROJECT_DIR$/app/common/ui" />
+            <option value="$PROJECT_DIR$/app/common/utils" />
             <option value="$PROJECT_DIR$/app/feature" />
             <option value="$PROJECT_DIR$/app/feature/home" />
             <option value="$PROJECT_DIR$/app/feature/host_game" />

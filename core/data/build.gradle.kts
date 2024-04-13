@@ -38,6 +38,7 @@ dependencies {
     implementation(project(":core:nearby"))
     implementation(project(":core:common:data"))
     implementation(libs.androidx.proto.datastore)
+    implementation(project(":app:common:utils"))
 }
 
 fun Provider<String>.toInt(): Int = get().toInt()

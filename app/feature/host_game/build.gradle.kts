@@ -49,6 +49,7 @@ dependencies {
     implementation(libs.accompanistPermissions)
     implementation(libs.dagger.hilt)
     implementation(libs.hilt.navigation)
+    implementation(project(":app:common:utils"))
     ksp(libs.dagger.hilt.compiler)
 }
 
