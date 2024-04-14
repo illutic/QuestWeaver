@@ -34,7 +34,6 @@ class HostGameViewModel @Inject constructor(
     val events = _events.asSharedFlow()
     val state = HostGameState()
 
-
     fun handleIntent(intent: HostGameIntent) {
         viewModelScope.launch {
             when (intent) {

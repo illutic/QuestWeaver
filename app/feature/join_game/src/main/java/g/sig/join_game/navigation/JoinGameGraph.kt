@@ -20,7 +20,7 @@ fun NavGraphBuilder.joinGameGraph(onBack: () -> Unit, onNavigateToPermissions: (
                 when (event) {
                     JoinGameEvent.Back -> onBack()
                     JoinGameEvent.NavigateToPermissions -> onNavigateToPermissions()
-                    is JoinGameEvent.JoinGame -> onNavigateToGame(event.game.id)
+                    is JoinGameEvent.JoinGame -> onNavigateToGame(event.game.gameId)
                 }
             }
         }

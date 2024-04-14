@@ -1,11 +1,9 @@
 package g.sig.questweaver.modules
 
-import android.content.Context
 import com.google.android.gms.nearby.connection.ConnectionsClient
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import g.sig.data.datasources.nearby.DeviceRepositoryImpl
 import g.sig.data.datasources.nearby.NearbyDataSource
@@ -70,15 +68,11 @@ object NearbyModule {
     @Provides
     @Singleton
     fun provideNearbyGamesDataSource(
-        @ApplicationContext context: Context,
-        deviceRepository: DeviceRepository,
         connectionsClient: ConnectionsClient,
         payloadCallback: PayloadCallback,
         @ServiceId serviceId: String
     ): NearbyDataSource {
         return NearbyDataSourceImpl(
-            context,
-            deviceRepository,
             connectionsClient,
             payloadCallback,
             serviceId

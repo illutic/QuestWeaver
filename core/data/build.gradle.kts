@@ -35,10 +35,10 @@ android {
 
 dependencies {
     implementation(project(":core:domain"))
-    implementation(project(":core:nearby"))
     implementation(project(":core:common:data"))
-    implementation(libs.androidx.proto.datastore)
     implementation(project(":app:common:utils"))
+    implementation(libs.androidx.proto.datastore)
+    api(libs.playServicesNearby)
 }
 
 fun Provider<String>.toInt(): Int = get().toInt()

@@ -102,7 +102,7 @@ private fun RecentGameCard(
 ) {
     Surface(
         modifier = modifier,
-        onClick = { onNavigateToGame(recentGame.id) },
+        onClick = { onNavigateToGame(recentGame.gameId) },
         shape = MediumRoundedShape
     ) {
         Box {

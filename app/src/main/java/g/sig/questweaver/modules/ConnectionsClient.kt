@@ -9,11 +9,15 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import g.sig.data.datasources.nearby.PayloadCallback
+import g.sig.data.repositories.PayloadRepositoryImpl
 import g.sig.domain.repositories.DeviceRepository
 import g.sig.domain.repositories.NearbyRepository
+import g.sig.domain.repositories.PayloadRepository
 import g.sig.domain.usecases.nearby.AcceptConnectionUseCase
+import g.sig.domain.usecases.nearby.BroadcastPayloadUseCase
 import g.sig.domain.usecases.nearby.RejectConnectionUseCase
 import g.sig.domain.usecases.nearby.RequestConnectionUseCase
+import g.sig.domain.usecases.nearby.SendPayloadUseCase
 import g.sig.domain.usecases.user.GetUserUseCase
 import g.sig.questweaver.data.CorePayloadCallback
 import kotlinx.coroutines.CoroutineDispatcher
@@ -74,6 +78,33 @@ object ConnectionsClient {
         @ApplicationContext context: Context
     ): ConnectionsClient {
         return Nearby.getConnectionsClient(context)
+    }
+
+    @Provides
+    @Singleton
+    fun providePayloadRepository(
+        @ApplicationContext context: Context,
+        connectionsClient: ConnectionsClient,
+        payloadCallback: PayloadCallback
+    ): PayloadRepository {
+        return PayloadRepositoryImpl(context, connectionsClient, payloadCallback)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSendPayloadUseCase(
+        payloadRepository: PayloadRepository
+    ): SendPayloadUseCase {
+        return SendPayloadUseCase(payloadRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideBroadcastPayloadUseCase(
+        payloadRepository: PayloadRepository,
+        deviceRepository: DeviceRepository
+    ): BroadcastPayloadUseCase {
+        return BroadcastPayloadUseCase(payloadRepository, deviceRepository)
     }
 }
 

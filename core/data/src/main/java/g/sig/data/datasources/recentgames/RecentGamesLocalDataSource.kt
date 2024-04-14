@@ -15,5 +15,5 @@ class RecentGamesLocalDataSource(
     override suspend fun getRecentGames(): List<Game> =
         withContext(ioDispatcher) { recentGamesDataStore.data.first() }
 
-    override suspend fun getGame(gameId: String): Game? = getRecentGames().firstOrNull { it.id == gameId }
+    override suspend fun getGame(gameId: String): Game? = getRecentGames().firstOrNull { it.gameId == gameId }
 }

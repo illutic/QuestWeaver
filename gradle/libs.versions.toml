@@ -32,7 +32,7 @@ splashScreen = "1.0.1"
 # Kotlin
 kotlin = "1.9.23"
 kotlinxCoroutines = "1.8.0"
-kotlinxSerializationProtobuf = "1.6.3"
+kotlinxSerialization = "1.6.3"
 ksp = "1.9.0-1.0.12"
 
 # Other
@@ -78,7 +78,8 @@ androidx-splashscreen = { group = "androidx.core", name = "core-splashscreen", v
 
 # Kotlin
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
-kotlinx-serialization-protobuf = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-protobuf", version.ref = "kotlinxSerializationProtobuf" }
+kotlinx-serialization-protobuf = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-protobuf", version.ref = "kotlinxSerialization" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 junit = { group = "junit", name = "junit", version.ref = "junitJunit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxJunit" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCoreVersion" }

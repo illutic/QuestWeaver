@@ -1,4 +1,4 @@
-package g.sig.data.nearby.utils
+package g.sig.data.nearby
 
 import com.google.android.gms.nearby.connection.ConnectionInfo
 import com.google.android.gms.nearby.connection.ConnectionLifecycleCallback

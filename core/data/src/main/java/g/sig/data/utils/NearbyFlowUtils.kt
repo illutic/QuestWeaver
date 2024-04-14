@@ -2,7 +2,7 @@ package g.sig.data.utils
 
 import com.google.android.gms.nearby.connection.ConnectionsClient
 import com.google.android.gms.nearby.connection.PayloadCallback
-import g.sig.data.nearby.entities.ConnectionState
+import g.sig.domain.entities.ConnectionState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onEach
 
@@ -11,7 +11,7 @@ fun Flow<ConnectionState>.acceptConnectionOnInitiated(
     payloadCallback: PayloadCallback
 ) = logOnEach()
     .onEach {
-        if (it is ConnectionState.Initiated) {
+        if (it is ConnectionState.Connecting) {
             connectionsClient.acceptConnection(it.endpointId, payloadCallback)
         }
     }

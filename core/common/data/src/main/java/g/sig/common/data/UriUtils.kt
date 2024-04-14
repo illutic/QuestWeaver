@@ -1,4 +1,4 @@
-package g.sig.data.nearby.utils
+package g.sig.common.data
 
 import android.content.Context
 import android.net.Uri

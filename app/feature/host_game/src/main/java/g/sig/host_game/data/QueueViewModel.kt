@@ -7,6 +7,7 @@ import g.sig.common.utils.update
 import g.sig.domain.usecases.host.GetGameSessionUseCase
 import g.sig.domain.usecases.nearby.AcceptConnectionUseCase
 import g.sig.domain.usecases.nearby.AdvertiseGameUseCase
+import g.sig.domain.usecases.nearby.BroadcastPayloadUseCase
 import g.sig.domain.usecases.nearby.CancelAdvertisementGameUseCase
 import g.sig.domain.usecases.nearby.RejectConnectionUseCase
 import g.sig.host_game.state.QueueEvent
@@ -25,7 +26,8 @@ class QueueViewModel @Inject constructor(
     private val cancelAdvertisement: CancelAdvertisementGameUseCase,
     private val getGameSession: GetGameSessionUseCase,
     private val acceptConnection: AcceptConnectionUseCase,
-    private val rejectConnection: RejectConnectionUseCase
+    private val rejectConnection: RejectConnectionUseCase,
+    private val broadcast: BroadcastPayloadUseCase
 ) : ViewModel() {
     private val _events = MutableSharedFlow<QueueEvent>()
     val state = QueueState()
@@ -73,7 +75,11 @@ class QueueViewModel @Inject constructor(
                     _events.emit(QueueEvent.CancelHostGame)
                 }
 
-                QueueIntent.StartGame -> _events.emit(QueueEvent.GameCreated)
+                QueueIntent.StartGame -> {
+                    val gameSession = getGameSession()
+                    broadcast(gameSession)
+                    _events.emit(QueueEvent.GameCreated)
+                }
 
                 is QueueIntent.RejectConnection -> connectionJob = launch {
                     rejectConnection(intent.device).collectLatest {

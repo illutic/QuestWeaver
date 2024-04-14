@@ -1,31 +1,23 @@
 package g.sig.data.datasources.nearby
 
-import android.content.Context
 import com.google.android.gms.nearby.connection.ConnectionsClient
-import g.sig.data.entities.DataEntity
 import g.sig.data.entities.User
-import g.sig.data.entities.asData
-import g.sig.data.nearby.core.acceptConnection
-import g.sig.data.nearby.core.rejectConnection
-import g.sig.data.nearby.core.requestConnection
-import g.sig.data.nearby.core.sendPayload
-import g.sig.data.nearby.core.startAdvertising
-import g.sig.data.nearby.core.startDiscovery
-import g.sig.data.nearby.core.stopAdvertising
-import g.sig.data.nearby.entities.ConnectionState
+import g.sig.data.nearby.acceptConnection
+import g.sig.data.nearby.rejectConnection
+import g.sig.data.nearby.requestConnection
+import g.sig.data.nearby.startAdvertising
+import g.sig.data.nearby.startDiscovery
+import g.sig.data.nearby.stopAdvertising
 import g.sig.data.platform.BatteryLevel
 import g.sig.data.platform.BatteryLevelReceiver
 import g.sig.data.utils.acceptConnectionOnInitiated
 import g.sig.data.utils.logOnEach
-import g.sig.domain.entities.Device
-import g.sig.domain.repositories.DeviceRepository
+import g.sig.domain.entities.ConnectionState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapMerge
 
 class NearbyDataSourceImpl(
-    private val context: Context,
-    private val deviceRepository: DeviceRepository,
     private val connectionsClient: ConnectionsClient,
     private val payloadCallback: PayloadCallback,
     private val serviceId: String
@@ -58,14 +50,4 @@ class NearbyDataSourceImpl(
     override fun rejectConnection(endpointId: String): Flow<ConnectionState> =
         rejectConnection(connectionsClient, endpointId)
             .logOnEach()
-
-    override fun sendData(device: Device, dataEntity: DataEntity) {
-        connectionsClient.sendPayload(context, device.id, dataEntity.asData())
-    }
-
-    override fun broadcast(dataEntity: DataEntity) {
-        deviceRepository.getDevices().forEach { device ->
-            connectionsClient.sendPayload(context, device.id, dataEntity.asData())
-        }
-    }
 }

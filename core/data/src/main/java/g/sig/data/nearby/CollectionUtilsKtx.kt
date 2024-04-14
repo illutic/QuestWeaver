@@ -1,4 +1,4 @@
-package g.sig.data.nearby.utils
+package g.sig.data.nearby
 
 import androidx.collection.SimpleArrayMap
 

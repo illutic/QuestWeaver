@@ -4,21 +4,20 @@ import android.content.Context
 import android.net.Uri
 import com.google.android.gms.nearby.connection.Payload
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate
+import g.sig.common.data.copyToCacheAndDelete
+import g.sig.data.entities.DataEntity
+import g.sig.data.entities.File
 import g.sig.data.entities.FileMetadata
-import g.sig.data.entities.asDataEntity
-import g.sig.data.nearby.entities.Data
-import g.sig.data.nearby.utils.copyToCacheAndDelete
+import g.sig.data.entities.Stream
+import g.sig.data.serializers.ProtoBufSerializer
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromByteArray
-import kotlinx.serialization.encodeToByteArray
-import kotlinx.serialization.protobuf.ProtoBuf
 import g.sig.data.datasources.nearby.PayloadCallback as NearbyPayloadCallback
 
 class CorePayloadCallback(
@@ -28,8 +27,8 @@ class CorePayloadCallback(
     private val incomingPayloads = mutableMapOf<Long, Payload>()
     private val completedFilePayloads = mutableMapOf<Long, Payload>()
     private val filePayloadMetadata = mutableMapOf<Long, FileMetadata>()
-    private val _data = MutableSharedFlow<Data>()
-    override val data = _data.asSharedFlow().map { it.asDataEntity() }
+    private val _data = MutableSharedFlow<DataEntity>()
+    override val data = _data.asSharedFlow()
 
     override fun onPayloadReceived(
         endpointId: String,
@@ -66,17 +65,12 @@ class CorePayloadCallback(
      * Otherwise, the payload will be treated as a message.
      * @param payload The payload to handle.
      */
+    @OptIn(ExperimentalSerializationApi::class)
     private fun handleBytesPayload(payload: Payload) {
-        val message = payload.asBytes()?.let { Data.Message(it) } ?: Data.Message.Empty
+        val message = ProtoBufSerializer.decodeFromByteArray<DataEntity>(payload.asBytes() ?: return)
 
-        val fileMetadata = try {
-            ProtoBuf.decodeFromByteArray<FileMetadata?>(message.byteArray)
-        } catch (e: Exception) {
-            null
-        }
-
-        if (fileMetadata != null) {
-            filePayloadMetadata[payload.id] = fileMetadata
+        if (message is FileMetadata) {
+            filePayloadMetadata[payload.id] = message
             return
         } else {
             launch { _data.emit(message) }
@@ -85,20 +79,19 @@ class CorePayloadCallback(
 
     /**
      * Handles a payload of type [Payload.Type.STREAM].
-     * The payload will be treated as a stream will be sent as [Data.Stream].
+     * The payload will be treated as a stream will be sent as [Stream].
      * @param payload The payload to handle.
      */
     private fun handleStreamPayload(payload: Payload) {
         val inputStream = payload.asStream()?.asInputStream() ?: return
-        launch { _data.emit(Data.Stream(inputStream)) }
+        launch { _data.emit(Stream(inputStream)) }
     }
 
     /**
      * Handles a payload of type [Payload.Type.FILE].
-     * The payload will be saved to the cache and the URI will be sent as [Data.File].
+     * The payload will be saved to the cache and the URI will be sent as [DataEntity.File].
      * @param payloadId The ID of the payload to handle.
      */
-    @OptIn(ExperimentalSerializationApi::class)
     private fun handleFilePayload(payloadId: Long) {
         val payload = completedFilePayloads.remove(payloadId) ?: return
         val metadata = filePayloadMetadata.remove(payloadId) ?: return
@@ -106,7 +99,7 @@ class CorePayloadCallback(
         launch {
             payload.asFile()?.asUri()?.copyToCacheAndDelete(dispatcher, context, metadata.name)
             val uri = Uri.fromFile(context.cacheDir.resolve(metadata.name))
-            _data.emit(Data.File(uri = uri, fileMetadata = Data.Message(ProtoBuf.encodeToByteArray(metadata))))
+            _data.emit(File(uri, metadata))
         }
     }
 }

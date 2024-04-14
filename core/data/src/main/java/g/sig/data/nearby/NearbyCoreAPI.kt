@@ -1,6 +1,5 @@
-package g.sig.data.nearby.core
+package g.sig.data.nearby
 
-import android.content.Context
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.nearby.connection.AdvertisingOptions
 import com.google.android.gms.nearby.connection.ConnectionsClient
@@ -11,13 +10,7 @@ import com.google.android.gms.nearby.connection.EndpointDiscoveryCallback
 import com.google.android.gms.nearby.connection.Payload
 import com.google.android.gms.nearby.connection.PayloadCallback
 import com.google.android.gms.nearby.connection.Strategy
-import g.sig.data.nearby.entities.AdvertiseState
-import g.sig.data.nearby.entities.ConnectionState
-import g.sig.data.nearby.entities.Data
-import g.sig.data.nearby.entities.DiscoverState
-import g.sig.data.nearby.utils.createConnectionCallback
-import g.sig.data.nearby.utils.doOnFailure
-import g.sig.data.nearby.utils.doOnSuccess
+import g.sig.domain.entities.ConnectionState
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
@@ -33,7 +26,7 @@ fun requestConnection(
     val connectionLifecycleCallback =
         createConnectionCallback(
             onConnectionInitiated = { endpointId, connectionInfo ->
-                trySend(ConnectionState.Initiated(endpointId, connectionInfo.endpointName))
+                trySend(ConnectionState.Connecting(endpointId, connectionInfo.endpointName))
             },
             onConnectionResult = { endpointId, connectionResolution ->
                 when (connectionResolution.status.statusCode) {
@@ -42,16 +35,16 @@ fun requestConnection(
                     }
 
                     ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> {
-                        trySend(ConnectionState.Rejected(endpointId))
+                        trySend(ConnectionState.Error.RejectError(endpointId))
                     }
 
                     ConnectionsStatusCodes.STATUS_ERROR -> {
-                        trySend(ConnectionState.Error(endpointId, connectionResolution.status.statusMessage))
+                        trySend(ConnectionState.Error.GenericError(endpointId, connectionResolution.status.statusMessage))
                     }
                 }
             },
             onDisconnected = { endpointId ->
-                trySend(ConnectionState.Disconnected(endpointId))
+                trySend(ConnectionState.Error.DisconnectionError(endpointId))
             },
         )
 
@@ -61,13 +54,13 @@ fun requestConnection(
             endpointId,
             connectionLifecycleCallback,
         )
-        .doOnSuccess { trySend(DiscoverState.ConnectionRequested) }
+        .doOnSuccess { trySend(ConnectionState.Loading) }
         .doOnFailure {
             if (it is ApiException) {
                 when (it.statusCode) {
                     ConnectionsStatusCodes.STATUS_ALREADY_CONNECTED_TO_ENDPOINT -> trySend(ConnectionState.Connected(endpointId))
-                    ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> trySend(ConnectionState.Rejected(endpointId))
-                    else -> trySend(ConnectionState.Error(endpointId, it.message))
+                    ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> trySend(ConnectionState.Error.RejectError(endpointId))
+                    else -> trySend(ConnectionState.Error.GenericError(endpointId, it.message))
                 }
             }
         }
@@ -94,7 +87,7 @@ fun startAdvertising(
     val connectionLifecycleCallback =
         createConnectionCallback(
             onConnectionInitiated = { endpointId, connectionInfo ->
-                trySend(ConnectionState.Initiated(endpointId, connectionInfo.endpointName))
+                trySend(ConnectionState.Connecting(endpointId, connectionInfo.endpointName))
             },
             onConnectionResult = { endpointId, connectionResolution ->
                 when (connectionResolution.status.statusCode) {
@@ -103,16 +96,16 @@ fun startAdvertising(
                     }
 
                     ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> {
-                        trySend(ConnectionState.Rejected(endpointId))
+                        trySend(ConnectionState.Error.RejectError(endpointId))
                     }
 
                     ConnectionsStatusCodes.STATUS_ERROR -> {
-                        trySend(ConnectionState.Error(endpointId, connectionResolution.status.statusMessage))
+                        trySend(ConnectionState.Error.GenericError(endpointId, connectionResolution.status.statusMessage))
                     }
                 }
             },
             onDisconnected = { endpointId ->
-                trySend(ConnectionState.Disconnected(endpointId))
+                trySend(ConnectionState.Error.DisconnectionError(endpointId))
             },
         )
 
@@ -123,12 +116,12 @@ fun startAdvertising(
             connectionLifecycleCallback,
             options,
         )
-        .doOnSuccess { trySend(AdvertiseState.Advertising) }
+        .doOnSuccess { trySend(ConnectionState.Loading) }
         .doOnFailure {
             if (it is ApiException) {
                 when (it.statusCode) {
-                    ConnectionsStatusCodes.STATUS_ALREADY_ADVERTISING -> trySend(AdvertiseState.Advertising)
-                    else -> trySend(ConnectionState.Error("", it.message))
+                    ConnectionsStatusCodes.STATUS_ALREADY_ADVERTISING -> trySend(ConnectionState.Loading)
+                    else -> trySend(ConnectionState.Error.GenericError("", it.message))
                 }
             }
         }
@@ -145,7 +138,7 @@ fun startDiscovery(
     serviceId: String,
     isLowPower: Boolean = false,
 ) = callbackFlow {
-    trySend(DiscoverState.Discovering)
+    trySend(ConnectionState.Loading)
 
     val options =
         DiscoveryOptions.Builder()
@@ -160,13 +153,13 @@ fun startDiscovery(
                 info: DiscoveredEndpointInfo,
             ) {
                 this@callbackFlow.launch {
-                    trySend(DiscoverState.Discovered(endpointId, info.endpointName))
+                    trySend(ConnectionState.Found(endpointId, info.endpointName))
                 }
             }
 
             override fun onEndpointLost(endpointId: String) {
                 this@callbackFlow.launch {
-                    trySend(DiscoverState.Lost(endpointId))
+                    trySend(ConnectionState.Error.LostError(endpointId))
                 }
             }
         }
@@ -177,12 +170,12 @@ fun startDiscovery(
             callback,
             options,
         )
-        .doOnSuccess { trySend(DiscoverState.Discovering) }
+        .doOnSuccess { trySend(ConnectionState.Loading) }
         .doOnFailure {
             if (it is ApiException) {
                 when (it.statusCode) {
-                    ConnectionsStatusCodes.STATUS_ALREADY_DISCOVERING -> trySend(DiscoverState.Discovering)
-                    else -> trySend(DiscoverState.ConnectionRequestFailed)
+                    ConnectionsStatusCodes.STATUS_ALREADY_DISCOVERING -> trySend(ConnectionState.Loading)
+                    else -> trySend(ConnectionState.Error.ConnectionRequestError)
                 }
             }
         }
@@ -206,7 +199,7 @@ fun acceptConnection(
             if (it is ApiException) {
                 when (it.statusCode) {
                     ConnectionsStatusCodes.STATUS_ALREADY_CONNECTED_TO_ENDPOINT -> trySend(ConnectionState.Connected(endpointId))
-                    else -> trySend(ConnectionState.Error(endpointId, it.message))
+                    else -> trySend(ConnectionState.Error.GenericError(endpointId, it.message))
                 }
             }
         }
@@ -220,32 +213,20 @@ fun rejectConnection(
     client
         .rejectConnection(endpointId)
         .doOnSuccess {
-            trySend(ConnectionState.Rejected(endpointId))
+            trySend(ConnectionState.Error.RejectError(endpointId))
         }
         .doOnFailure {
-            trySend(ConnectionState.Error(endpointId, it.message))
+            trySend(ConnectionState.Error.GenericError(endpointId, it.message))
         }
     awaitClose()
 }
 
 fun ConnectionsClient.sendPayload(
-    context: Context,
-    endpointId: String,
-    data: Data,
-) {
-    when (data) {
-        is Data.File -> context.contentResolver.openInputStream(data.uri)?.use { sendPayload(endpointId, it) }
-        is Data.Message -> sendPayload(endpointId, data.byteArray)
-        is Data.Stream -> sendPayload(endpointId, data.inputStream)
-    }
-}
-
-private fun ConnectionsClient.sendPayload(
     endpointId: String,
     payload: InputStream,
 ) = sendPayload(endpointId, Payload.fromStream(payload))
 
-private fun ConnectionsClient.sendPayload(
+fun ConnectionsClient.sendPayload(
     endpointId: String,
     payload: ByteArray,
 ) = sendPayload(endpointId, Payload.fromBytes(payload))

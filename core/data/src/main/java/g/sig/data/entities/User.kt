@@ -9,7 +9,7 @@ import java.util.UUID
 import g.sig.domain.entities.User as DomainUser
 
 @Serializable
-data class User(val id: UUID, val name: String) {
+data class User(val id: UUID, val name: String) : DataEntity {
     fun toDomain() = DomainUser(name, id.toString())
 
     companion object {

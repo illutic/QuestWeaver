@@ -12,7 +12,7 @@ class CreateGameSessionUseCase(
     suspend operator fun invoke(id: String, name: String, description: String, numberOfPlayers: Int) =
         withContext(defaultDispatcher) {
             gameSessionRepository.startGameSession(
-                Game(id = id, title = name, description = description, maxPlayers = numberOfPlayers)
+                Game(gameId = id, title = name, description = description, maxPlayers = numberOfPlayers)
             )
         }
 }

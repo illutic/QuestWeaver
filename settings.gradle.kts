@@ -22,7 +22,6 @@ dependencyResolutionManagement {
 rootProject.name = "Quest Weaver"
 include(":app")
 include(":core:ui")
-include(":core:nearby")
 include(":core:domain")
 include(":core:navigation")
 include(":app:feature:onboarding")
