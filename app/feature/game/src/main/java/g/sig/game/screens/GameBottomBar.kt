@@ -19,6 +19,7 @@ import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,11 +39,11 @@ import g.sig.ui.largeSize
 import g.sig.ui.smallSize
 
 @Composable
-internal fun GameBottomBar(
+internal inline fun GameBottomBar(
     modifier: Modifier = Modifier,
-    onItemClick: (DecoratedRoute) -> Unit,
     selectedRoute: DecoratedRoute,
-    routes: List<DecoratedRoute>
+    routes: List<DecoratedRoute>,
+    crossinline onItemClick: (DecoratedRoute) -> Unit
 ) {
     BottomAppBar(modifier) {
         routes.forEach { route ->
@@ -51,21 +52,22 @@ internal fun GameBottomBar(
                     .fillMaxHeight()
                     .weight(1f),
                 route = route,
-                onItemClick = onItemClick,
-                isSelected = route == selectedRoute
+                selectedRoute = selectedRoute,
+                onItemClick = onItemClick
             )
         }
     }
 }
 
 @Composable
-private fun GameBottomBarItem(
+private inline fun GameBottomBarItem(
     modifier: Modifier = Modifier,
+    animationDuration: Int = 700,
     route: DecoratedRoute,
-    onItemClick: (DecoratedRoute) -> Unit,
-    isSelected: Boolean
+    selectedRoute: DecoratedRoute,
+    crossinline onItemClick: (DecoratedRoute) -> Unit
 ) {
-    fun <T> animationSpec() = tween<T>(700)
+    val isSelected by remember(selectedRoute) { derivedStateOf { route == selectedRoute } }
 
     Box(
         modifier
@@ -75,7 +77,7 @@ private fun GameBottomBarItem(
         AnimatedContent(
             targetState = isSelected,
             label = "selected route animation",
-            transitionSpec = { fadeIn(animationSpec()) togetherWith fadeOut(animationSpec()) }
+            transitionSpec = { fadeIn(tween(animationDuration)) togetherWith fadeOut(tween(animationDuration)) }
         ) { isSelected ->
             val backgroundColor = if (isSelected) MaterialTheme.colorScheme.primaryContainer else Color.Transparent
             val contentColor = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
