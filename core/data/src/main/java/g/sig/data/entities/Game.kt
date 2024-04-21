@@ -15,12 +15,13 @@ data class Game(
     val title: String,
     val description: String,
     val players: Int = 0,
-    val maxPlayers: Int
+    val maxPlayers: Int,
+    val isDM: Boolean = false
 ) : DataEntity {
-    fun toDomain() = GameDomain(gameId, title, description, Uri.EMPTY.toDomain(), players, maxPlayers)
+    fun toDomain() = GameDomain(gameId, title, description, Uri.EMPTY.toDomain(), players, maxPlayers, isDM)
 
     companion object {
         val Empty = Game("", "", "", 0, 0)
-        fun GameDomain.fromDomain() = Game(gameId, title, description, players, maxPlayers)
+        fun GameDomain.fromDomain() = Game(gameId, title, description, players, maxPlayers, isDM)
     }
 }

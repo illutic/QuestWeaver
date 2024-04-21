@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="game_home_label">Αρχική</string>
+    <string name="game_chat_label">Συνομιλία</string>
+    <string name="game_ai_label">Τεχνητή Νοημοσύνη</string>
+</resources>

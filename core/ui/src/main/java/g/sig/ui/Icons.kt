@@ -4,7 +4,9 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.runtime.Composable
@@ -26,5 +28,9 @@ object AppIcons {
     val Check @Composable get() = MaterialIcons.Filled.Check.painter
     val Close @Composable get() = MaterialIcons.Filled.Close.painter
     val ConnectingDevice @Composable get() = R.drawable.ic_connect_without_contact_24.painter
+    val HomeOutlinedVector = MaterialIcons.Outlined.Home
+    val HomeFilledVector = MaterialIcons.Filled.Home
+    val HomeOutlined @Composable get() = HomeOutlinedVector.painter
+    val HomeFilled @Composable get() = HomeFilledVector.painter
 }
 

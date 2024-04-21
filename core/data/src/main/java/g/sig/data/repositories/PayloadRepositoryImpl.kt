@@ -35,7 +35,7 @@ class PayloadRepositoryImpl(
             is File -> context.contentResolver.openInputStream(data.uri.toUri())?.use { inputStream -> sendPayload(endpointId, inputStream) }
             is Stream -> data.inputStream.use { inputStream -> sendPayload(endpointId, inputStream) }
             is FileMetadata -> sendPayload(endpointId, ProtoBufSerializer.encodeToByteArray(DataEntity.serializer(), data.fromDomain()))
-            is Game -> sendPayload(endpointId, ProtoBufSerializer.encodeToByteArray(DataEntity.serializer(), data.fromDomain()))
+            is Game -> sendPayload(endpointId, ProtoBufSerializer.encodeToByteArray(DataEntity.serializer(), data.fromDomain().copy(isDM = false)))
             is User -> sendPayload(endpointId, ProtoBufSerializer.encodeToByteArray(DataEntity.serializer(), data.fromDomain()))
         }
     }

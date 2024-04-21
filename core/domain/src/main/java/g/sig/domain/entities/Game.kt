@@ -6,5 +6,6 @@ data class Game(
     val description: String,
     val imageUri: Uri? = null,
     val players: Int = 0,
-    val maxPlayers: Int
+    val maxPlayers: Int,
+    val isDM: Boolean = false
 ) : PayloadData

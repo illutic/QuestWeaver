@@ -11,7 +11,7 @@ import g.sig.domain.entities.PayloadData
 fun DataEntity.toDomainData(): PayloadData = when (this) {
     is File -> toDomain()
     is FileMetadata -> toDomain()
-    is Game -> toDomain()
+    is Game -> toDomain().copy(isDM = false)
     is User -> toDomain()
     is Stream -> toDomain()
 }
