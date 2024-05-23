@@ -22,7 +22,7 @@ fun NavGraphBuilder.hostGameGraph(
     onNavigateHome: () -> Unit,
     onNavigateToPermissions: () -> Unit,
     onNavigateToQueue: () -> Unit,
-    onGameCreated: () -> Unit,
+    onGameCreated: (id: String) -> Unit,
 ) {
     composable(HostGameRoute.path) {
         val viewModel = hiltViewModel<HostGameViewModel>()
@@ -57,10 +57,10 @@ fun NavGraphBuilder.hostGameGraph(
             viewModel.handleIntent(QueueIntent.HostGame)
             viewModel.events.collectLatest { event ->
                 when (event) {
-                    QueueEvent.Back -> onBack()
                     is QueueEvent.Error -> snackbarHostState.showSnackbar("Error")
+                    is QueueEvent.GameCreated -> onGameCreated(event.id)
                     QueueEvent.CancelHostGame -> onNavigateHome()
-                    QueueEvent.GameCreated -> onGameCreated()
+                    QueueEvent.Back -> onBack()
                 }
             }
         }

@@ -5,8 +5,10 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import g.sig.domain.entities.ConnectionState
 import g.sig.domain.entities.Device
+import g.sig.domain.entities.Game
 import g.sig.domain.usecases.nearby.AcceptConnectionUseCase
 import g.sig.domain.usecases.nearby.DiscoverNearbyDevicesUseCase
+import g.sig.domain.usecases.nearby.OnPayloadReceivedUseCase
 import g.sig.domain.usecases.nearby.RejectConnectionUseCase
 import g.sig.domain.usecases.nearby.RequestConnectionUseCase
 import g.sig.domain.usecases.permissions.GetNearbyPermissionUseCase
@@ -23,6 +25,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class JoinGameViewModel @Inject constructor(
+    private val onPayloadReceived: OnPayloadReceivedUseCase,
     private val getNearbyPermissions: GetNearbyPermissionUseCase,
     private val hasPermissions: HasPermissionsUseCase,
     private val discoverDevices: DiscoverNearbyDevicesUseCase,
@@ -51,8 +54,7 @@ class JoinGameViewModel @Inject constructor(
             viewModelScope.launch {
                 when (intent) {
                     JoinGameIntent.Back -> _events.send(JoinGameEvent.Back)
-                    JoinGameIntent.LoadGames -> {
-                        state.discovering = true
+                    JoinGameIntent.Load -> {
                         state.hasPermissions = hasPermissions(*getNearbyPermissions().toTypedArray())
                         discoverDevices()
                             .collectLatest { devices ->
@@ -73,7 +75,23 @@ class JoinGameViewModel @Inject constructor(
                     is JoinGameIntent.RejectConnection -> {
                         rejectConnection(intent.device).collectLatest { updateDeviceState(intent.device, it) }
                     }
+
+                    is JoinGameIntent.JoinGame -> {
+
+                        _events.send(JoinGameEvent.JoinGame(intent.game))
+                    }
                 }
             }
+    }
+
+    init {
+        viewModelScope.launch {
+            onPayloadReceived { payload ->
+                when (payload) {
+                    is Game -> handleIntent(JoinGameIntent.JoinGame(payload))
+                    else -> Unit
+                }
+            }
+        }
     }
 }

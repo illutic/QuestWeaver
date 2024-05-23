@@ -3,8 +3,8 @@ package g.sig.host_game.data
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import g.sig.domain.usecases.host.CreateGameSessionUseCase
-import g.sig.domain.usecases.host.DeleteGameSessionUseCase
+import g.sig.domain.usecases.game.CreateGameSessionUseCase
+import g.sig.domain.usecases.game.DeleteGameSessionUseCase
 import g.sig.domain.usecases.host.VerifyDescriptionUseCase
 import g.sig.domain.usecases.host.VerifyGameNameUseCase
 import g.sig.domain.usecases.host.VerifyPlayerCountUseCase

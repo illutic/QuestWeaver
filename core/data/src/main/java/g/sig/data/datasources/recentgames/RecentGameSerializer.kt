@@ -10,7 +10,7 @@ import kotlinx.serialization.protobuf.ProtoBuf
 import java.io.InputStream
 import java.io.OutputStream
 
-object RecentGameSerializer : Serializer<Games> {
+internal object RecentGameSerializer : Serializer<Games> {
     override val defaultValue: Games = Games(emptyList())
 
     @OptIn(ExperimentalSerializationApi::class)

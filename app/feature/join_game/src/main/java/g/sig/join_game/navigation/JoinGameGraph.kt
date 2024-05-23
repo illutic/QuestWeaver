@@ -15,7 +15,7 @@ fun NavGraphBuilder.joinGameGraph(onBack: () -> Unit, onNavigateToPermissions: (
         val viewModel = hiltViewModel<JoinGameViewModel>()
 
         LaunchedEffect(Unit) {
-            viewModel.handleIntent(JoinGameIntent.LoadGames)
+            viewModel.handleIntent(JoinGameIntent.Load)
             viewModel.events.collectLatest { event ->
                 when (event) {
                     JoinGameEvent.Back -> onBack()

@@ -12,9 +12,10 @@ import g.sig.data.datasources.recentgames.RecentGamesDataSource
 import g.sig.data.datasources.recentgames.RecentGamesLocalDataSource
 import g.sig.data.repositories.GameSessionRepositoryImpl
 import g.sig.domain.repositories.GameSessionRepository
-import g.sig.domain.usecases.host.CreateGameSessionUseCase
-import g.sig.domain.usecases.host.DeleteGameSessionUseCase
-import g.sig.domain.usecases.host.GetGameSessionUseCase
+import g.sig.domain.usecases.game.CreateGameSessionUseCase
+import g.sig.domain.usecases.game.DeleteGameSessionUseCase
+import g.sig.domain.usecases.game.GetGameSessionUseCase
+import g.sig.domain.usecases.game.UpdateGameSessionUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Singleton
 
@@ -40,9 +41,10 @@ object GamesModule {
     @Provides
     @Singleton
     fun provideGameSessionRepository(
-        gameSessionDataSource: GameSessionDataSource
+        gameSessionDataSource: GameSessionDataSource,
+        recentGamesDataSource: RecentGamesDataSource
     ): GameSessionRepository {
-        return GameSessionRepositoryImpl(gameSessionDataSource)
+        return GameSessionRepositoryImpl(gameSessionDataSource, recentGamesDataSource)
     }
 
     @Provides
@@ -70,5 +72,14 @@ object GamesModule {
         @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
     ): GetGameSessionUseCase {
         return GetGameSessionUseCase(gameSessionRepository, defaultDispatcher)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUpdateGameSessionUseCase(
+        gameSessionRepository: GameSessionRepository,
+        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
+    ): UpdateGameSessionUseCase {
+        return UpdateGameSessionUseCase(gameSessionRepository, defaultDispatcher)
     }
 }

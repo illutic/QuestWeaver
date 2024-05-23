@@ -112,7 +112,7 @@ private fun JoinGameScreenContent(
             }
         } else {
             item {
-                Button(onClick = { onIntent(JoinGameIntent.LoadGames) }) {
+                Button(onClick = { onIntent(JoinGameIntent.Load) }) {
                     Text(text = stringResource(R.string.join_game_refresh))
                 }
             }

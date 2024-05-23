@@ -5,7 +5,10 @@ import androidx.navigation.compose.composable
 import g.sig.game.screens.GameRoute
 
 fun NavGraphBuilder.gameGraph() {
-    composable(route = GameRoute.path) {
+    composable(
+        route = GameRoute.path,
+        arguments = GameRoute.arguments
+    ) {
         GameRoute()
     }
 }

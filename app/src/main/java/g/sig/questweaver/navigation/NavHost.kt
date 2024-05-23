@@ -4,6 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import g.sig.game.navigation.GameRoute
+import g.sig.game.navigation.gameGraph
 import g.sig.home.navigation.HomeRoute
 import g.sig.home.navigation.homeGraph
 import g.sig.host_game.navigation.HostGameRoute
@@ -80,8 +82,11 @@ fun AppNavHost(
             onNavigateToPermissions = {
                 navController.navigate(PermissionRoute.path)
             },
-            onNavigateToGame = { gameId ->
-//                navController.navigate(GameRoute.createRoute(gameId))
+            onNavigateToGame = { id ->
+                navController.navigate(GameRoute.createPath(id)) {
+                    launchSingleTop = true
+                    popUpTo(navController.graph.id) { inclusive = true }
+                }
             }
         )
 
@@ -96,9 +101,14 @@ fun AppNavHost(
             onNavigateHome = {
                 navController.popBackStack()
             },
-            onGameCreated = {
-//                navController.navigate(GameRoute.createRoute(gameId))
+            onGameCreated = { id ->
+                navController.navigate(GameRoute.createPath(id)) {
+                    launchSingleTop = true
+                    popUpTo(navController.graph.id) { inclusive = true }
+                }
             }
         )
+
+        gameGraph()
     }
 }

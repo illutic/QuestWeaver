@@ -3,6 +3,7 @@ package g.sig.ui
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalInspectionMode
 
 @Composable
 fun AppTheme(
@@ -12,10 +13,11 @@ fun AppTheme(
         isSystemInDarkTheme() -> darkScheme
         else -> lightScheme
     }
+    val isInEditMode = LocalInspectionMode.current
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = appTypography
+        typography = if (isInEditMode) MaterialTheme.typography else appTypography
     ) {
         content()
     }

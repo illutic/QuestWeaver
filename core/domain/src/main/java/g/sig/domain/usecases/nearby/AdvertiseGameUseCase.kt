@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 
+// TODO make this a service?
 class AdvertiseGameUseCase(
     private val nearbyRepository: NearbyRepository,
     private val deviceRepository: DeviceRepository,

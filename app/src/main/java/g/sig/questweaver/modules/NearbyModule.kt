@@ -5,7 +5,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import g.sig.data.datasources.nearby.DeviceRepositoryImpl
 import g.sig.data.datasources.nearby.NearbyDataSource
 import g.sig.data.datasources.nearby.NearbyDataSourceImpl
 import g.sig.data.datasources.nearby.PayloadCallback
@@ -13,9 +12,11 @@ import g.sig.data.datasources.recentgames.RecentGamesDataSource
 import g.sig.data.repositories.NearbyRepositoryImpl
 import g.sig.domain.repositories.DeviceRepository
 import g.sig.domain.repositories.NearbyRepository
+import g.sig.domain.repositories.PayloadRepository
 import g.sig.domain.usecases.nearby.AdvertiseGameUseCase
 import g.sig.domain.usecases.nearby.CancelAdvertisementGameUseCase
 import g.sig.domain.usecases.nearby.DiscoverNearbyDevicesUseCase
+import g.sig.domain.usecases.nearby.OnPayloadReceivedUseCase
 import g.sig.domain.usecases.user.GetUserUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Singleton
@@ -81,7 +82,11 @@ object NearbyModule {
 
     @Provides
     @Singleton
-    fun provideDeviceRepository(): DeviceRepository {
-        return DeviceRepositoryImpl()
+    fun provideOnPayloadReceivedUseCase(
+        payloadRepository: PayloadRepository,
+        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
+    ): OnPayloadReceivedUseCase {
+        return OnPayloadReceivedUseCase(payloadRepository, defaultDispatcher)
     }
+
 }

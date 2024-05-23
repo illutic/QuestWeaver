@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import g.sig.common.utils.update
-import g.sig.domain.usecases.host.GetGameSessionUseCase
+import g.sig.domain.usecases.game.GetGameSessionUseCase
 import g.sig.domain.usecases.nearby.AcceptConnectionUseCase
 import g.sig.domain.usecases.nearby.AdvertiseGameUseCase
 import g.sig.domain.usecases.nearby.BroadcastPayloadUseCase
@@ -78,7 +78,7 @@ class QueueViewModel @Inject constructor(
                 QueueIntent.StartGame -> {
                     val gameSession = getGameSession()
                     broadcast(gameSession)
-                    _events.emit(QueueEvent.GameCreated)
+                    _events.emit(QueueEvent.GameCreated(gameSession.gameId))
                 }
 
                 is QueueIntent.RejectConnection -> connectionJob = launch {

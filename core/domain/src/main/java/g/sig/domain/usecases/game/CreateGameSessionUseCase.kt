@@ -1,4 +1,4 @@
-package g.sig.domain.usecases.host
+package g.sig.domain.usecases.game
 
 import g.sig.domain.entities.Game
 import g.sig.domain.repositories.GameSessionRepository

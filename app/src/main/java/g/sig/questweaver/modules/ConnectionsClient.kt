@@ -102,9 +102,10 @@ object ConnectionsClient {
     @Singleton
     fun provideBroadcastPayloadUseCase(
         payloadRepository: PayloadRepository,
-        deviceRepository: DeviceRepository
+        deviceRepository: DeviceRepository,
+        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
     ): BroadcastPayloadUseCase {
-        return BroadcastPayloadUseCase(payloadRepository, deviceRepository)
+        return BroadcastPayloadUseCase(payloadRepository, deviceRepository, defaultDispatcher)
     }
 }
 

@@ -2,7 +2,7 @@ package g.sig.game.screens
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
+import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -14,24 +14,22 @@ import g.sig.game.chat.navigation.gameChatGraph
 import g.sig.game.data.GameViewModel
 import g.sig.game.home.navigation.GameHomeRoute
 import g.sig.game.home.navigation.gameHomeGraph
+import g.sig.game.state.GameIntent
 import g.sig.ui.largeSize
 
 @Composable
 internal fun GameRoute(navController: NavHostController = rememberNavController()) {
     val viewModel = hiltViewModel<GameViewModel>()
 
-    Scaffold(
+    GameNavigation(
         modifier = Modifier.fillMaxSize(),
-        topBar = {
-            // TODO
-        },
-        bottomBar = {
-            // TODO
-        }
+        selectedRoute = viewModel.selectedRoute,
+        routes = viewModel.gameRoutes,
+        onItemClick = { viewModel.handleIntent(GameIntent.SelectRoute(it)) }
     ) {
         NavHost(
             modifier = Modifier
-                .padding(it)
+                .safeContentPadding()
                 .padding(horizontal = largeSize),
             navController = navController,
             startDestination = GameHomeRoute.path

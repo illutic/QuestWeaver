@@ -16,4 +16,14 @@ class RecentGamesLocalDataSource(
         withContext(ioDispatcher) { recentGamesDataStore.data.first() }
 
     override suspend fun getGame(gameId: String): Game? = getRecentGames().firstOrNull { it.gameId == gameId }
+
+    override suspend fun saveGame(game: Game): Unit = withContext(ioDispatcher) {
+        recentGamesDataStore.updateData { recentGames ->
+            recentGames.toMutableList().apply {
+                removeIf { recentGame -> recentGame.gameId == game.gameId }
+                add(0, game)
+            }
+        }
+    }
+
 }

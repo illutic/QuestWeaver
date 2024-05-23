@@ -4,10 +4,10 @@ import g.sig.domain.entities.ConnectionState
 import g.sig.domain.entities.Device
 
 interface DeviceRepository {
-    fun addDevice(id: String, name: String)
-    fun removeDevice(id: String)
-    fun getDevices(): List<Device>
-    fun updateDevice(device: Device)
-    fun updateState(id: String?, state: ConnectionState)
-    fun updateState(state: ConnectionState)
+    suspend fun addDevice(id: String, name: String)
+    suspend fun removeDevice(id: String)
+    suspend fun getDevices(): List<Device>
+    suspend fun updateDevice(device: Device)
+    suspend fun updateState(id: String?, state: ConnectionState)
+    suspend fun updateState(state: ConnectionState)
 }

@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.googleServices)
     alias(libs.plugins.firebaseCrashlytics)
+    alias(libs.plugins.composeCompiler)
 }
 
 val properties: Properties = Properties().apply {
@@ -65,8 +66,11 @@ android {
     buildFeatures {
         compose = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
+    composeCompiler {
+        enableStrongSkippingMode = true
+
+        reportsDestination = layout.buildDirectory.dir("compose_compiler")
+        stabilityConfigurationFile = rootProject.layout.projectDirectory.file("stability_config.conf")
     }
     packaging {
         resources {
@@ -95,6 +99,7 @@ dependencies {
     implementation(libs.firebase.config)
     implementation(libs.androidx.splashscreen)
     implementation(libs.dagger.hilt)
+    implementation(project(":app:feature:game"))
     ksp(libs.dagger.hilt.compiler)
 }
 

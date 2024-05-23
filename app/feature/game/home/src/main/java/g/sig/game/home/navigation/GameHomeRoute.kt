@@ -10,7 +10,7 @@ class GameHomeRoute(
     override val unselectedIcon: NavIcon = NavIcon.VectorNavIcon(AppIcons.HomeOutlinedVector),
     override val selectedIcon: NavIcon = NavIcon.VectorNavIcon(AppIcons.HomeFilledVector)
 ) : DecoratedRoute {
-    override val route: Route = Companion
+    override val path: String = Companion.path
 
     companion object : Route {
         override val path: String = "game/home"
