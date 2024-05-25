@@ -15,6 +15,7 @@ import g.sig.domain.repositories.NearbyRepository
 import g.sig.domain.repositories.PayloadRepository
 import g.sig.domain.usecases.nearby.AdvertiseGameUseCase
 import g.sig.domain.usecases.nearby.CancelAdvertisementGameUseCase
+import g.sig.domain.usecases.nearby.CancelDiscoveryUseCase
 import g.sig.domain.usecases.nearby.DiscoverNearbyDevicesUseCase
 import g.sig.domain.usecases.nearby.OnPayloadReceivedUseCase
 import g.sig.domain.usecases.user.GetUserUseCase
@@ -37,10 +38,17 @@ object NearbyModule {
     @Provides
     @Singleton
     fun provideCancelAdvertisementGameUseCase(
-        nearbyRepository: NearbyRepository,
-        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
+        nearbyRepository: NearbyRepository
     ): CancelAdvertisementGameUseCase {
-        return CancelAdvertisementGameUseCase(nearbyRepository, defaultDispatcher)
+        return CancelAdvertisementGameUseCase(nearbyRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCancelDiscoveryUseCase(
+        nearbyRepository: NearbyRepository
+    ): CancelDiscoveryUseCase {
+        return CancelDiscoveryUseCase(nearbyRepository)
     }
 
     @Provides

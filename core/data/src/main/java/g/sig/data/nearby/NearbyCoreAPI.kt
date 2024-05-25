@@ -131,6 +131,8 @@ fun startAdvertising(
     }
 }
 
+fun stopDiscovery(client: ConnectionsClient) = client.stopDiscovery()
+
 fun stopAdvertising(client: ConnectionsClient) = client.stopAdvertising()
 
 fun startDiscovery(

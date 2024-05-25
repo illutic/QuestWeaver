@@ -5,7 +5,6 @@ import g.sig.domain.repositories.PayloadRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 
-//TODO make payload listening a service
 class OnPayloadReceivedUseCase(
     val payloadRepository: PayloadRepository,
     val defaultDispatcher: CoroutineDispatcher

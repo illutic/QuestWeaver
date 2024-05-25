@@ -4,11 +4,8 @@ import g.sig.domain.entities.ConnectionState
 import g.sig.domain.repositories.DeviceRepository
 import g.sig.domain.repositories.NearbyRepository
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 
-// TODO make this a service?
 class AdvertiseGameUseCase(
     private val nearbyRepository: NearbyRepository,
     private val deviceRepository: DeviceRepository,
@@ -18,7 +15,7 @@ class AdvertiseGameUseCase(
         withContext(mainDispatcher) {
             nearbyRepository
                 .advertiseGame(name)
-                .onEach { state ->
+                .collect { state ->
                     when (state) {
                         is ConnectionState.Connecting -> deviceRepository.addDevice(state.endpointId, state.name)
 
@@ -27,6 +24,5 @@ class AdvertiseGameUseCase(
                         else -> Unit
                     }
                 }
-                .map { deviceRepository.getDevices() }
         }
 }

@@ -54,7 +54,7 @@ fun NavGraphBuilder.hostGameGraph(
         val snackbarHostState = remember { SnackbarHostState() }
 
         LaunchedEffect(Unit) {
-            viewModel.handleIntent(QueueIntent.HostGame)
+            viewModel.handleIntent(QueueIntent.Load)
             viewModel.events.collectLatest { event ->
                 when (event) {
                     is QueueEvent.Error -> snackbarHostState.showSnackbar("Error")

@@ -3,17 +3,16 @@ package g.sig.host_game.data
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import g.sig.common.utils.update
 import g.sig.domain.usecases.game.GetGameSessionUseCase
 import g.sig.domain.usecases.nearby.AcceptConnectionUseCase
 import g.sig.domain.usecases.nearby.AdvertiseGameUseCase
 import g.sig.domain.usecases.nearby.BroadcastPayloadUseCase
 import g.sig.domain.usecases.nearby.CancelAdvertisementGameUseCase
+import g.sig.domain.usecases.nearby.GetDevicesUseCase
 import g.sig.domain.usecases.nearby.RejectConnectionUseCase
 import g.sig.host_game.state.QueueEvent
 import g.sig.host_game.state.QueueIntent
 import g.sig.host_game.state.QueueState
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -27,70 +26,54 @@ class QueueViewModel @Inject constructor(
     private val getGameSession: GetGameSessionUseCase,
     private val acceptConnection: AcceptConnectionUseCase,
     private val rejectConnection: RejectConnectionUseCase,
-    private val broadcast: BroadcastPayloadUseCase
+    private val broadcast: BroadcastPayloadUseCase,
+    private val getDevices: GetDevicesUseCase
 ) : ViewModel() {
     private val _events = MutableSharedFlow<QueueEvent>()
     val state = QueueState()
     val events = _events.asSharedFlow()
 
-    private var hostingJob: Job? = null
-        set(value) {
-            field?.cancel()
-            field = value
-        }
-    private var connectionJob: Job? = null
-        set(value) {
-            field?.cancel()
-            field = value
-        }
-
     fun handleIntent(intent: QueueIntent) {
+        when (intent) {
+            is QueueIntent.AcceptConnection -> viewModelScope.launch { acceptConnection(intent.device) }
+
+            is QueueIntent.RejectConnection -> viewModelScope.launch { rejectConnection(intent.device) }
+
+            QueueIntent.Back -> sendEvent(QueueEvent.Back)
+
+            QueueIntent.Load -> {
+                collectDevices()
+                viewModelScope.launch { advertiseGame(getGameSession().title) }
+            }
+
+            QueueIntent.CancelHostGame -> cancelHosting()
+
+            QueueIntent.StartGame -> startGame()
+        }
+    }
+
+    private fun sendEvent(event: QueueEvent) {
+        viewModelScope.launch { _events.emit(event) }
+    }
+
+    private fun collectDevices() {
         viewModelScope.launch {
-            when (intent) {
-
-                QueueIntent.Back -> _events.emit(QueueEvent.Back)
-
-                is QueueIntent.HostGame -> {
-                    hostingJob =
-                        launch {
-                            advertiseGame(getGameSession().title)
-                                .collectLatest {
-                                    state.devicesToConnect.clear()
-                                    state.devicesToConnect.addAll(it)
-                                }
-                        }
-                }
-
-                is QueueIntent.AcceptConnection -> connectionJob = launch {
-                    acceptConnection(intent.device).collectLatest { connectionState ->
-                        state.devicesToConnect.update(
-                            { it.id == intent.device.id },
-                            { it.copy(connectionState = connectionState) }
-                        )
-                    }
-                }
-
-                QueueIntent.CancelHostGame -> {
-                    cancelAdvertisement()
-                    _events.emit(QueueEvent.CancelHostGame)
-                }
-
-                QueueIntent.StartGame -> {
-                    val gameSession = getGameSession()
-                    broadcast(gameSession)
-                    _events.emit(QueueEvent.GameCreated(gameSession.gameId))
-                }
-
-                is QueueIntent.RejectConnection -> connectionJob = launch {
-                    rejectConnection(intent.device).collectLatest {
-                        state.devicesToConnect.update(
-                            { it.id == intent.device.id },
-                            { it.copy(connectionState = it.connectionState) }
-                        )
-                    }
-                }
+            getDevices().collectLatest {
+                state.devicesToConnect.clear()
+                state.devicesToConnect.addAll(it)
             }
         }
+    }
 
+    private fun cancelHosting() {
+        viewModelScope.launch { cancelAdvertisement() }
+        sendEvent(QueueEvent.CancelHostGame)
+    }
+
+    private fun startGame() {
+        viewModelScope.launch {
+            broadcast(getGameSession())
+            sendEvent(QueueEvent.GameCreated(getGameSession().gameId))
+        }
     }
 }

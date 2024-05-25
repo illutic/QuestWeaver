@@ -1,45 +1,40 @@
 package g.sig.data.datasources.nearby
 
-import g.sig.common.utils.addOrReplace
 import g.sig.domain.entities.ConnectionState
 import g.sig.domain.entities.Device
 import g.sig.domain.repositories.DeviceRepository
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
 
 class DeviceRepositoryImpl(
     private val ioDispatcher: CoroutineDispatcher
 ) : DeviceRepository {
-    private val devices = mutableListOf<Device>()
+    private val _devices = MutableStateFlow<List<Device>>(listOf())
+    override val devices: StateFlow<List<Device>> = _devices.asStateFlow()
 
     override suspend fun addDevice(id: String, name: String) = withContext(ioDispatcher) {
-        devices.addOrReplace(
-            { it.name == name || it.id == id },
-            Device(id, name, ConnectionState.Idle)
-        )
+        if (_devices.value.none { it.id == id }) {
+            _devices.value += Device(id, name, ConnectionState.Idle)
+        }
     }
 
     override suspend fun removeDevice(id: String): Unit = withContext(ioDispatcher) {
-        devices.removeAll { it.id == id }
-    }
-
-    override suspend fun getDevices(): List<Device> = withContext(ioDispatcher) {
-        devices
+        _devices.value = _devices.value.filter { it.id != id }
     }
 
     override suspend fun updateDevice(device: Device): Unit = withContext(ioDispatcher) {
-        devices.addOrReplace({ it.id == device.id }, device)
+        _devices.value = _devices.value.map {
+            if (it.id == device.id) device else it
+        }
     }
 
     override suspend fun updateState(id: String?, state: ConnectionState) = withContext(ioDispatcher) {
-        if (id == null) return@withContext
-
-        devices.addOrReplace(
-            { it.id == id },
-            devices
-                .firstOrNull { it.id == id }
-                ?.copy(connectionState = state) ?: return@withContext
-        )
+        _devices.value = _devices.value.map {
+            if (it.id == id) it.copy(connectionState = state) else it
+        }
     }
 
     override suspend fun updateState(state: ConnectionState) = withContext(ioDispatcher) {
@@ -52,12 +47,6 @@ class DeviceRepositoryImpl(
             is ConnectionState.Error.LostError -> state.endpointId
             else -> return@withContext
         }
-
-        devices.addOrReplace(
-            { it.id == endpointId },
-            devices
-                .firstOrNull { it.id == endpointId }
-                ?.copy(connectionState = state) ?: return@withContext
-        )
+        updateState(endpointId, state)
     }
 }

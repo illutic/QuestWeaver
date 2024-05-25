@@ -12,6 +12,6 @@ class BroadcastPayloadUseCase(
     private val defaultDispatcher: CoroutineDispatcher
 ) {
     suspend operator fun invoke(payload: PayloadData) = withContext(defaultDispatcher) {
-        deviceRepository.getDevices().forEach { payloadRepository.send(it.id, payload) }
+        deviceRepository.devices.value.forEach { payloadRepository.send(it.id, payload) }
     }
 }

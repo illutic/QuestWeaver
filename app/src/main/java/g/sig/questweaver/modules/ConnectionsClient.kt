@@ -21,6 +21,8 @@ import g.sig.domain.usecases.nearby.SendPayloadUseCase
 import g.sig.domain.usecases.user.GetUserUseCase
 import g.sig.questweaver.data.CorePayloadCallback
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.CoroutineScope
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
@@ -31,7 +33,7 @@ object ConnectionsClient {
     @Provides
     @Singleton
     @ServiceId
-    fun provideServiceId(@ApplicationContext context: Context) = context.packageName
+    fun provideServiceId(@ApplicationContext context: Context): String = context.packageName
 
     @Provides
     @Singleton
@@ -51,16 +53,18 @@ object ConnectionsClient {
         deviceRepository: DeviceRepository,
         @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
     ): AcceptConnectionUseCase {
-        return AcceptConnectionUseCase(nearbyRepository, deviceRepository, defaultDispatcher)
+        val connectedDeviceScope = CoroutineScope(defaultDispatcher + CoroutineName("ConnectedDeviceScope"))
+        return AcceptConnectionUseCase(nearbyRepository, deviceRepository, connectedDeviceScope)
     }
 
     @Provides
     @Singleton
     fun provideRejectConnectionUseCase(
+        deviceRepository: DeviceRepository,
         nearbyRepository: NearbyRepository,
         @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
     ): RejectConnectionUseCase {
-        return RejectConnectionUseCase(nearbyRepository, defaultDispatcher)
+        return RejectConnectionUseCase(deviceRepository, nearbyRepository, defaultDispatcher)
     }
 
     @Provides

@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface NearbyDataSource {
     fun discover(user: User): Flow<ConnectionState>
+    fun cancelDiscovery()
     fun advertise(name: String): Flow<ConnectionState>
     fun cancelAdvertisement()
     fun requestConnection(user: User, endpointId: String): Flow<ConnectionState>

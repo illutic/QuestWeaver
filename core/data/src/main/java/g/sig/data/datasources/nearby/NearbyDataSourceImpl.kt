@@ -8,6 +8,7 @@ import g.sig.data.nearby.requestConnection
 import g.sig.data.nearby.startAdvertising
 import g.sig.data.nearby.startDiscovery
 import g.sig.data.nearby.stopAdvertising
+import g.sig.data.nearby.stopDiscovery
 import g.sig.data.platform.BatteryLevel
 import g.sig.data.platform.BatteryLevelReceiver
 import g.sig.data.utils.acceptConnectionOnInitiated
@@ -28,6 +29,8 @@ class NearbyDataSourceImpl(
             .level
             .flatMapMerge { batteryLevel -> startDiscovery(connectionsClient, serviceId, batteryLevel == BatteryLevel.Low) }
             .logOnEach()
+
+    override fun cancelDiscovery() = stopDiscovery(connectionsClient)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun advertise(name: String): Flow<ConnectionState> =

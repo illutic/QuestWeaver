@@ -27,6 +27,8 @@ class NearbyRepositoryImpl(
 
     override fun cancelAdvertisement() = nearbyDataSource.cancelAdvertisement()
 
+    override fun cancelDiscovery() = nearbyDataSource.cancelDiscovery()
+
     override fun requestConnection(user: User, device: Device): Flow<DomainConnectionState> =
         nearbyDataSource.requestConnection(user.fromDomain(), device.id)
 

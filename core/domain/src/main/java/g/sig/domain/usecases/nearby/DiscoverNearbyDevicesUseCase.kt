@@ -5,8 +5,6 @@ import g.sig.domain.repositories.DeviceRepository
 import g.sig.domain.repositories.NearbyRepository
 import g.sig.domain.usecases.user.GetUserUseCase
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 
 class DiscoverNearbyDevicesUseCase(
@@ -19,7 +17,7 @@ class DiscoverNearbyDevicesUseCase(
         withContext(mainDispatcher) {
             nearbyRepository
                 .discoverNearbyDevices(getUser())
-                .onEach { state ->
+                .collect { state ->
                     when (state) {
                         is ConnectionState.Found -> deviceRepository.addDevice(state.endpointId, state.name)
 
@@ -28,6 +26,5 @@ class DiscoverNearbyDevicesUseCase(
                         else -> Unit
                     }
                 }
-                .map { deviceRepository.getDevices() }
         }
 }

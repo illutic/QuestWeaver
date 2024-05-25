@@ -11,6 +11,8 @@ interface NearbyRepository {
 
     fun discoverNearbyDevices(user: User): Flow<ConnectionState>
 
+    fun cancelDiscovery()
+
     fun advertiseGame(game: String): Flow<ConnectionState>
 
     fun cancelAdvertisement()

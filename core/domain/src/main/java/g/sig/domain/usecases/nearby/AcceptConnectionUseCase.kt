@@ -3,19 +3,21 @@ package g.sig.domain.usecases.nearby
 import g.sig.domain.entities.Device
 import g.sig.domain.repositories.DeviceRepository
 import g.sig.domain.repositories.NearbyRepository
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 class AcceptConnectionUseCase(
     private val nearbyRepository: NearbyRepository,
     private val deviceRepository: DeviceRepository,
-    private val defaultDispatcher: CoroutineDispatcher
+    private val coroutineScope: CoroutineScope
 ) {
-    suspend operator fun invoke(device: Device) =
-        withContext(defaultDispatcher) {
+    operator fun invoke(device: Device) {
+        coroutineScope.launch {
             nearbyRepository
                 .acceptConnection(device)
-                .onEach { deviceRepository.updateState(it) }
+                .collect {
+                    deviceRepository.updateState(it)
+                }
         }
+    }
 }

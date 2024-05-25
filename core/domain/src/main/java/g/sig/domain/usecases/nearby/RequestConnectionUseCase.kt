@@ -5,7 +5,6 @@ import g.sig.domain.repositories.DeviceRepository
 import g.sig.domain.repositories.NearbyRepository
 import g.sig.domain.usecases.user.GetUserUseCase
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 
 class RequestConnectionUseCase(
@@ -18,6 +17,6 @@ class RequestConnectionUseCase(
         withContext(defaultDispatcher) {
             nearbyRepository
                 .requestConnection(getUser(), device)
-                .onEach { deviceRepository.updateState(it) }
+                .collect { deviceRepository.updateState(it) }
         }
 }
