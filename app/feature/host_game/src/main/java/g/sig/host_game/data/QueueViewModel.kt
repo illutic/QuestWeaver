@@ -3,12 +3,12 @@ package g.sig.host_game.data
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import g.sig.domain.usecases.device.GetDevicesUseCase
 import g.sig.domain.usecases.game.GetGameSessionUseCase
 import g.sig.domain.usecases.nearby.AcceptConnectionUseCase
 import g.sig.domain.usecases.nearby.AdvertiseGameUseCase
 import g.sig.domain.usecases.nearby.BroadcastPayloadUseCase
-import g.sig.domain.usecases.nearby.CancelAdvertisementGameUseCase
-import g.sig.domain.usecases.nearby.GetDevicesUseCase
+import g.sig.domain.usecases.nearby.CancelAdvertisementUseCase
 import g.sig.domain.usecases.nearby.RejectConnectionUseCase
 import g.sig.host_game.state.QueueEvent
 import g.sig.host_game.state.QueueIntent
@@ -22,7 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class QueueViewModel @Inject constructor(
     private val advertiseGame: AdvertiseGameUseCase,
-    private val cancelAdvertisement: CancelAdvertisementGameUseCase,
+    private val cancelAdvertisement: CancelAdvertisementUseCase,
     private val getGameSession: GetGameSessionUseCase,
     private val acceptConnection: AcceptConnectionUseCase,
     private val rejectConnection: RejectConnectionUseCase,

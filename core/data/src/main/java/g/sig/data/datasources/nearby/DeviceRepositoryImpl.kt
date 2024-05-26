@@ -45,6 +45,8 @@ class DeviceRepositoryImpl(
             is ConnectionState.Error.DisconnectionError -> state.endpointId
             is ConnectionState.Error.RejectError -> state.endpointId
             is ConnectionState.Error.LostError -> state.endpointId
+            is ConnectionState.Error.GenericError -> state.endpointId
+
             else -> return@withContext
         }
         updateState(endpointId, state)

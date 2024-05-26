@@ -1,4 +1,4 @@
-package g.sig.domain.usecases.nearby
+package g.sig.domain.usecases.device
 
 import g.sig.domain.repositories.DeviceRepository
 

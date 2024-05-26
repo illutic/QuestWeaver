@@ -319,7 +319,7 @@ private fun JoinGameScreenPreview() {
                 Device("1", "Device 1", ConnectionState.Idle),
                 Device("2", "Device 2", ConnectionState.Connecting("2", "Device 2")),
                 Device("3", "Device 3", ConnectionState.Connected("2")),
-                Device("3", "Device 3", ConnectionState.Error.ConnectionRequestError),
+                Device("3", "Device 3", ConnectionState.Error.GenericError("123", null)),
             )
         }
     ) {}

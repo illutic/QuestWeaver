@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="game_close_game_title">Έξοδος από το παιχνίδι</string>
+    <string name="game_close_game_message">Είστε βέβαιοι ότι θέλετε να κλείσετε το παιχνίδι? Μπορεί να μην μπορείτε να ξαναμπείτε.</string>
+    <string name="game_device_disconnected_title">Χάθηκε η σύνδεση</string>
+    <string name="confirm">Εντάξει</string>
+    <string name="cancel">Ακύρωση</string>
+</resources>

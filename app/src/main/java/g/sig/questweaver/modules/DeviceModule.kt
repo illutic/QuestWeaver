@@ -6,7 +6,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import g.sig.data.datasources.nearby.DeviceRepositoryImpl
 import g.sig.domain.repositories.DeviceRepository
-import g.sig.domain.usecases.nearby.GetDevicesUseCase
+import g.sig.domain.usecases.device.GetConnectedDeviceUseCase
+import g.sig.domain.usecases.device.GetDevicesUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Singleton
 
@@ -21,5 +22,11 @@ object DeviceModule {
 
     @Provides
     @Singleton
-    fun provideGetDevicesUseCase(deviceRepository: DeviceRepository): GetDevicesUseCase = GetDevicesUseCase(deviceRepository)
+    fun provideGetDevicesUseCase(deviceRepository: DeviceRepository): GetDevicesUseCase =
+        GetDevicesUseCase(deviceRepository)
+
+    @Provides
+    @Singleton
+    fun provideGetConnectedDeviceUseCase(deviceRepository: DeviceRepository): GetConnectedDeviceUseCase =
+        GetConnectedDeviceUseCase(deviceRepository)
 }

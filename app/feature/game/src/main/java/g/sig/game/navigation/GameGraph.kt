@@ -9,6 +9,6 @@ fun NavGraphBuilder.gameGraph() {
         route = GameRoute.path,
         arguments = GameRoute.arguments
     ) {
-        GameRoute()
+        GameRoute({})
     }
 }

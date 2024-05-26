@@ -4,10 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import g.sig.domain.entities.Game
+import g.sig.domain.usecases.device.GetDevicesUseCase
 import g.sig.domain.usecases.nearby.AcceptConnectionUseCase
 import g.sig.domain.usecases.nearby.CancelDiscoveryUseCase
 import g.sig.domain.usecases.nearby.DiscoverNearbyDevicesUseCase
-import g.sig.domain.usecases.nearby.GetDevicesUseCase
 import g.sig.domain.usecases.nearby.OnPayloadReceivedUseCase
 import g.sig.domain.usecases.nearby.RejectConnectionUseCase
 import g.sig.domain.usecases.nearby.RequestConnectionUseCase
@@ -62,6 +62,7 @@ class JoinGameViewModel @Inject constructor(
     private fun sendEvent(event: JoinGameEvent) = viewModelScope.launch { _events.send(event) }
 
     private fun startDiscovery() {
+        state.discovering = true
         viewModelScope.launch { discoverDevices() }
     }
 

@@ -9,6 +9,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -32,5 +33,6 @@ object AppIcons {
     val HomeFilledVector = MaterialIcons.Filled.Home
     val HomeOutlined @Composable get() = HomeOutlinedVector.painter
     val HomeFilled @Composable get() = HomeFilledVector.painter
+    val Warning @Composable get() = MaterialIcons.Outlined.Warning.painter
 }
 

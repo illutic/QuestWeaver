@@ -1,5 +1,6 @@
 package g.sig.domain.usecases.nearby
 
+import g.sig.domain.entities.ConnectionState
 import g.sig.domain.entities.Device
 import g.sig.domain.repositories.DeviceRepository
 import g.sig.domain.repositories.NearbyRepository
@@ -15,8 +16,14 @@ class AcceptConnectionUseCase(
         coroutineScope.launch {
             nearbyRepository
                 .acceptConnection(device)
-                .collect {
-                    deviceRepository.updateState(it)
+                .collect { state ->
+                    when (state) {
+                        is ConnectionState.Error.DisconnectionError -> deviceRepository.removeDevice(state.endpointId)
+
+                        is ConnectionState.Error.LostError -> deviceRepository.removeDevice(state.endpointId)
+
+                        else -> deviceRepository.updateState(device.id, state)
+                    }
                 }
         }
     }

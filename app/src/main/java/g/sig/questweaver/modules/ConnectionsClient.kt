@@ -43,7 +43,8 @@ object ConnectionsClient {
         getUserUseCase: GetUserUseCase,
         @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
     ): RequestConnectionUseCase {
-        return RequestConnectionUseCase(nearbyRepository, deviceRepository, getUserUseCase, defaultDispatcher)
+        val connectedDeviceScope = CoroutineScope(defaultDispatcher + CoroutineName("RequestConnectionScope"))
+        return RequestConnectionUseCase(nearbyRepository, deviceRepository, getUserUseCase, connectedDeviceScope)
     }
 
     @Provides
@@ -53,7 +54,7 @@ object ConnectionsClient {
         deviceRepository: DeviceRepository,
         @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
     ): AcceptConnectionUseCase {
-        val connectedDeviceScope = CoroutineScope(defaultDispatcher + CoroutineName("ConnectedDeviceScope"))
+        val connectedDeviceScope = CoroutineScope(defaultDispatcher + CoroutineName("AcceptConnectionScope"))
         return AcceptConnectionUseCase(nearbyRepository, deviceRepository, connectedDeviceScope)
     }
 

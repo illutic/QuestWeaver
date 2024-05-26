@@ -23,6 +23,8 @@ class DiscoverNearbyDevicesUseCase(
 
                         is ConnectionState.Error.DisconnectionError -> deviceRepository.removeDevice(state.endpointId)
 
+                        is ConnectionState.Error.LostError -> deviceRepository.removeDevice(state.endpointId)
+
                         else -> Unit
                     }
                 }
