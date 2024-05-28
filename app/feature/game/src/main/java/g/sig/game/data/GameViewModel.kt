@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import g.sig.domain.entities.ConnectionState
 import g.sig.domain.usecases.device.GetDevicesUseCase
 import g.sig.game.ai.navigation.GameAiRoute
 import g.sig.game.chat.navigation.GameChatRoute
@@ -48,7 +47,7 @@ class GameViewModel @Inject constructor(
     private fun listenForConnectedState() {
         viewModelScope.launch {
             getDevices().collect { devices ->
-                if (devices.any { it.connectionState !is ConnectionState.Connected }) {
+                if (devices.isEmpty()) {
                     sendEvent(GameScreenEvent.DeviceDisconnected)
                 }
             }

@@ -15,6 +15,7 @@ import g.sig.domain.repositories.NearbyRepository
 import g.sig.domain.repositories.PayloadRepository
 import g.sig.domain.usecases.nearby.AcceptConnectionUseCase
 import g.sig.domain.usecases.nearby.BroadcastPayloadUseCase
+import g.sig.domain.usecases.nearby.CancelDiscoveryUseCase
 import g.sig.domain.usecases.nearby.RejectConnectionUseCase
 import g.sig.domain.usecases.nearby.RequestConnectionUseCase
 import g.sig.domain.usecases.nearby.SendPayloadUseCase
@@ -38,13 +39,13 @@ object ConnectionsClient {
     @Provides
     @Singleton
     fun provideRequestConnectionUseCase(
+        cancelDiscoveryUseCase: CancelDiscoveryUseCase,
         nearbyRepository: NearbyRepository,
         deviceRepository: DeviceRepository,
         getUserUseCase: GetUserUseCase,
         @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
     ): RequestConnectionUseCase {
-        val connectedDeviceScope = CoroutineScope(defaultDispatcher + CoroutineName("RequestConnectionScope"))
-        return RequestConnectionUseCase(nearbyRepository, deviceRepository, getUserUseCase, connectedDeviceScope)
+        return RequestConnectionUseCase(cancelDiscoveryUseCase, nearbyRepository, deviceRepository, getUserUseCase, defaultDispatcher)
     }
 
     @Provides

@@ -44,6 +44,7 @@ internal fun GameRoute(
     var showDeviceDisconnectedDialog by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
+        viewModel.handleIntent(GameIntent.Load)
         viewModel.events.collectLatest {
             when (it) {
                 is GameScreenEvent.RequestCloseGame -> showCloseGameDialog = true
