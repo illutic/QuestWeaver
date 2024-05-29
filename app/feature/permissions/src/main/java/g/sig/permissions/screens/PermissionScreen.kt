@@ -83,40 +83,40 @@ internal fun PermissionScreen(
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
                 .verticalScroll(rememberScrollState())
+                .fillMaxSize()
                 .padding(largeSize),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(largeSize)
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(largeSize)
-            ) {
-                Text(
-                    text = if (userDeniedPermission) {
-                        stringResource(id = R.string.permission_title_denied)
-                    } else {
-                        stringResource(id = R.string.permission_title)
-                    },
-                    style = MaterialTheme.typography.headlineLarge,
-                    color = MaterialTheme.colorScheme.primary
-                )
+            Text(
+                text = if (userDeniedPermission) {
+                    stringResource(id = R.string.permission_title_denied)
+                } else {
+                    stringResource(id = R.string.permission_title)
+                },
+                style = MaterialTheme.typography.headlineLarge,
+                color = MaterialTheme.colorScheme.primary
+            )
 
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(largeSize)
-                ) {
-                    Text(text = stringResource(id = R.string.permission_header_1), style = MaterialTheme.typography.titleLarge)
-                    Text(text = stringResource(id = R.string.permission_body_1), style = MaterialTheme.typography.bodyMedium)
-                    HorizontalDivider()
-                    Text(text = stringResource(id = R.string.permission_header_2), style = MaterialTheme.typography.titleLarge)
-                    Text(text = stringResource(id = R.string.permission_body_2), style = MaterialTheme.typography.bodyMedium)
-                    HorizontalDivider()
-                }
-            }
+            Text(
+                text = stringResource(id = R.string.permission_header_1),
+                style = MaterialTheme.typography.titleLarge
+            )
+            Text(
+                text = stringResource(id = R.string.permission_body_1),
+                style = MaterialTheme.typography.bodyMedium
+            )
+            HorizontalDivider()
+            Text(
+                text = stringResource(id = R.string.permission_header_2),
+                style = MaterialTheme.typography.titleLarge
+            )
+            Text(
+                text = stringResource(id = R.string.permission_body_2),
+                style = MaterialTheme.typography.bodyMedium
+            )
+            HorizontalDivider()
         }
     }
 }

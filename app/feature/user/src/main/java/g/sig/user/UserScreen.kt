@@ -20,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -75,7 +76,8 @@ private fun UserScreenTopBar(
 @Composable
 private fun UserScreenContent(
     modifier: Modifier = Modifier,
-    state: UserState.Loaded.Success,
+    name: String,
+    error: Int?,
     onValueChanged: (String) -> Unit,
     onDone: () -> Unit
 ) {
@@ -85,8 +87,8 @@ private fun UserScreenContent(
     ) {
         AppOutlinedTextField(
             modifier = Modifier.defaultMinSize(minWidth = UserSize.minTextSize),
-            value = state.user.name,
-            error = state.getError()?.let { stringResource(it) },
+            value = name,
+            error = error?.let { stringResource(it) },
             label = stringResource(R.string.user_name_label),
             placeholder = stringResource(R.string.user_name_placeholder),
             keyboardActions = KeyboardActions(onDone = { onDone() }),
@@ -144,12 +146,15 @@ internal fun UserScreen(
     ) {
         when (state) {
             is UserState.Loaded.Success -> {
-                name = state.user.name
+                LaunchedEffect(state) {
+                    name = state.user.name
+                }
                 UserScreenContent(
                     modifier = Modifier
                         .verticalScroll(rememberScrollState())
                         .fillMaxSize(),
-                    state = state,
+                    name = name,
+                    error = state.getError(),
                     onDone = { onIntent(UserIntent.SaveUser(name)) },
                     onValueChanged = { name = it }
                 )

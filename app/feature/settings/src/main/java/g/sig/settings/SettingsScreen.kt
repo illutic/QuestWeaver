@@ -1,7 +1,6 @@
 package g.sig.settings
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -48,8 +47,7 @@ private fun SettingsTopBar(
 
 @Composable
 private fun SettingsScreenContent(
-    modifier: Modifier = Modifier,
-    onIntent: (intent: SettingsIntent) -> Unit
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier,
@@ -66,10 +64,6 @@ private fun SettingsScreenContent(
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(vertical = largeSize)
         )
-
-        TextButton(onClick = { onIntent(SettingsIntent.OpenPrivacyPolicy) }) {
-            Text(text = stringResource(id = R.string.privacy_policy))
-        }
     }
 }
 
@@ -88,6 +82,15 @@ internal fun SettingsScreen(
                 model = R.drawable.graphic_7,
                 contentDescription = null,
             )
+        },
+        navigation = {
+            TextButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = largeSize),
+                onClick = { onIntent(SettingsIntent.OpenPrivacyPolicy) }) {
+                Text(text = stringResource(id = R.string.privacy_policy))
+            }
         }
     ) {
         when (state) {
@@ -98,9 +101,7 @@ internal fun SettingsScreen(
                 SettingsScreenContent(
                     modifier = Modifier
                         .verticalScroll(rememberScrollState())
-                        .fillMaxSize()
                         .padding(largeSize),
-                    onIntent = onIntent
                 )
             }
         }

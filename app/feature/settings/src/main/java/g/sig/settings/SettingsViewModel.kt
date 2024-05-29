@@ -11,7 +11,7 @@ import g.sig.settings.state.SettingsState
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,7 +22,7 @@ class SettingsViewModel @Inject constructor(
     private val _events = Channel<SettingsEvent>()
     private val _state = MutableStateFlow<SettingsState>(SettingsState.Idle)
     val state = _state.asStateFlow()
-    val events = _events.consumeAsFlow()
+    val events = _events.receiveAsFlow()
 
     fun handleIntent(intent: SettingsIntent) {
         viewModelScope.launch {
