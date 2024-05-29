@@ -26,7 +26,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
@@ -41,7 +40,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import coil.compose.AsyncImage
+import g.sig.common.ui.components.AdaptiveImage
+import g.sig.common.ui.layouts.ScreenScaffold
 import g.sig.domain.entities.ConnectionState
 import g.sig.domain.entities.Device
 import g.sig.host_game.R
@@ -57,13 +57,29 @@ internal fun QueueScreen(
     snackbarHostState: SnackbarHostState,
     onIntent: (QueueIntent) -> Unit
 ) {
-    Scaffold(
+    ScreenScaffold(
         modifier = Modifier.fillMaxSize(),
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = { QueueScreenTopBar { onIntent(QueueIntent.Back) } },
-    ) { padding ->
+        decoration = {
+            AdaptiveImage(
+                modifier = Modifier.width(HostGameSize.imageSize),
+                model = R.drawable.graphic_10,
+                contentDescription = ""
+            )
+        },
+        navigation = {
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = largeSize),
+                onClick = { onIntent(QueueIntent.StartGame) }
+            ) {
+                Text(text = stringResource(R.string.queue_game_button))
+            }
+        }
+    ) {
         JoinGameScreenContent(
-            modifier = Modifier.padding(padding),
             state = state,
             onIntent = onIntent
         )
@@ -83,14 +99,6 @@ private fun JoinGameScreenContent(
         verticalArrangement = Arrangement.spacedBy(largeSize),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        item {
-            AsyncImage(
-                modifier = Modifier.width(HostGameSize.imageSize),
-                model = R.drawable.graphic_10,
-                contentDescription = ""
-            )
-        }
-
         if (state.advertising) {
             item {
                 LinearProgressIndicator(Modifier.width(IntrinsicSize.Max))
@@ -111,12 +119,6 @@ private fun JoinGameScreenContent(
                     text = stringResource(R.string.queue_empty),
                     style = MaterialTheme.typography.bodyMedium
                 )
-            }
-        }
-
-        item {
-            Button(onClick = { onIntent(QueueIntent.StartGame) }) {
-                Text(text = stringResource(R.string.queue_game_button))
             }
         }
     }

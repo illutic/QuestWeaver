@@ -43,6 +43,7 @@ android {
 
 dependencies {
     implementation(project(":core:ui"))
+    implementation(project(":app:common:ui"))
     implementation(project(":core:domain"))
     implementation(project(":core:navigation"))
     implementation(libs.accompanistPermissions)

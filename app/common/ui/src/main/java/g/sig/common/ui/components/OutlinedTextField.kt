@@ -1,48 +1,41 @@
-package g.sig.common.ui
+package g.sig.common.ui.components
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisallowComposableCalls
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
-import g.sig.ui.LargeRoundedShape
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.window.core.layout.WindowWidthSizeClass
+import g.sig.ui.AppTheme
+import g.sig.ui.MediumRoundedShape
 
 @Composable
 inline fun AppOutlinedTextField(
-    modifier: Modifier = Modifier,
     value: String,
     crossinline onValueChanged: (String) -> Unit,
+    modifier: Modifier = Modifier,
     style: TextStyle = MaterialTheme.typography.labelMedium,
     label: String? = null,
     placeholder: String? = null,
     error: String? = null,
-    isLastField: Boolean = false,
-    crossinline onNextField: @DisallowComposableCalls () -> Unit = {},
-    crossinline onDone: @DisallowComposableCalls () -> Unit = {}
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
 ) {
-    val keyboardActions = remember {
-        KeyboardActions(
-            onDone = if (isLastField) {
-                {
-                    KeyboardActions.Default.onDone?.invoke(this)
-                    onDone()
-                }
-            } else null,
-            onNext = if (!isLastField) {
-                {
-                    KeyboardActions.Default.onNext?.invoke(this)
-                    onNextField()
-                }
-            } else null
-        )
+    val windowClassSize = currentWindowAdaptiveInfo().windowSizeClass
+    val adaptiveModifier = if (windowClassSize.windowWidthSizeClass == WindowWidthSizeClass.COMPACT) {
+        Modifier.fillMaxWidth()
+    } else {
+        Modifier
     }
 
     OutlinedTextField(
-        modifier = modifier,
+        modifier = modifier.then(adaptiveModifier),
         value = value,
         isError = error != null,
         onValueChange = { onValueChanged(it) },
@@ -59,7 +52,21 @@ inline fun AppOutlinedTextField(
             }
         },
         keyboardActions = keyboardActions,
+        keyboardOptions = keyboardOptions,
         singleLine = true,
-        shape = LargeRoundedShape
+        shape = MediumRoundedShape
     )
+}
+
+@Composable
+@Preview
+fun AppOutlinedTextFieldPreview() {
+    AppTheme {
+        AppOutlinedTextField(
+            value = "Hello",
+            onValueChanged = {},
+            label = "Label",
+            placeholder = "Placeholder"
+        )
+    }
 }

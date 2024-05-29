@@ -3,14 +3,11 @@ package g.sig.home.screens
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -21,20 +18,21 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import coil.compose.AsyncImage
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import g.sig.common.ui.PermissionsAlert
+import g.sig.common.ui.components.AdaptiveImage
+import g.sig.common.ui.components.PermissionsAlert
+import g.sig.common.ui.layouts.ScreenScaffold
 import g.sig.domain.entities.Game
 import g.sig.domain.entities.Uri
 import g.sig.home.R
@@ -44,17 +42,36 @@ import g.sig.ui.AppIcons
 import g.sig.ui.MediumRoundedShape
 import g.sig.ui.largeSize
 import g.sig.ui.mediumSize
+import g.sig.ui.smallSize
 
 @Composable
 internal fun HomeScreen(
     homeState: HomeState,
     onIntent: (HomeIntent) -> Unit
 ) {
-    Scaffold {
+    ScreenScaffold(
+        decoration = {
+            AdaptiveImage(
+                modifier = Modifier.size(HomeScreenSize.graphicSize),
+                model = R.drawable.graphic_3,
+                contentDescription = null
+            )
+        },
+        navigation = {
+            if (homeState is HomeState.Loaded) {
+                HomeScreenBottomContent(
+                    modifier = Modifier.padding(horizontal = largeSize),
+                    state = homeState,
+                    onNavigateToProfile = { onIntent(HomeIntent.NavigateToProfile) },
+                    onNavigateToSettings = { onIntent(HomeIntent.NavigateToSettings) },
+                    onNavigateToPermissions = { onIntent(HomeIntent.NavigateToPermissions) }
+                )
+            }
+        }
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(it)
                 .padding(largeSize),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
@@ -69,28 +86,18 @@ internal fun HomeScreen(
 }
 
 @Composable
-private fun ColumnScope.HomeScreenContent(
+private fun HomeScreenContent(
     homeState: HomeState.Loaded,
     onIntent: (HomeIntent) -> Unit
 ) {
     HomeScreenTopContent(
         modifier = Modifier
             .fillMaxWidth()
-            .verticalScroll(rememberScrollState())
-            .weight(1f),
+            .verticalScroll(rememberScrollState()),
         state = homeState,
         onNavigateToHostGame = { onIntent(HomeIntent.NavigateToHost) },
         onNavigateToJoinGame = { onIntent(HomeIntent.NavigateToJoin) },
         onNavigateToGame = { gameId -> onIntent(HomeIntent.NavigateToGame(gameId)) }
-    )
-    HomeScreenBottomContent(
-        modifier = Modifier
-            .width(IntrinsicSize.Max)
-            .padding(top = mediumSize),
-        state = homeState,
-        onNavigateToProfile = { onIntent(HomeIntent.NavigateToProfile) },
-        onNavigateToSettings = { onIntent(HomeIntent.NavigateToSettings) },
-        onNavigateToPermissions = { onIntent(HomeIntent.NavigateToPermissions) }
     )
 }
 
@@ -103,10 +110,11 @@ private fun RecentGameCard(
     Surface(
         modifier = modifier,
         onClick = { onNavigateToGame(recentGame.gameId) },
+        tonalElevation = smallSize,
         shape = MediumRoundedShape
     ) {
         Box {
-            AsyncImage(
+            AdaptiveImage(
                 modifier = Modifier.matchParentSize(),
                 model = recentGame.imageUri?.value,
                 contentDescription = null,
@@ -157,12 +165,6 @@ private fun HomeScreenTopContent(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        AsyncImage(
-            modifier = Modifier.size(HomeScreenSize.graphicSize),
-            model = R.drawable.graphic_3,
-            contentDescription = null
-        )
-
         Text(
             text = stringResource(R.string.home_title, state.userName),
             style = MaterialTheme.typography.titleMedium,
@@ -201,13 +203,16 @@ private fun HomeScreenBottomContent(
     onNavigateToSettings: () -> Unit,
     onNavigateToPermissions: () -> Unit
 ) {
-    val permissionsState = rememberMultiplePermissionsState(state.permissions)
+    val permissionsState = if (!LocalInspectionMode.current) {
+        rememberMultiplePermissionsState(state.permissions)
+    } else null
+
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(mediumSize),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (!permissionsState.allPermissionsGranted) {
+        if (permissionsState?.allPermissionsGranted == false) {
             PermissionsAlert(onClick = onNavigateToPermissions)
         }
 

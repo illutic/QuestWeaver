@@ -1,4 +1,4 @@
-package g.sig.ui.components
+package g.sig.common.ui.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement

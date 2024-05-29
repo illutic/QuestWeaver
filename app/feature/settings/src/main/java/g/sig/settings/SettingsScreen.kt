@@ -11,7 +11,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -20,11 +19,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import coil.compose.AsyncImage
+import g.sig.common.ui.components.AdaptiveImage
+import g.sig.common.ui.components.CenteredProgressBar
+import g.sig.common.ui.layouts.ScreenScaffold
 import g.sig.settings.state.SettingsIntent
 import g.sig.settings.state.SettingsState
 import g.sig.ui.AppIcons
-import g.sig.ui.components.CenteredProgressBar
 import g.sig.ui.largeSize
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -70,14 +70,6 @@ private fun SettingsScreenContent(
         TextButton(onClick = { onIntent(SettingsIntent.OpenPrivacyPolicy) }) {
             Text(text = stringResource(id = R.string.privacy_policy))
         }
-
-        AsyncImage(
-            modifier = Modifier
-                .padding(top = largeSize)
-                .size(SettingsSize.imageSize),
-            model = R.drawable.graphic_7,
-            contentDescription = null,
-        )
     }
 }
 
@@ -86,7 +78,18 @@ internal fun SettingsScreen(
     state: SettingsState,
     onIntent: (intent: SettingsIntent) -> Unit
 ) {
-    Scaffold(topBar = { SettingsTopBar { onIntent(SettingsIntent.Back) } }) { padding ->
+    ScreenScaffold(
+        topBar = { SettingsTopBar { onIntent(SettingsIntent.Back) } },
+        decoration = {
+            AdaptiveImage(
+                modifier = Modifier
+                    .padding(top = largeSize)
+                    .size(SettingsSize.imageSize),
+                model = R.drawable.graphic_7,
+                contentDescription = null,
+            )
+        }
+    ) {
         when (state) {
             SettingsState.Loading -> CenteredProgressBar()
 
@@ -96,7 +99,6 @@ internal fun SettingsScreen(
                     modifier = Modifier
                         .verticalScroll(rememberScrollState())
                         .fillMaxSize()
-                        .padding(padding)
                         .padding(largeSize),
                     onIntent = onIntent
                 )

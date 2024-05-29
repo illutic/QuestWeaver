@@ -8,11 +8,8 @@ sealed interface UserState {
     data object Loading : UserState
 
     sealed interface Loaded : UserState {
-        val user: User
-        val hasUser: Boolean get() = user.id.isNotBlank()
-
-        data class Success(override val user: User) : Loaded
-        data class Error(override val user: User, @StringRes val error: Int) : Loaded
+        data class Success(val user: User) : Loaded
+        data class Error(val name: String, @StringRes val error: Int) : Loaded
     }
 }
 

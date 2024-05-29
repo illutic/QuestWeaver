@@ -37,17 +37,16 @@ class UserViewModel @Inject constructor(
 
                 is UserIntent.SaveUser -> {
                     _state.value = UserState.Loading
-                    val user = intent.user
-                    val validationState = validateUser(user.name)
+                    val validationState = validateUser(intent.name)
 
                     when (validationState) {
                         is ValidateUserNameUseCase.ValidationState.Valid -> {
-                            updateUserName(user.name)
+                            updateUserName(intent.name)
                             _events.send(UserEvent.UserSaved)
                         }
 
                         is ValidateUserNameUseCase.ValidationState.EmptyName -> {
-                            _state.value = UserState.Loaded.Error(user, R.string.user_name_error)
+                            _state.value = UserState.Loaded.Error(intent.name, R.string.user_name_error)
                         }
                     }
                 }

@@ -9,13 +9,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -27,11 +27,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import coil.compose.AsyncImage
-import g.sig.common.ui.AppOutlinedTextField
+import androidx.compose.ui.tooling.preview.Preview
+import g.sig.common.ui.components.AdaptiveImage
+import g.sig.common.ui.components.Alert
+import g.sig.common.ui.components.AppOutlinedTextField
+import g.sig.common.ui.components.CenteredProgressBar
+import g.sig.common.ui.layouts.ScreenScaffold
+import g.sig.domain.entities.User
 import g.sig.ui.AppIcons
-import g.sig.ui.components.Alert
-import g.sig.ui.components.CenteredProgressBar
+import g.sig.ui.AppTheme
 import g.sig.ui.largeSize
 import g.sig.ui.mediumSize
 import g.sig.user.state.UserIntent
@@ -49,16 +53,15 @@ private fun UserScreenTopBar(
         title = {
             Text(
                 text = when (userState) {
-                    UserState.Idle,
-                    UserState.Loading -> stringResource(id = R.string.user_top_bar_update_title)
-
-                    is UserState.Loaded -> {
-                        if (userState.hasUser) {
+                    is UserState.Loaded.Success -> {
+                        if (userState.user.id.isNotBlank()) {
                             stringResource(id = R.string.user_top_bar_update_title)
                         } else {
                             stringResource(id = R.string.user_top_bar_creation_title)
                         }
                     }
+
+                    else -> stringResource(id = R.string.user_top_bar_update_title)
                 },
             )
         },
@@ -72,37 +75,22 @@ private fun UserScreenTopBar(
 @Composable
 private fun UserScreenContent(
     modifier: Modifier = Modifier,
-    state: UserState.Loaded,
-    onIntent: (intent: UserIntent) -> Unit
+    state: UserState.Loaded.Success,
+    onValueChanged: (String) -> Unit,
+    onDone: () -> Unit
 ) {
-    var name by remember { mutableStateOf(state.user.name) }
-    val saveUserIntent = { onIntent(UserIntent.SaveUser(state.user.copy(name = name))) }
-
     Column(
-        modifier = modifier,
+        modifier = modifier.padding(horizontal = largeSize),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        AsyncImage(
-            modifier = Modifier.size(UserSize.imageSize),
-            model = if (state.hasUser) {
-                R.drawable.graphic_6
-            } else {
-                R.drawable.graphic_2
-            },
-            contentDescription = null,
-        )
-
         AppOutlinedTextField(
-            modifier = Modifier
-                .defaultMinSize(minWidth = UserSize.minTextSize)
-                .width(IntrinsicSize.Max),
-            value = name,
+            modifier = Modifier.defaultMinSize(minWidth = UserSize.minTextSize),
+            value = state.user.name,
             error = state.getError()?.let { stringResource(it) },
             label = stringResource(R.string.user_name_label),
             placeholder = stringResource(R.string.user_name_placeholder),
-            isLastField = true,
-            onDone = saveUserIntent,
-            onValueChanged = { name = it }
+            keyboardActions = KeyboardActions(onDone = { onDone() }),
+            onValueChanged = onValueChanged
         )
 
         Alert(
@@ -119,10 +107,6 @@ private fun UserScreenContent(
                 Icon(AppIcons.Info, contentDescription = null)
             }
         )
-
-        Button(onClick = saveUserIntent) {
-            Text(text = stringResource(id = R.string.user_name_button))
-        }
     }
 }
 
@@ -131,21 +115,63 @@ internal fun UserScreen(
     state: UserState,
     onIntent: (intent: UserIntent) -> Unit
 ) {
-    Scaffold(topBar = { UserScreenTopBar(state) { onIntent(UserIntent.Back) } }) { padding ->
-        when (state) {
-            UserState.Idle, UserState.Loading -> CenteredProgressBar()
+    var name by remember { mutableStateOf("") }
+    val isUserPresent = (state as? UserState.Loaded.Success)?.user?.id?.isNotBlank() ?: false
 
-            is UserState.Loaded -> {
+    ScreenScaffold(
+        topBar = { UserScreenTopBar(state) { onIntent(UserIntent.Back) } },
+        navigation = {
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(largeSize),
+                onClick = { onIntent(UserIntent.SaveUser(name)) }
+            ) {
+                Text(text = stringResource(id = R.string.user_name_button))
+            }
+        },
+        decoration = {
+            AdaptiveImage(
+                modifier = Modifier.size(UserSize.imageSize),
+                model = if (isUserPresent) {
+                    R.drawable.graphic_6
+                } else {
+                    R.drawable.graphic_2
+                },
+                contentDescription = null,
+            )
+        }
+    ) {
+        when (state) {
+            is UserState.Loaded.Success -> {
+                name = state.user.name
                 UserScreenContent(
                     modifier = Modifier
                         .verticalScroll(rememberScrollState())
-                        .fillMaxSize()
-                        .padding(padding)
-                        .padding(largeSize),
+                        .fillMaxSize(),
                     state = state,
-                    onIntent = onIntent
+                    onDone = { onIntent(UserIntent.SaveUser(name)) },
+                    onValueChanged = { name = it }
                 )
             }
+
+            else -> CenteredProgressBar()
         }
+    }
+}
+
+@Composable
+@Preview
+private fun UserScreenPreview() {
+    AppTheme {
+        UserScreen(
+            state = UserState.Loaded.Success(
+                User(
+                    id = "1",
+                    name = "Test"
+                )
+            ),
+            onIntent = {}
+        )
     }
 }

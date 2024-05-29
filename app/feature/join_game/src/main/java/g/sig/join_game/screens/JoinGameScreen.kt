@@ -28,7 +28,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -47,8 +46,9 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import g.sig.common.ui.PermissionsAlert
+import g.sig.common.ui.components.AdaptiveImage
+import g.sig.common.ui.components.PermissionsAlert
+import g.sig.common.ui.layouts.ScreenScaffold
 import g.sig.domain.entities.ConnectionState
 import g.sig.domain.entities.Device
 import g.sig.join_game.R
@@ -60,10 +60,17 @@ import g.sig.ui.mediumSize
 
 @Composable
 internal fun JoinGameScreen(state: JoinGameState, onIntent: (JoinGameIntent) -> Unit) {
-    Scaffold(
+    ScreenScaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = { JoinGameTopBar { onIntent(JoinGameIntent.Back) } },
-    ) { padding ->
+        decoration = {
+            AdaptiveImage(
+                modifier = Modifier.size(250.dp),
+                model = R.drawable.graphic_8,
+                contentDescription = ""
+            )
+        }
+    ) {
         var showDeviceConfirmationDialog by remember { mutableStateOf<JoinGameState.ShowDeviceConfirmationDialog?>(null) }
         showDeviceConfirmationDialog?.let {
             ConnectionDialog(
@@ -74,7 +81,6 @@ internal fun JoinGameScreen(state: JoinGameState, onIntent: (JoinGameIntent) -> 
         }
 
         JoinGameScreenContent(
-            modifier = Modifier.padding(padding),
             state = state,
             onDeviceClicked = { device ->
                 showDeviceConfirmationDialog = JoinGameState.ShowDeviceConfirmationDialog(device)
@@ -98,14 +104,6 @@ private fun JoinGameScreenContent(
         verticalArrangement = spacedBy(largeSize),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        item {
-            AsyncImage(
-                modifier = Modifier.width(360.dp),
-                model = R.drawable.graphic_8,
-                contentDescription = ""
-            )
-        }
-
         if (state.discovering && state.hasPermissions) {
             item {
                 LinearProgressIndicator(Modifier.width(IntrinsicSize.Max))
