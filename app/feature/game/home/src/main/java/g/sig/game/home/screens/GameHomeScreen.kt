@@ -1,22 +1,63 @@
 package g.sig.game.home.screens
 
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import g.sig.game.home.R
 import g.sig.game.home.data.GameHomeViewModel
+import g.sig.game.home.screens.components.GameHomeTopBar
+import g.sig.game.home.state.GameHomeEvent
+import g.sig.game.home.state.GameHomeIntent
+import g.sig.ui.AppIcons
+import g.sig.ui.AppTheme
 
 @Composable
-internal fun GameHomeRoute() {
+internal fun GameHomeRoute(onBackPressed: () -> Unit) {
     val viewModel = hiltViewModel<GameHomeViewModel>()
-    GameHomeScreen()
+
+    LaunchedEffect(Unit) {
+        viewModel.events.collect {
+            when (it) {
+                is GameHomeEvent.Back -> onBackPressed()
+            }
+        }
+    }
+
+    GameHomeScreen(viewModel::handleIntent)
 }
 
 @Composable
-internal fun GameHomeScreen() {
-    Column(modifier = Modifier.fillMaxSize()) {
-        Text(text = "Home")
+@OptIn(ExperimentalMaterial3Api::class)
+internal fun GameHomeScreen(
+    postIntent: (GameHomeIntent) -> Unit
+) {
+    BottomSheetScaffold(
+        topBar = {
+            GameHomeTopBar(
+                title = stringResource(R.string.game_home_label),
+                icon = AppIcons.Close,
+                onBackPressed = { postIntent(GameHomeIntent.Back) }
+            )
+        },
+        modifier = Modifier.fillMaxSize(),
+        sheetContent = {}
+    ) {
+        Box(modifier = Modifier.padding(it), propagateMinConstraints = true) {
+
+        }
     }
+}
+
+@Preview
+@Composable
+internal fun GameHomePreview() {
+    AppTheme { GameHomeScreen {} }
 }

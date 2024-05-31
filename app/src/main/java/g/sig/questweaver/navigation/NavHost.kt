@@ -109,6 +109,11 @@ fun AppNavHost(
             }
         )
 
-        gameGraph()
+        gameGraph {
+            navController.navigate(HomeRoute.path) {
+                launchSingleTop = true
+                popUpTo(navController.graph.id) { inclusive = true }
+            }
+        }
     }
 }

@@ -3,6 +3,7 @@
     <string name="game_close_game_title">Exit game</string>
     <string name="game_close_game_message">Do you wish to exit the game? You may not be able to rejoin.</string>
     <string name="game_device_disconnected_title">Connection Lost</string>
+    <string name="game_device_disconnected_message">No device is connected. You are going to be disconnected.</string>
     <string name="confirm">Okay</string>
     <string name="cancel">Cancel</string>
 </resources>

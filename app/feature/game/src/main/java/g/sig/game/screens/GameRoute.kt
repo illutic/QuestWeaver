@@ -1,5 +1,6 @@
 package g.sig.game.screens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -43,6 +44,8 @@ internal fun GameRoute(
     var showCloseGameDialog by rememberSaveable { mutableStateOf(false) }
     var showDeviceDisconnectedDialog by rememberSaveable { mutableStateOf(false) }
 
+    BackHandler { showCloseGameDialog = true }
+
     LaunchedEffect(Unit) {
         viewModel.handleIntent(GameIntent.Load)
         viewModel.events.collectLatest {
@@ -69,6 +72,7 @@ internal fun GameRoute(
         GameAlertDialog(
             icon = AppIcons.Warning,
             title = stringResource(R.string.game_device_disconnected_title),
+            message = stringResource(R.string.game_device_disconnected_message),
             onDismissRequest = { onGameClosed() },
             onConfirm = { onGameClosed() }
         )
@@ -87,7 +91,7 @@ internal fun GameRoute(
             navController = navController,
             startDestination = GameHomeRoute.path
         ) {
-            gameHomeGraph()
+            gameHomeGraph { navController.popBackStack() }
             gameChatGraph()
             gameAiGraph()
         }
