@@ -16,7 +16,7 @@ jobs:
       - name: Get dependencies
         run: sudo apt-get install -y curl unzip
       - name: Fetch detekt jar
-        run: curl -sSLO https://github.com/detekt/detekt/releases/download/v1.23.3/detekt-cli-1.23.3.zip
+        run: curl -sSLO "https://github.com/detekt/detekt/releases/download/v$DETEKT_VERSION/detekt-cli-$DETEKT_VERSION.zip"
       - name: Unzip detekt
         run: unzip detekt-cli-1.23.3.zip
       - name: Run detekt 
