@@ -31,4 +31,4 @@ jobs:
         with:
           name: detekt-report
           path: |
-            **/report/*.html
+            **reports/*.html
