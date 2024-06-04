@@ -11,7 +11,7 @@ on:
 jobs:
   detekt:
     runs-on: ubuntu-latest
-    environment: ${{ vars.Development }}
+    environment: "Development"
     env:
       DETEKT_VERSION: ${{ vars.DETEKT_VERSION }}
     steps:
