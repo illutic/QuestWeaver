@@ -12,19 +12,17 @@ jobs:
   detekt:
     runs-on: ubuntu-latest
     environment: ${{ vars.Development }}
+    env:
+      DETEKT_VERSION: ${{ vars.DETEKT_VERSION }}
     steps:
       - uses: actions/checkout@v4
       - name: Get dependencies
         run: sudo apt-get install -y curl unzip
+      - name: Verify Detekt Version
+        run: echo "Detekt version - $DETEKT_VERSION"
       - name: Fetch detekt jar
         run: curl -sSLO "https://github.com/detekt/detekt/releases/download/v$DETEKT_VERSION/detekt-cli-$DETEKT_VERSION.zip"
-        env:
-          DETEKT_VERSION: ${{ vars.DETEKT_VERSION }}
       - name: Unzip detekt
-        run: unzip detekt-cli-$DETEKT_VERSION.zip
-        env:
-          DETEKT_VERSION: ${{ vars.DETEKT_VERSION }}
+        run: unzip detekt-cli-$DETEKT_VERSION.zip"
       - name: Run detekt 
         run: ./detekt-cli-$DETEKT_VERSION/bin/detekt-cli --report html:reports/detekt.html -c ./detekt.yml
-        env:
-          DETEKT_VERSION: ${{ vars.DETEKT_VERSION }}
