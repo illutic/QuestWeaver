@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "g.sig.nearby"
+    namespace = "g.sig.questweaver.nearby"
     compileSdk = libs.versions.targetSdk.toInt()
 
     defaultConfig {

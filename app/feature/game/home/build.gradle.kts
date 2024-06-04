@@ -7,24 +7,13 @@ plugins {
 }
 
 android {
-    namespace = "g.sig.game.home"
+    namespace = "g.sig.questweaver.game.home"
     compileSdk = libs.versions.targetSdk.toInt()
 
     defaultConfig {
         minSdk = libs.versions.minSdk.toInt()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-rules.pro")
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
     }
     buildFeatures {
         compose = true
@@ -46,7 +35,6 @@ dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:navigation"))
     implementation(project(":app:common:ui"))
-    implementation(project(":app:common:utils"))
     implementation(libs.dagger.hilt)
     implementation(libs.hilt.navigation)
     ksp(libs.dagger.hilt.compiler)

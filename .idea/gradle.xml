@@ -12,15 +12,14 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/app/common" />
             <option value="$PROJECT_DIR$/app/common/ui" />
-            <option value="$PROJECT_DIR$/app/common/utils" />
             <option value="$PROJECT_DIR$/app/feature" />
             <option value="$PROJECT_DIR$/app/feature/game" />
             <option value="$PROJECT_DIR$/app/feature/game/ai" />
             <option value="$PROJECT_DIR$/app/feature/game/chat" />
             <option value="$PROJECT_DIR$/app/feature/game/home" />
             <option value="$PROJECT_DIR$/app/feature/home" />
-            <option value="$PROJECT_DIR$/app/feature/host_game" />
-            <option value="$PROJECT_DIR$/app/feature/join_game" />
+            <option value="$PROJECT_DIR$/app/feature/hostgame" />
+            <option value="$PROJECT_DIR$/app/feature/joingame" />
             <option value="$PROJECT_DIR$/app/feature/onboarding" />
             <option value="$PROJECT_DIR$/app/feature/permissions" />
             <option value="$PROJECT_DIR$/app/feature/settings" />

@@ -5,24 +5,13 @@ plugins {
 }
 
 android {
-    namespace = "g.sig.common.data"
+    namespace = "g.sig.questweaver.common.data"
     compileSdk = libs.versions.targetSdk.toInt()
 
     defaultConfig {
         minSdk = libs.versions.minSdk.toInt()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-rules.pro")
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

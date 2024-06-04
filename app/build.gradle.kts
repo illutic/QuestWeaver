@@ -16,11 +16,11 @@ val properties: Properties = Properties().apply {
 }
 
 android {
-    namespace = "g.sig.questweaver"
+    namespace = "g.sig.questweaver.app"
     compileSdk = libs.versions.targetSdk.toInt()
 
     defaultConfig {
-        applicationId = "g.sig.questweaver"
+        applicationId = "g.sig.questweaver.questweaver"
         minSdk = libs.versions.minSdk.toInt()
         targetSdk = libs.versions.targetSdk.toInt()
         versionCode = libs.versions.versionCode.toInt()
@@ -70,7 +70,8 @@ android {
         enableStrongSkippingMode = true
 
         reportsDestination = layout.buildDirectory.dir("compose_compiler")
-        stabilityConfigurationFile = rootProject.layout.projectDirectory.file("stability_config.conf")
+        stabilityConfigurationFile =
+            rootProject.layout.projectDirectory.file("stability_config.conf")
     }
     packaging {
         resources {
@@ -90,8 +91,8 @@ dependencies {
     implementation(project(":app:feature:permissions"))
     implementation(project(":app:feature:user"))
     implementation(project(":app:feature:settings"))
-    implementation(project(":app:feature:join_game"))
-    implementation(project(":app:feature:host_game"))
+    implementation(project(":app:feature:joingame"))
+    implementation(project(":app:feature:hostgame"))
 
     implementation(platform(libs.firebaseBom))
     implementation(libs.firebase.analytics)

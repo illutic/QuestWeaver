@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "g.sig.game.navigation"
+    namespace = "g.sig.questweaver.game.navigation"
     compileSdk = libs.versions.targetSdk.toInt()
 
     defaultConfig {
@@ -33,7 +33,8 @@ android {
         enableStrongSkippingMode = true
 
         reportsDestination = layout.buildDirectory.dir("compose_compiler")
-        stabilityConfigurationFile = rootProject.layout.projectDirectory.file("stability_config.conf")
+        stabilityConfigurationFile =
+            rootProject.layout.projectDirectory.file("stability_config.conf")
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
