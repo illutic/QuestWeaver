@@ -18,6 +18,6 @@ jobs:
       - name: Fetch detekt jar
         run: curl -sSLO "https://github.com/detekt/detekt/releases/download/v$DETEKT_VERSION/detekt-cli-$DETEKT_VERSION.zip"
       - name: Unzip detekt
-        run: unzip detekt-cli-1.23.3.zip
+        run: unzip detekt-cli-$DETEKT_VERSION.zip
       - name: Run detekt 
-        run: ./detekt-cli-1.23.3/bin/detekt-cli --report html:reports/detekt.html -c ./detekt.yml
+        run: ./detekt-cli-$DETEKT_VERSION/bin/detekt-cli --report html:reports/detekt.html -c ./detekt.yml
