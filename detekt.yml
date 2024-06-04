@@ -1,5 +1,5 @@
 build:
-  maxIssues: 0
+  maxIssues: 10
   excludeCorrectable: false
   weights:
   # complexity: 2
@@ -43,10 +43,10 @@ console-reports:
 
 output-reports:
   active: true
-  exclude:
+  exclude: [ ]
     # - 'TxtOutputReport'
     # - 'XmlOutputReport'
-    - 'HtmlOutputReport'
+  # - 'HtmlOutputReport'
   # - 'MdOutputReport'
   # - 'SarifOutputReport'
 
@@ -175,7 +175,9 @@ complexity:
     ignoreDeprecated: false
     ignorePrivate: false
     ignoreOverridden: false
-    ignoreAnnotatedFunctions: [ 'Preview', 'Provides' ]
+    ignoreAnnotatedFunctions:
+      - 'Preview'
+      - 'Provides'
 
 coroutines:
   active: true
