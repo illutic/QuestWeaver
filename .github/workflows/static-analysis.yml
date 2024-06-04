@@ -11,13 +11,20 @@ on:
 jobs:
   detekt:
     runs-on: ubuntu-latest
+    environment: ${{ vars.Development }}
     steps:
       - uses: actions/checkout@v4
       - name: Get dependencies
         run: sudo apt-get install -y curl unzip
       - name: Fetch detekt jar
         run: curl -sSLO "https://github.com/detekt/detekt/releases/download/v$DETEKT_VERSION/detekt-cli-$DETEKT_VERSION.zip"
+        env:
+          DETEKT_VERSION: ${{ vars.DETEKT_VERSION }}
       - name: Unzip detekt
         run: unzip detekt-cli-$DETEKT_VERSION.zip
+        env:
+          DETEKT_VERSION: ${{ vars.DETEKT_VERSION }}
       - name: Run detekt 
         run: ./detekt-cli-$DETEKT_VERSION/bin/detekt-cli --report html:reports/detekt.html -c ./detekt.yml
+        env:
+          DETEKT_VERSION: ${{ vars.DETEKT_VERSION }}
