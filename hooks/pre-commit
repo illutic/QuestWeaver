@@ -1,0 +1,25 @@
+#!/bin/bash
+
+echo "Running detekt check..."
+# Get all the files that are staged
+fileArray=($(git diff --name-only --cached | grep -E "\.kt$"))
+
+# If no kt files are staged, then exit
+if [ ${#fileArray[@]} -eq 0 ]; then
+  echo "No kt files to check"
+  exit 0
+fi
+
+detektInput=$(IFS=,;printf  "%s" "${fileArray[*]}")
+echo "Input files: $detektInput"
+
+OUTPUT=$(detekt -c ../../detekt.yml --input "$detektInput" 2>&1)
+EXIT_CODE=$?
+if [ $EXIT_CODE -ne 0 ]; then
+  echo $OUTPUT
+  echo "***********************************************"
+  echo "                 detekt failed                 "
+  echo " Please fix the above issues before committing "
+  echo "***********************************************"
+  exit $EXIT_CODE
+fi
