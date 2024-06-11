@@ -1,4 +1,4 @@
-package g.sig.questweaver.domain.entities
+package g.sig.questweaver.domain.entities.io
 
 import java.io.Closeable
 import java.io.InputStream

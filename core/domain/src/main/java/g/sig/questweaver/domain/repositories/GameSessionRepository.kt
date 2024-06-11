@@ -1,6 +1,6 @@
 package g.sig.questweaver.domain.repositories
 
-import g.sig.questweaver.domain.entities.Game
+import g.sig.questweaver.domain.entities.common.Game
 
 interface GameSessionRepository {
     suspend fun getGameSession(): Game

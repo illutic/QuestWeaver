@@ -1,7 +1,7 @@
 package g.sig.questweaver.domain.usecases.nearby
 
-import g.sig.questweaver.domain.entities.ConnectionState
-import g.sig.questweaver.domain.entities.Device
+import g.sig.questweaver.domain.entities.common.Device
+import g.sig.questweaver.domain.entities.states.ConnectionState
 import g.sig.questweaver.domain.repositories.DeviceRepository
 import g.sig.questweaver.domain.repositories.NearbyRepository
 import kotlinx.coroutines.CoroutineScope

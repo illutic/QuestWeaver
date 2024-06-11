@@ -1,6 +1,6 @@
 package g.sig.questweaver.home.state
 
-import g.sig.questweaver.domain.entities.Game
+import g.sig.questweaver.domain.entities.common.Game
 
 sealed interface HomeState {
     data object Idle : HomeState

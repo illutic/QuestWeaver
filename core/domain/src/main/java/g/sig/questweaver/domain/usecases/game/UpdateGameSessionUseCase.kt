@@ -1,6 +1,6 @@
 package g.sig.questweaver.domain.usecases.game
 
-import g.sig.questweaver.domain.entities.Game
+import g.sig.questweaver.domain.entities.common.Game
 import g.sig.questweaver.domain.repositories.GameSessionRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext

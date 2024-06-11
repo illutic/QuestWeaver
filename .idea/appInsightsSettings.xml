@@ -22,7 +22,7 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="g.sig.questweaver.questweaver" />
+                  <option name="appId" value="g.sig.questweaver" />
                   <option name="mobileSdkAppId" value="1:868778343615:android:f3932dd1dd8e82eab81a0a" />
                   <option name="projectId" value="questweaver-6c65a" />
                   <option name="projectNumber" value="868778343615" />

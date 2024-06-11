@@ -34,7 +34,7 @@ import g.sig.questweaver.common.ui.components.Alert
 import g.sig.questweaver.common.ui.components.AppOutlinedTextField
 import g.sig.questweaver.common.ui.components.CenteredProgressBar
 import g.sig.questweaver.common.ui.layouts.ScreenScaffold
-import g.sig.questweaver.domain.entities.User
+import g.sig.questweaver.domain.entities.common.User
 import g.sig.questweaver.ui.AppIcons
 import g.sig.questweaver.ui.AppTheme
 import g.sig.questweaver.ui.largeSize

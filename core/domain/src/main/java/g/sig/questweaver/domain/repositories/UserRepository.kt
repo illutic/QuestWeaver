@@ -1,6 +1,6 @@
 package g.sig.questweaver.domain.repositories
 
-import g.sig.questweaver.domain.entities.User
+import g.sig.questweaver.domain.entities.common.User
 
 interface UserRepository {
     suspend fun getUser(): User

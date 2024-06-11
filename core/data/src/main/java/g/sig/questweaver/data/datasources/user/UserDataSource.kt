@@ -1,11 +1,11 @@
 package g.sig.questweaver.data.datasources.user
 
-import g.sig.questweaver.data.entities.User
+import g.sig.questweaver.data.entities.common.UserDto
 
 interface UserDataSource {
-    suspend fun getUser(): User
-    suspend fun saveUser(user: User)
+    suspend fun getUser(): UserDto
+    suspend fun saveUser(userDto: UserDto)
     suspend fun deleteUser()
-    suspend fun updateUser(user: User)
+    suspend fun updateUser(userDto: UserDto)
     suspend fun hasUser(): Boolean
 }

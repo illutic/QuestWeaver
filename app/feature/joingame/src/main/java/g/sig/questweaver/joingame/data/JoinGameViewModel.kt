@@ -3,7 +3,7 @@ package g.sig.questweaver.joingame.data
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import g.sig.questweaver.domain.entities.Game
+import g.sig.questweaver.domain.entities.common.Game
 import g.sig.questweaver.domain.usecases.device.GetDevicesUseCase
 import g.sig.questweaver.domain.usecases.nearby.AcceptConnectionUseCase
 import g.sig.questweaver.domain.usecases.nearby.CancelDiscoveryUseCase

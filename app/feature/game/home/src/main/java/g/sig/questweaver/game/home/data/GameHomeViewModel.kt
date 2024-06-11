@@ -18,6 +18,16 @@ class GameHomeViewModel @Inject constructor() : ViewModel() {
     fun handleIntent(intent: GameHomeIntent) {
         when (intent) {
             is GameHomeIntent.Back -> sendEvent(GameHomeEvent.Back)
+            GameHomeIntent.Request.RequestColorChange -> TODO()
+            GameHomeIntent.Request.RequestDMTools -> TODO()
+            GameHomeIntent.Request.RequestDrawing -> TODO()
+            GameHomeIntent.Request.RequestOpacityChange -> TODO()
+            GameHomeIntent.Request.RequestSizeChange -> TODO()
+            GameHomeIntent.Request.RequestTextEdit -> TODO()
+            is GameHomeIntent.Select.SelectColor -> TODO()
+            is GameHomeIntent.Select.SelectOpacity -> TODO()
+            is GameHomeIntent.Select.SelectSize -> TODO()
+            is GameHomeIntent.Select.SelectText -> TODO()
         }
     }
 

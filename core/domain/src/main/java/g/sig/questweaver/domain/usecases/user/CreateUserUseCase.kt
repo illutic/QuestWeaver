@@ -1,6 +1,6 @@
 package g.sig.questweaver.domain.usecases.user
 
-import g.sig.questweaver.domain.entities.User
+import g.sig.questweaver.domain.entities.common.User
 import g.sig.questweaver.domain.repositories.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext

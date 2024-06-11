@@ -2,7 +2,7 @@ package g.sig.questweaver.data.utils
 
 import com.google.android.gms.nearby.connection.ConnectionsClient
 import com.google.android.gms.nearby.connection.PayloadCallback
-import g.sig.questweaver.domain.entities.ConnectionState
+import g.sig.questweaver.domain.entities.states.ConnectionState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onEach
 

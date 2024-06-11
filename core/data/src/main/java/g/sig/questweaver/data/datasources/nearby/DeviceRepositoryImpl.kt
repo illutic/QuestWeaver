@@ -1,7 +1,7 @@
 package g.sig.questweaver.data.datasources.nearby
 
-import g.sig.questweaver.domain.entities.ConnectionState
-import g.sig.questweaver.domain.entities.Device
+import g.sig.questweaver.domain.entities.common.Device
+import g.sig.questweaver.domain.entities.states.ConnectionState
 import g.sig.questweaver.domain.repositories.DeviceRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow

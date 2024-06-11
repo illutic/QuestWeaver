@@ -20,7 +20,7 @@ android {
     compileSdk = libs.versions.targetSdk.toInt()
 
     defaultConfig {
-        applicationId = "g.sig.questweaver.questweaver"
+        applicationId = "g.sig.questweaver"
         minSdk = libs.versions.minSdk.toInt()
         targetSdk = libs.versions.targetSdk.toInt()
         versionCode = libs.versions.versionCode.toInt()
@@ -93,6 +93,7 @@ dependencies {
     implementation(project(":app:feature:settings"))
     implementation(project(":app:feature:joingame"))
     implementation(project(":app:feature:hostgame"))
+    implementation(project(":app:feature:game"))
 
     implementation(platform(libs.firebaseBom))
     implementation(libs.firebase.analytics)
@@ -100,7 +101,6 @@ dependencies {
     implementation(libs.firebase.config)
     implementation(libs.androidx.splashscreen)
     implementation(libs.dagger.hilt)
-    implementation(project(":app:feature:game"))
     ksp(libs.dagger.hilt.compiler)
 }
 

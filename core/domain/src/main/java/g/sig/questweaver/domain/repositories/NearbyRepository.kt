@@ -1,9 +1,9 @@
 package g.sig.questweaver.domain.repositories
 
-import g.sig.questweaver.domain.entities.ConnectionState
-import g.sig.questweaver.domain.entities.Device
-import g.sig.questweaver.domain.entities.Game
-import g.sig.questweaver.domain.entities.User
+import g.sig.questweaver.domain.entities.common.Device
+import g.sig.questweaver.domain.entities.common.Game
+import g.sig.questweaver.domain.entities.common.User
+import g.sig.questweaver.domain.entities.states.ConnectionState
 import kotlinx.coroutines.flow.Flow
 
 interface NearbyRepository {

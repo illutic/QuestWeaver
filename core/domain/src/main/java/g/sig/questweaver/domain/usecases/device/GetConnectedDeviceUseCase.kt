@@ -1,6 +1,6 @@
 package g.sig.questweaver.domain.usecases.device
 
-import g.sig.questweaver.domain.entities.ConnectionState
+import g.sig.questweaver.domain.entities.states.ConnectionState
 import g.sig.questweaver.domain.repositories.DeviceRepository
 import kotlinx.coroutines.flow.map
 

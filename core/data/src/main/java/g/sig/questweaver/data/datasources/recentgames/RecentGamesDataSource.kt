@@ -1,9 +1,9 @@
 package g.sig.questweaver.data.datasources.recentgames
 
-import g.sig.questweaver.data.entities.Game
+import g.sig.questweaver.data.entities.common.GameDto
 
 interface RecentGamesDataSource {
-    suspend fun getRecentGames(): List<Game>
-    suspend fun getGame(gameId: String): Game?
-    suspend fun saveGame(game: Game)
+    suspend fun getRecentGames(): List<GameDto>
+    suspend fun getGame(gameId: String): GameDto?
+    suspend fun saveGame(gameDto: GameDto)
 }

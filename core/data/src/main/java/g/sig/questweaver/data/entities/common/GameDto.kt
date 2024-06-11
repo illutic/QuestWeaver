@@ -1,28 +1,29 @@
 @file:UseSerializers(UriSerializer::class)
 
-package g.sig.questweaver.data.entities
+package g.sig.questweaver.data.entities.common
 
 import android.net.Uri
 import g.sig.questweaver.common.data.serializers.UriSerializer
+import g.sig.questweaver.data.entities.Dto
 import g.sig.questweaver.data.utils.toDomain
+import g.sig.questweaver.domain.entities.common.Game
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
-import g.sig.questweaver.domain.entities.Game as GameDomain
 
 @Serializable
-data class Game(
+data class GameDto(
     val gameId: String,
     val title: String,
     val description: String,
     val players: Int = 0,
     val maxPlayers: Int,
-    val isDM: Boolean = false
-) : DataEntity {
+    val dmId: String? = null,
+) : Dto {
     fun toDomain() =
-        GameDomain(gameId, title, description, Uri.EMPTY.toDomain(), players, maxPlayers, isDM)
+        Game(gameId, title, description, Uri.EMPTY.toDomain(), players, maxPlayers, dmId)
 
     companion object {
-        val Empty = Game("", "", "", 0, 0)
-        fun GameDomain.fromDomain() = Game(gameId, title, description, players, maxPlayers, isDM)
+        val Empty = GameDto("", "", "", 0, 0)
+        fun Game.fromDomain() = GameDto(gameId, title, description, players, maxPlayers, dmId)
     }
 }

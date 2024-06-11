@@ -1,7 +1,7 @@
 package g.sig.questweaver.data.datasources.nearby
 
 import com.google.android.gms.nearby.connection.ConnectionsClient
-import g.sig.questweaver.data.entities.User
+import g.sig.questweaver.data.entities.common.UserDto
 import g.sig.questweaver.data.nearby.acceptConnection
 import g.sig.questweaver.data.nearby.rejectConnection
 import g.sig.questweaver.data.nearby.requestConnection
@@ -13,7 +13,7 @@ import g.sig.questweaver.data.platform.BatteryLevel
 import g.sig.questweaver.data.platform.BatteryLevelReceiver
 import g.sig.questweaver.data.utils.acceptConnectionOnInitiated
 import g.sig.questweaver.data.utils.logOnEach
-import g.sig.questweaver.domain.entities.ConnectionState
+import g.sig.questweaver.domain.entities.states.ConnectionState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapMerge
@@ -24,7 +24,7 @@ class NearbyDataSourceImpl(
     private val serviceId: String
 ) : NearbyDataSource {
     @OptIn(ExperimentalCoroutinesApi::class)
-    override fun discover(user: User): Flow<ConnectionState> =
+    override fun discover(userDto: UserDto): Flow<ConnectionState> =
         BatteryLevelReceiver
             .level
             .flatMapMerge { batteryLevel ->
@@ -54,8 +54,8 @@ class NearbyDataSourceImpl(
 
     override fun cancelAdvertisement() = stopAdvertising(connectionsClient)
 
-    override fun requestConnection(user: User, endpointId: String): Flow<ConnectionState> =
-        requestConnection(connectionsClient, user.name, endpointId)
+    override fun requestConnection(userDto: UserDto, endpointId: String): Flow<ConnectionState> =
+        requestConnection(connectionsClient, userDto.name, endpointId)
             .acceptConnectionOnInitiated(connectionsClient, payloadCallback)
             .logOnEach()
 

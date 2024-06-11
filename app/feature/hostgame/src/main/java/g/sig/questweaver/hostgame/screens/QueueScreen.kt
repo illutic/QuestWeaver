@@ -42,8 +42,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import g.sig.questweaver.common.ui.components.AdaptiveImage
 import g.sig.questweaver.common.ui.layouts.ScreenScaffold
-import g.sig.questweaver.domain.entities.ConnectionState
-import g.sig.questweaver.domain.entities.Device
+import g.sig.questweaver.domain.entities.common.Device
+import g.sig.questweaver.domain.entities.states.ConnectionState
 import g.sig.questweaver.hostgame.R
 import g.sig.questweaver.hostgame.state.QueueIntent
 import g.sig.questweaver.hostgame.state.QueueState

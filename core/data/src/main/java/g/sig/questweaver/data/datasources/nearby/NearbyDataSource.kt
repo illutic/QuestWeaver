@@ -1,15 +1,15 @@
 package g.sig.questweaver.data.datasources.nearby
 
-import g.sig.questweaver.data.entities.User
-import g.sig.questweaver.domain.entities.ConnectionState
+import g.sig.questweaver.data.entities.common.UserDto
+import g.sig.questweaver.domain.entities.states.ConnectionState
 import kotlinx.coroutines.flow.Flow
 
 interface NearbyDataSource {
-    fun discover(user: User): Flow<ConnectionState>
+    fun discover(userDto: UserDto): Flow<ConnectionState>
     fun cancelDiscovery()
     fun advertise(name: String): Flow<ConnectionState>
     fun cancelAdvertisement()
-    fun requestConnection(user: User, endpointId: String): Flow<ConnectionState>
+    fun requestConnection(userDto: UserDto, endpointId: String): Flow<ConnectionState>
     fun acceptConnection(endpointId: String): Flow<ConnectionState>
     fun rejectConnection(endpointId: String): Flow<ConnectionState>
 }

@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import g.sig.questweaver.domain.usecases.device.GetDevicesUseCase
-import g.sig.questweaver.domain.usecases.game.GetGameSessionUseCase
+import g.sig.questweaver.domain.usecases.game.GetGameStateUseCase
 import g.sig.questweaver.domain.usecases.nearby.AcceptConnectionUseCase
 import g.sig.questweaver.domain.usecases.nearby.AdvertiseGameUseCase
 import g.sig.questweaver.domain.usecases.nearby.BroadcastPayloadUseCase
@@ -23,7 +23,7 @@ import javax.inject.Inject
 class QueueViewModel @Inject constructor(
     private val advertiseGame: AdvertiseGameUseCase,
     private val cancelAdvertisement: CancelAdvertisementUseCase,
-    private val getGameSession: GetGameSessionUseCase,
+    private val getGameSession: GetGameStateUseCase,
     private val acceptConnection: AcceptConnectionUseCase,
     private val rejectConnection: RejectConnectionUseCase,
     private val broadcast: BroadcastPayloadUseCase,
@@ -43,7 +43,7 @@ class QueueViewModel @Inject constructor(
 
             QueueIntent.Load -> {
                 collectDevices()
-                viewModelScope.launch { advertiseGame(getGameSession().title) }
+                viewModelScope.launch { advertiseGame(getGameSession().game.title) }
             }
 
             QueueIntent.CancelHostGame -> cancelHosting()
@@ -73,7 +73,7 @@ class QueueViewModel @Inject constructor(
     private fun startGame() {
         viewModelScope.launch {
             broadcast(getGameSession())
-            sendEvent(QueueEvent.GameCreated(getGameSession().gameId))
+            sendEvent(QueueEvent.GameCreated(getGameSession().game.gameId))
         }
     }
 }

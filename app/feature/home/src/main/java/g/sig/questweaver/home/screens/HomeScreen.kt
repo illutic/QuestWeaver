@@ -32,8 +32,8 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import g.sig.questweaver.common.ui.components.AdaptiveImage
 import g.sig.questweaver.common.ui.components.PermissionsAlert
 import g.sig.questweaver.common.ui.layouts.ScreenScaffold
-import g.sig.questweaver.domain.entities.Game
-import g.sig.questweaver.domain.entities.Uri
+import g.sig.questweaver.domain.entities.blocks.Uri
+import g.sig.questweaver.domain.entities.common.Game
 import g.sig.questweaver.home.R
 import g.sig.questweaver.home.state.HomeIntent
 import g.sig.questweaver.home.state.HomeState

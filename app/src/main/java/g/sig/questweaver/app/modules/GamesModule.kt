@@ -14,8 +14,9 @@ import g.sig.questweaver.data.repositories.GameSessionRepositoryImpl
 import g.sig.questweaver.domain.repositories.GameSessionRepository
 import g.sig.questweaver.domain.usecases.game.CreateGameSessionUseCase
 import g.sig.questweaver.domain.usecases.game.DeleteGameSessionUseCase
-import g.sig.questweaver.domain.usecases.game.GetGameSessionUseCase
+import g.sig.questweaver.domain.usecases.game.GetGameStateUseCase
 import g.sig.questweaver.domain.usecases.game.UpdateGameSessionUseCase
+import g.sig.questweaver.domain.usecases.user.GetUserUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Singleton
 
@@ -50,10 +51,15 @@ object GamesModule {
     @Provides
     @Singleton
     fun provideCreateGameSessionUseCase(
+        getUserUseCase: GetUserUseCase,
         gameSessionRepository: GameSessionRepository,
         @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
     ): CreateGameSessionUseCase {
-        return CreateGameSessionUseCase(gameSessionRepository, defaultDispatcher)
+        return CreateGameSessionUseCase(
+            getUserUseCase,
+            gameSessionRepository,
+            defaultDispatcher
+        )
     }
 
     @Provides
@@ -70,8 +76,8 @@ object GamesModule {
     fun provideGetGameSessionUseCase(
         gameSessionRepository: GameSessionRepository,
         @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
-    ): GetGameSessionUseCase {
-        return GetGameSessionUseCase(gameSessionRepository, defaultDispatcher)
+    ): GetGameStateUseCase {
+        return GetGameStateUseCase(gameSessionRepository, defaultDispatcher)
     }
 
     @Provides

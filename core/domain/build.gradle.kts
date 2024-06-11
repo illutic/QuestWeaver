@@ -23,6 +23,8 @@ android {
 
 dependencies {
     implementation(libs.kotlinx.coroutines.core)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.junit4)
 }
 
 fun Provider<String>.toInt(): Int = get().toInt()

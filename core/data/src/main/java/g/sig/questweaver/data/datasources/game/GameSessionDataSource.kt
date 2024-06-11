@@ -1,12 +1,12 @@
 package g.sig.questweaver.data.datasources.game
 
-import g.sig.questweaver.data.entities.Game
+import g.sig.questweaver.data.entities.common.GameDto
 import kotlinx.coroutines.flow.StateFlow
 
 interface GameSessionDataSource {
-    val currentGameSession: StateFlow<Game>
+    val currentGameSessionDto: StateFlow<GameDto>
 
-    suspend fun startGameSession(game: Game)
-    suspend fun updateGameSession(game: Game)
+    suspend fun startGameSession(gameDto: GameDto)
+    suspend fun updateGameSession(gameDto: GameDto)
     suspend fun endGameSession()
 }

@@ -1,4 +1,4 @@
-package g.sig.questweaver.domain.entities
+package g.sig.questweaver.domain.entities.states
 
 sealed interface ConnectionState {
     data object Idle : ConnectionState

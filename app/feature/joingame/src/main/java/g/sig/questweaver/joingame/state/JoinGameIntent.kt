@@ -1,7 +1,7 @@
 package g.sig.questweaver.joingame.state
 
-import g.sig.questweaver.domain.entities.Device
-import g.sig.questweaver.domain.entities.Game
+import g.sig.questweaver.domain.entities.common.Device
+import g.sig.questweaver.domain.entities.common.Game
 
 sealed interface JoinGameIntent {
     data object Back : JoinGameIntent

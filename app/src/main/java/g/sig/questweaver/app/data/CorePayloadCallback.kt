@@ -5,10 +5,10 @@ import android.net.Uri
 import com.google.android.gms.nearby.connection.Payload
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate
 import g.sig.questweaver.common.data.copyToCacheAndDelete
-import g.sig.questweaver.data.entities.DataEntity
-import g.sig.questweaver.data.entities.File
-import g.sig.questweaver.data.entities.FileMetadata
-import g.sig.questweaver.data.entities.Stream
+import g.sig.questweaver.data.entities.Dto
+import g.sig.questweaver.data.entities.io.FileDto
+import g.sig.questweaver.data.entities.io.FileMetadataDto
+import g.sig.questweaver.data.entities.io.StreamDto
 import g.sig.questweaver.data.serializers.ProtoBufSerializer
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -26,8 +26,8 @@ class CorePayloadCallback(
 ) : NearbyPayloadCallback(), CoroutineScope by CoroutineScope(dispatcher) {
     private val incomingPayloads = mutableMapOf<Long, Payload>()
     private val completedFilePayloads = mutableMapOf<Long, Payload>()
-    private val filePayloadMetadata = mutableMapOf<Long, FileMetadata>()
-    private val _data = MutableSharedFlow<DataEntity>()
+    private val filePayloadMetadata = mutableMapOf<Long, FileMetadataDto>()
+    private val _data = MutableSharedFlow<Dto>()
     override val data = _data.asSharedFlow()
 
     override fun onPayloadReceived(
@@ -68,9 +68,9 @@ class CorePayloadCallback(
     @OptIn(ExperimentalSerializationApi::class)
     private fun handleBytesPayload(payload: Payload) {
         val message =
-            ProtoBufSerializer.decodeFromByteArray<DataEntity>(payload.asBytes() ?: return)
+            ProtoBufSerializer.decodeFromByteArray<Dto>(payload.asBytes() ?: return)
 
-        if (message is FileMetadata) {
+        if (message is FileMetadataDto) {
             filePayloadMetadata[payload.id] = message
             return
         } else {
@@ -80,17 +80,17 @@ class CorePayloadCallback(
 
     /**
      * Handles a payload of type [Payload.Type.STREAM].
-     * The payload will be treated as a stream will be sent as [Stream].
+     * The payload will be treated as a stream will be sent as [StreamDto].
      * @param payload The payload to handle.
      */
     private fun handleStreamPayload(payload: Payload) {
         val inputStream = payload.asStream()?.asInputStream() ?: return
-        launch { _data.emit(Stream(inputStream)) }
+        launch { _data.emit(StreamDto(inputStream)) }
     }
 
     /**
      * Handles a payload of type [Payload.Type.FILE].
-     * The payload will be saved to the cache and the URI will be sent as [DataEntity.File].
+     * The payload will be saved to the cache and the URI will be sent as [Dto.File].
      * @param payloadId The ID of the payload to handle.
      */
     private fun handleFilePayload(payloadId: Long) {
@@ -100,7 +100,7 @@ class CorePayloadCallback(
         launch {
             payload.asFile()?.asUri()?.copyToCacheAndDelete(dispatcher, context, metadata.name)
             val uri = Uri.fromFile(context.cacheDir.resolve(metadata.name))
-            _data.emit(File(uri, metadata))
+            _data.emit(FileDto(uri, metadata))
         }
     }
 }

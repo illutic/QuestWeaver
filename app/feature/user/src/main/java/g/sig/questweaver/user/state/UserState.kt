@@ -1,7 +1,7 @@
 package g.sig.questweaver.user.state
 
 import androidx.annotation.StringRes
-import g.sig.questweaver.domain.entities.User
+import g.sig.questweaver.domain.entities.common.User
 
 sealed interface UserState {
     data object Idle : UserState

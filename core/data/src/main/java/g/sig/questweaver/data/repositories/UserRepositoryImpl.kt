@@ -1,8 +1,8 @@
 package g.sig.questweaver.data.repositories
 
 import g.sig.questweaver.data.datasources.user.UserDataSource
-import g.sig.questweaver.data.entities.User.Companion.fromDomain
-import g.sig.questweaver.domain.entities.User
+import g.sig.questweaver.data.entities.common.UserDto.Companion.fromDomain
+import g.sig.questweaver.domain.entities.common.User
 import g.sig.questweaver.domain.repositories.UserRepository
 
 class UserRepositoryImpl(

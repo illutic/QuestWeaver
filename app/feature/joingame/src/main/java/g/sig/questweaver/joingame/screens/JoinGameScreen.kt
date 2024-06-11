@@ -49,8 +49,8 @@ import androidx.compose.ui.unit.dp
 import g.sig.questweaver.common.ui.components.AdaptiveImage
 import g.sig.questweaver.common.ui.components.PermissionsAlert
 import g.sig.questweaver.common.ui.layouts.ScreenScaffold
-import g.sig.questweaver.domain.entities.ConnectionState
-import g.sig.questweaver.domain.entities.Device
+import g.sig.questweaver.domain.entities.common.Device
+import g.sig.questweaver.domain.entities.states.ConnectionState
 import g.sig.questweaver.joingame.R
 import g.sig.questweaver.joingame.state.JoinGameIntent
 import g.sig.questweaver.joingame.state.JoinGameState

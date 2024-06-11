@@ -1,6 +1,6 @@
 package g.sig.questweaver.hostgame.state
 
-import g.sig.questweaver.domain.entities.Device
+import g.sig.questweaver.domain.entities.common.Device
 
 sealed interface QueueIntent {
     data object Back : QueueIntent
