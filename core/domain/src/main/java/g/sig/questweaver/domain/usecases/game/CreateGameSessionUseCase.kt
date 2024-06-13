@@ -1,6 +1,8 @@
 package g.sig.questweaver.domain.usecases.game
 
 import g.sig.questweaver.domain.entities.common.Game
+import g.sig.questweaver.domain.entities.states.GameHomeState
+import g.sig.questweaver.domain.entities.states.GameState
 import g.sig.questweaver.domain.repositories.GameSessionRepository
 import g.sig.questweaver.domain.usecases.user.GetUserUseCase
 import kotlinx.coroutines.CoroutineDispatcher
@@ -19,12 +21,16 @@ class CreateGameSessionUseCase(
     ) =
         withContext(defaultDispatcher) {
             gameSessionRepository.startGameSession(
-                Game(
-                    gameId = id,
-                    title = name,
-                    description = description,
-                    maxPlayers = numberOfPlayers,
-                    dmId = getUserUseCase().id
+                GameState(
+                    game = Game(
+                        gameId = id,
+                        title = name,
+                        description = description,
+                        maxPlayers = numberOfPlayers,
+                        dmId = getUserUseCase().id
+                    ),
+                    connectedUsers = listOf(getUserUseCase()),
+                    gameHomeState = GameHomeState.Empty
                 )
             )
         }

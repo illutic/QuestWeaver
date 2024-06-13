@@ -21,6 +21,12 @@ data class GameStateDto(
     )
 
     companion object {
+        val Empty = GameStateDto(
+            game = GameDto.Empty,
+            connectedUsers = emptyList(),
+            gameHomeState = GameHomeStateDto.Empty,
+        )
+
         fun GameState.fromDomain() = GameStateDto(
             game = game.fromDomain(),
             connectedUsers = connectedUsers.map { it.fromDomain() },

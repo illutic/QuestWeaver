@@ -17,6 +17,11 @@ data class GameHomeStateDto(
     )
 
     companion object {
+        val Empty = GameHomeStateDto(
+            interactions = emptyList(),
+            allowEditing = true,
+        )
+
         fun GameHomeState.fromDomain() = GameHomeStateDto(
             interactions = interactions.map { it.fromDomain() },
             allowEditing = allowEditing,
