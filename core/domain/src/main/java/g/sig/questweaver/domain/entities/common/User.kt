@@ -1,5 +1,5 @@
 package g.sig.questweaver.domain.entities.common
 
-import g.sig.questweaver.domain.entities.io.PayloadData
+import g.sig.questweaver.domain.entities.DomainEntity
 
-data class User(val name: String, val id: String = "") : PayloadData
+data class User(val name: String, val id: String = "") : DomainEntity

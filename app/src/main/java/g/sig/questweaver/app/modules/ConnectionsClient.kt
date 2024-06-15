@@ -8,7 +8,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import g.sig.questweaver.app.data.CorePayloadCallback
+import g.sig.questweaver.data.datasources.nearby.CorePayloadCallback
 import g.sig.questweaver.data.datasources.nearby.PayloadCallback
 import g.sig.questweaver.data.repositories.PayloadRepositoryImpl
 import g.sig.questweaver.domain.repositories.DeviceRepository
@@ -96,11 +96,10 @@ object ConnectionsClient {
     @Provides
     @Singleton
     fun providePayloadRepository(
-        @ApplicationContext context: Context,
         connectionsClient: ConnectionsClient,
         payloadCallback: PayloadCallback
     ): PayloadRepository {
-        return PayloadRepositoryImpl(context, connectionsClient, payloadCallback)
+        return PayloadRepositoryImpl(connectionsClient, payloadCallback)
     }
 
     @Provides

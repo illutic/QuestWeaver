@@ -2,7 +2,8 @@ package g.sig.questweaver.data.repositories
 
 import g.sig.questweaver.data.datasources.nearby.NearbyDataSource
 import g.sig.questweaver.data.datasources.recentgames.RecentGamesDataSource
-import g.sig.questweaver.data.entities.common.UserDto.Companion.fromDomain
+import g.sig.questweaver.data.mapper.toDomain
+import g.sig.questweaver.data.mapper.toDto
 import g.sig.questweaver.domain.entities.common.Device
 import g.sig.questweaver.domain.entities.common.Game
 import g.sig.questweaver.domain.entities.common.User
@@ -20,7 +21,7 @@ class NearbyRepositoryImpl(
             .map { it.toDomain() }
 
     override fun discoverNearbyDevices(user: User): Flow<ConnectionState> =
-        nearbyDataSource.discover(user.fromDomain())
+        nearbyDataSource.discover(user.toDto())
 
     override fun advertiseGame(game: String): Flow<ConnectionState> =
         nearbyDataSource.advertise(game)
@@ -30,7 +31,7 @@ class NearbyRepositoryImpl(
     override fun cancelDiscovery() = nearbyDataSource.cancelDiscovery()
 
     override fun requestConnection(user: User, device: Device): Flow<ConnectionState> =
-        nearbyDataSource.requestConnection(user.fromDomain(), device.id)
+        nearbyDataSource.requestConnection(user.toDto(), device.id)
 
     override fun acceptConnection(device: Device): Flow<ConnectionState> =
         nearbyDataSource.acceptConnection(device.id)

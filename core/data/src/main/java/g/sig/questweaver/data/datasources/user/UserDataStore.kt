@@ -3,7 +3,7 @@ package g.sig.questweaver.data.datasources.user
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.dataStore
-import g.sig.questweaver.data.entities.common.UserDto
+import g.sig.questweaver.data.dto.UserDto
 import kotlinx.coroutines.flow.Flow
 
 class UserDataStore(private val context: Context) : DataStore<UserDto> {

@@ -1,6 +1,8 @@
 package g.sig.questweaver.domain.entities.states
 
-sealed interface ConnectionState {
+import g.sig.questweaver.domain.entities.DomainEntity
+
+sealed interface ConnectionState : DomainEntity {
     data object Idle : ConnectionState
     data object Loading : ConnectionState
     data class Connecting(val endpointId: String, val name: String) : ConnectionState

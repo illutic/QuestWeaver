@@ -27,6 +27,8 @@ dependencies {
     implementation(project(":core:common:data"))
     implementation(libs.androidx.proto.datastore)
     api(libs.playServicesNearby)
+
+    testImplementation(libs.junit4)
 }
 
 fun Provider<String>.toInt(): Int = get().toInt()

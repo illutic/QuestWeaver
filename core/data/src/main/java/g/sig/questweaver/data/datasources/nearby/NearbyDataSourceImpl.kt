@@ -1,7 +1,7 @@
 package g.sig.questweaver.data.datasources.nearby
 
 import com.google.android.gms.nearby.connection.ConnectionsClient
-import g.sig.questweaver.data.entities.common.UserDto
+import g.sig.questweaver.data.dto.UserDto
 import g.sig.questweaver.data.nearby.acceptConnection
 import g.sig.questweaver.data.nearby.rejectConnection
 import g.sig.questweaver.data.nearby.requestConnection

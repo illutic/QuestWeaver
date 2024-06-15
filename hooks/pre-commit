@@ -1,8 +1,14 @@
 #!/bin/bash
 
-echo "Running detekt check..."
 # Get all the files that are staged
 fileArray=($(git diff --name-only --cached | grep -E "\.kt$"))
+
+# Ignore removed files
+for file in "${fileArray[@]}"; do
+  if [ ! -f "$file" ]; then
+    fileArray=("${fileArray[@]/$file}")
+  fi
+done
 
 # If no kt files are staged, then exit
 if [ ${#fileArray[@]} -eq 0 ]; then
@@ -10,10 +16,10 @@ if [ ${#fileArray[@]} -eq 0 ]; then
   exit 0
 fi
 
-detektInput=$(IFS=,;printf  "%s" "${fileArray[*]}")
-echo "Input files: $detektInput"
+# Get the input files for detekt ignoring removed files
+detektInput=$(echo "${fileArray[@]}" | tr ' ' '\n' | grep -vE "^\s*$" | tr '\n' ',' | sed 's/,$//')
 
-OUTPUT=$(detekt -c ../../detekt.yml --input "$detektInput" 2>&1)
+OUTPUT=$(detekt -c detekt.yml --input "$detektInput" 2>&1)
 EXIT_CODE=$?
 if [ $EXIT_CODE -ne 0 ]; then
   echo $OUTPUT
@@ -22,4 +28,9 @@ if [ $EXIT_CODE -ne 0 ]; then
   echo " Please fix the above issues before committing "
   echo "***********************************************"
   exit $EXIT_CODE
+else
+    echo $OUTPUT
+    echo "***********************************************"
+    echo "                 detekt passed                 "
+    echo "***********************************************"
 fi

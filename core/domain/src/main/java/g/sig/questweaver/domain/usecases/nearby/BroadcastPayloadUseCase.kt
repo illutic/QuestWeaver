@@ -1,6 +1,6 @@
 package g.sig.questweaver.domain.usecases.nearby
 
-import g.sig.questweaver.domain.entities.io.PayloadData
+import g.sig.questweaver.domain.entities.DomainEntity
 import g.sig.questweaver.domain.repositories.DeviceRepository
 import g.sig.questweaver.domain.repositories.PayloadRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -11,7 +11,7 @@ class BroadcastPayloadUseCase(
     private val deviceRepository: DeviceRepository,
     private val defaultDispatcher: CoroutineDispatcher
 ) {
-    suspend operator fun invoke(payload: PayloadData) = withContext(defaultDispatcher) {
+    suspend operator fun invoke(payload: DomainEntity) = withContext(defaultDispatcher) {
         deviceRepository.devices.value.forEach { payloadRepository.send(it.id, payload) }
     }
 }

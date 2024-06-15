@@ -1,7 +1,7 @@
 package g.sig.questweaver.data.datasources.recentgames
 
 import android.content.Context
-import g.sig.questweaver.data.entities.common.GameDto
+import g.sig.questweaver.data.dto.GameDto
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext

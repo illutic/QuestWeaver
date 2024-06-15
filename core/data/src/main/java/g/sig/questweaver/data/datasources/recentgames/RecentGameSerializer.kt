@@ -1,25 +1,20 @@
 package g.sig.questweaver.data.datasources.recentgames
 
 import androidx.datastore.core.Serializer
+import g.sig.questweaver.data.dto.GamesDto
+import g.sig.questweaver.data.serializers.deserializeDto
+import g.sig.questweaver.data.serializers.serializeDto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.decodeFromByteArray
-import kotlinx.serialization.encodeToByteArray
-import kotlinx.serialization.protobuf.ProtoBuf
 import java.io.InputStream
 import java.io.OutputStream
 
-internal object RecentGameSerializer : Serializer<Games> {
-    override val defaultValue: Games = Games(emptyList())
+internal object RecentGameSerializer : Serializer<GamesDto> {
+    override val defaultValue: GamesDto = GamesDto(emptyList())
 
-    @OptIn(ExperimentalSerializationApi::class)
-    override suspend fun readFrom(input: InputStream): Games =
-        ProtoBuf.decodeFromByteArray(input.readBytes())
+    override suspend fun readFrom(input: InputStream): GamesDto =
+        withContext(Dispatchers.IO) { deserializeDto(input.readBytes()) }
 
-    @OptIn(ExperimentalSerializationApi::class)
-    override suspend fun writeTo(t: Games, output: OutputStream) =
-        withContext(Dispatchers.IO) {
-            output.write(ProtoBuf.encodeToByteArray(t))
-        }
+    override suspend fun writeTo(t: GamesDto, output: OutputStream) =
+        withContext(Dispatchers.IO) { output.write(serializeDto(t)) }
 }

@@ -1,6 +1,6 @@
 package g.sig.questweaver.domain.usecases.home
 
-import g.sig.questweaver.domain.entities.Home
+import g.sig.questweaver.domain.entities.common.Home
 import g.sig.questweaver.domain.repositories.NearbyRepository
 import g.sig.questweaver.domain.repositories.UserRepository
 import g.sig.questweaver.domain.usecases.permissions.GetNearbyPermissionUseCase

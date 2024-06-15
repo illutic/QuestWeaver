@@ -7,7 +7,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import g.sig.questweaver.domain.entities.Permission
+import g.sig.questweaver.domain.entities.common.Permission
 import g.sig.questweaver.domain.repositories.PermissionsRepository
 import g.sig.questweaver.domain.usecases.permissions.GetNearbyPermissionUseCase
 import g.sig.questweaver.domain.usecases.permissions.HasPermissionsUseCase

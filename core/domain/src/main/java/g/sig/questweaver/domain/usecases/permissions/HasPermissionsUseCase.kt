@@ -1,6 +1,6 @@
 package g.sig.questweaver.domain.usecases.permissions
 
-import g.sig.questweaver.domain.entities.Permission
+import g.sig.questweaver.domain.entities.common.Permission
 import g.sig.questweaver.domain.repositories.PermissionsRepository
 
 class HasPermissionsUseCase(private val repository: PermissionsRepository) {

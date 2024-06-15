@@ -1,6 +1,6 @@
 package g.sig.questweaver.data.datasources.nearby
 
-import g.sig.questweaver.data.entities.common.UserDto
+import g.sig.questweaver.data.dto.UserDto
 import g.sig.questweaver.domain.entities.states.ConnectionState
 import kotlinx.coroutines.flow.Flow
 

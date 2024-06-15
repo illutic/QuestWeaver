@@ -1,6 +1,6 @@
 package g.sig.questweaver.data.datasources.nearby
 
-import g.sig.questweaver.data.entities.Dto
+import g.sig.questweaver.data.dto.Dto
 import kotlinx.coroutines.flow.Flow
 import com.google.android.gms.nearby.connection.PayloadCallback as NearbyPayloadCallback
 

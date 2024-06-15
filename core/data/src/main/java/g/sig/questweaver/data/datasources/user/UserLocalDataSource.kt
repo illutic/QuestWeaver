@@ -1,7 +1,7 @@
 package g.sig.questweaver.data.datasources.user
 
 import android.content.Context
-import g.sig.questweaver.data.entities.common.UserDto
+import g.sig.questweaver.data.dto.UserDto
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext

@@ -1,12 +1,12 @@
 package g.sig.questweaver.domain.entities.states
 
-import g.sig.questweaver.domain.entities.Interaction
-import g.sig.questweaver.domain.entities.io.PayloadData
+import g.sig.questweaver.domain.entities.DomainEntity
+import g.sig.questweaver.domain.entities.common.Interaction
 
 data class GameHomeState(
     val interactions: List<Interaction>,
     val allowEditing: Boolean,
-) : PayloadData {
+) : DomainEntity {
 
     companion object {
         val Empty = GameHomeState(

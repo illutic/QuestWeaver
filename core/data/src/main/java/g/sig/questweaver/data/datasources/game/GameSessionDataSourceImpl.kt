@@ -1,6 +1,6 @@
 package g.sig.questweaver.data.datasources.game
 
-import g.sig.questweaver.data.entities.states.GameStateDto
+import g.sig.questweaver.data.dto.GameStateDto
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
