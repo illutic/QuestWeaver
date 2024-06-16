@@ -5,24 +5,34 @@ package g.sig.questweaver.data.dto
 import g.sig.questweaver.common.data.serializers.UUIDSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
-import java.util.UUID
 
 @Serializable
-sealed interface InteractionDto : Dto {
+sealed interface AnnotationDto : Dto {
     @Serializable
     data class DrawingDto(
-        val id: UUID,
+        val id: String,
+        val createdBy: String,
         val strokeWidth: Int,
         val colorDto: ColorDto,
         val path: List<PointDto>
-    ) : InteractionDto
+    ) : AnnotationDto
 
     @Serializable
     data class TextDto(
-        val id: UUID,
+        val id: String,
+        val createdBy: String,
         val text: String,
         val sizeDTO: SizeDto,
         val colorDTO: ColorDto,
         val anchor: PointDto
-    ) : InteractionDto
+    ) : AnnotationDto
+
+    @Serializable
+    data class ImageDto(
+        val id: String,
+        val createdBy: String,
+        val size: SizeDto,
+        val anchor: PointDto,
+        val fileDto: FileDto
+    ) : AnnotationDto
 }

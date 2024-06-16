@@ -139,8 +139,7 @@ private fun HostGameContent(
 
             Row(
                 modifier = Modifier
-                    .defaultMinSize(minWidth = HostGameSize.minTextSize)
-                    .fillMaxWidth(),
+                    .defaultMinSize(minWidth = HostGameSize.minTextSize),
                 horizontalArrangement = Arrangement.spacedBy(mediumSize),
                 verticalAlignment = Alignment.CenterVertically
             ) {

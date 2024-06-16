@@ -1,14 +1,16 @@
 package g.sig.questweaver.common.ui.layouts
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.FabPosition
@@ -27,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.window.core.layout.WindowWidthSizeClass
 import g.sig.questweaver.common.ui.components.AdaptiveNavigationButton
 import g.sig.questweaver.ui.AppTheme
+import g.sig.questweaver.ui.largeSize
 
 @Composable
 fun ScreenScaffold(
@@ -62,41 +65,49 @@ fun ScreenScaffold(
         contentColor = contentColor,
         contentWindowInsets = contentWindowInsets,
     ) { padding ->
-        Row(modifier = Modifier.padding(padding)) {
-            if (windowSizeClass.windowWidthSizeClass != WindowWidthSizeClass.COMPACT) {
-                Box(
-                    modifier = Modifier.fillMaxHeight(),
-                    contentAlignment = Alignment.Center,
-                    propagateMinConstraints = true
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .safeDrawingPadding()
+                .padding(padding),
+        ) {
+            if (windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT) {
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    decoration()
-                }
-            }
-            Column {
-                if (windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT) {
                     Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center,
-                        propagateMinConstraints = true
+                        modifier = Modifier.padding(largeSize),
+                        contentAlignment = Alignment.Center
                     ) {
                         decoration()
                     }
+                    content()
                 }
-                Box(
+            } else {
+                Row(
                     modifier = Modifier.weight(1f),
-                    propagateMinConstraints = true,
-                    contentAlignment = Alignment.Center
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Absolute.Center
                 ) {
-                    Box(contentAlignment = Alignment.Center) { content() }
+                    Box(
+                        modifier = Modifier.padding(largeSize),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        decoration()
+                    }
+                    content()
                 }
-                Row(modifier = adaptiveModifier.align(Alignment.End)) { navigation() }
             }
+
+            Row(modifier = adaptiveModifier.align(Alignment.End)) { navigation() }
         }
     }
 }
 
 @Composable
-@Preview
+@Preview(device = "spec:parent=pixel_5,orientation=landscape")
 fun AdaptiveScaffoldPreview() {
     AppTheme {
         ScreenScaffold(

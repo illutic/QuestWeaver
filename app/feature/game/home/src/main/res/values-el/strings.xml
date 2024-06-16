@@ -3,4 +3,5 @@
     <string name="game_home_label">Αρχική</string>
     <string name="game_chat_label">Συνομιλία</string>
     <string name="game_ai_label">Τεχνητή Νοημοσύνη</string>
+    <string name="dm_tools">Εργαλεία DM</string>
 </resources>

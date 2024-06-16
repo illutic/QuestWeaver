@@ -1,5 +1,6 @@
 package g.sig.questweaver.data.mapper
 
+import g.sig.questweaver.data.dto.AnnotationDto
 import g.sig.questweaver.data.dto.ColorDto
 import g.sig.questweaver.data.dto.ConnectionStateDto
 import g.sig.questweaver.data.dto.ConnectionStateDto.ConnectedDto
@@ -15,7 +16,6 @@ import g.sig.questweaver.data.dto.FileMetadataDto
 import g.sig.questweaver.data.dto.GameDto
 import g.sig.questweaver.data.dto.GameHomeStateDto
 import g.sig.questweaver.data.dto.GameStateDto
-import g.sig.questweaver.data.dto.InteractionDto
 import g.sig.questweaver.data.dto.PointDto
 import g.sig.questweaver.data.dto.SizeDto
 import g.sig.questweaver.data.dto.UserDto
@@ -24,9 +24,9 @@ import g.sig.questweaver.domain.entities.blocks.Color
 import g.sig.questweaver.domain.entities.blocks.Point
 import g.sig.questweaver.domain.entities.blocks.Size
 import g.sig.questweaver.domain.entities.blocks.Uri
+import g.sig.questweaver.domain.entities.common.Annotation
 import g.sig.questweaver.domain.entities.common.Device
 import g.sig.questweaver.domain.entities.common.Game
-import g.sig.questweaver.domain.entities.common.Interaction
 import g.sig.questweaver.domain.entities.common.User
 import g.sig.questweaver.domain.entities.io.File
 import g.sig.questweaver.domain.entities.io.FileMetadata
@@ -47,8 +47,8 @@ fun Dto.toDomain(): DomainEntity = when (this) {
     is GameDto -> toDomain()
     is UserDto -> toDomain()
     is ColorDto -> toDomain()
-    is InteractionDto.DrawingDto -> toDomain()
-    is InteractionDto.TextDto -> toDomain()
+    is AnnotationDto.DrawingDto -> toDomain()
+    is AnnotationDto.TextDto -> toDomain()
     is PointDto -> toDomain()
     is SizeDto -> toDomain()
     else -> throw IllegalArgumentException("Unknown Dto type: $this")
@@ -71,7 +71,7 @@ fun DeviceDto.toDomain() = Device(
 )
 
 fun GameHomeStateDto.toDomain() = GameHomeState(
-    interactions = interactions.map { it.toDomain() },
+    annotations = annotationDtos.map { it.toDomain() },
     allowEditing = allowEditing,
 )
 
@@ -81,24 +81,36 @@ fun GameStateDto.toDomain() = GameState(
     gameHomeState = gameHomeState.toDomain(),
 )
 
-fun InteractionDto.DrawingDto.toDomain() = Interaction.Drawing(
+fun AnnotationDto.DrawingDto.toDomain() = Annotation.Drawing(
     id = id,
+    createdBy = createdBy,
     strokeWidth = strokeWidth,
     color = colorDto.toDomain(),
     path = path.map { it.toDomain() }
 )
 
-fun InteractionDto.TextDto.toDomain() = Interaction.Text(
+fun AnnotationDto.TextDto.toDomain() = Annotation.Text(
     id = id,
+    createdBy = createdBy,
     text = text,
     size = sizeDTO.toDomain(),
     color = colorDTO.toDomain(),
     anchor = anchor.toDomain()
 )
 
-fun InteractionDto.toDomain(): Interaction = when (this) {
-    is InteractionDto.DrawingDto -> toDomain()
-    is InteractionDto.TextDto -> toDomain()
+fun AnnotationDto.ImageDto.toDomain() = Annotation.Image(
+    uri = fileDto.uri.toDomain(),
+    metadata = fileDto.metadata.toDomain(),
+    size = size.toDomain(),
+    anchor = anchor.toDomain(),
+    createdBy = createdBy,
+    id = id
+)
+
+fun AnnotationDto.toDomain(): Annotation = when (this) {
+    is AnnotationDto.DrawingDto -> toDomain()
+    is AnnotationDto.TextDto -> toDomain()
+    is AnnotationDto.ImageDto -> toDomain()
 }
 
 fun ConnectionStateDto.toDomain(): ConnectionState =

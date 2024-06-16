@@ -4,12 +4,12 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class GameHomeStateDto(
-    val interactions: List<InteractionDto>,
+    val annotationDtos: List<AnnotationDto>,
     val allowEditing: Boolean,
 ) : Dto {
     companion object {
         val Empty = GameHomeStateDto(
-            interactions = emptyList(),
+            annotationDtos = emptyList(),
             allowEditing = true,
         )
     }

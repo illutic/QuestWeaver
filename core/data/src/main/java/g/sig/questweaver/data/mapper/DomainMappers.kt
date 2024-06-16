@@ -1,5 +1,8 @@
 package g.sig.questweaver.data.mapper
 
+import g.sig.questweaver.data.dto.AnnotationDto
+import g.sig.questweaver.data.dto.AnnotationDto.DrawingDto
+import g.sig.questweaver.data.dto.AnnotationDto.TextDto
 import g.sig.questweaver.data.dto.ColorDto
 import g.sig.questweaver.data.dto.ConnectionStateDto
 import g.sig.questweaver.data.dto.ConnectionStateDto.ConnectedDto
@@ -15,8 +18,6 @@ import g.sig.questweaver.data.dto.FileMetadataDto
 import g.sig.questweaver.data.dto.GameDto
 import g.sig.questweaver.data.dto.GameHomeStateDto
 import g.sig.questweaver.data.dto.GameStateDto
-import g.sig.questweaver.data.dto.InteractionDto.DrawingDto
-import g.sig.questweaver.data.dto.InteractionDto.TextDto
 import g.sig.questweaver.data.dto.PointDto
 import g.sig.questweaver.data.dto.SizeDto
 import g.sig.questweaver.data.dto.UserDto
@@ -25,9 +26,9 @@ import g.sig.questweaver.domain.entities.blocks.Color
 import g.sig.questweaver.domain.entities.blocks.Point
 import g.sig.questweaver.domain.entities.blocks.Size
 import g.sig.questweaver.domain.entities.blocks.Uri
+import g.sig.questweaver.domain.entities.common.Annotation
 import g.sig.questweaver.domain.entities.common.Device
 import g.sig.questweaver.domain.entities.common.Game
-import g.sig.questweaver.domain.entities.common.Interaction
 import g.sig.questweaver.domain.entities.common.User
 import g.sig.questweaver.domain.entities.io.File
 import g.sig.questweaver.domain.entities.io.FileMetadata
@@ -43,8 +44,8 @@ fun DomainEntity.toDto(): Dto = when (this) {
     is Game -> toDto()
     is User -> toDto()
     is Color -> toDto()
-    is Interaction.Drawing -> toDto()
-    is Interaction.Text -> toDto()
+    is Annotation.Drawing -> toDto()
+    is Annotation.Text -> toDto()
     is Point -> toDto()
     is Size -> toDto()
     is Device -> toDto()
@@ -69,7 +70,7 @@ fun Device.toDto() = DeviceDto(
 )
 
 fun GameHomeState.toDto() = GameHomeStateDto(
-    interactions = interactions.map { it.toDto() },
+    annotationDtos = annotations.map { it.toDto() },
     allowEditing = allowEditing,
 )
 
@@ -79,24 +80,35 @@ fun GameState.toDto() = GameStateDto(
     gameHomeState = gameHomeState.toDto(),
 )
 
-fun Interaction.Drawing.toDto() = DrawingDto(
+fun Annotation.Drawing.toDto() = DrawingDto(
     id = id,
+    createdBy = createdBy,
     strokeWidth = strokeWidth,
     colorDto = color.toDto(),
     path = path.map { it.toDto() }
 )
 
-fun Interaction.Text.toDto() = TextDto(
+fun Annotation.Text.toDto() = TextDto(
     id = id,
+    createdBy = createdBy,
     text = text,
     sizeDTO = size.toDto(),
     colorDTO = color.toDto(),
     anchor = anchor.toDto()
 )
 
-fun Interaction.toDto() = when (this) {
-    is Interaction.Drawing -> toDto()
-    is Interaction.Text -> toDto()
+fun Annotation.Image.toDto() = AnnotationDto.ImageDto(
+    id = id,
+    createdBy = createdBy,
+    size = size.toDto(),
+    anchor = anchor.toDto(),
+    fileDto = FileDto(uri.toDto(), metadata.toDto())
+)
+
+fun Annotation.toDto() = when (this) {
+    is Annotation.Drawing -> toDto()
+    is Annotation.Text -> toDto()
+    is Annotation.Image -> toDto()
 }
 
 fun ConnectionState.toDto(): ConnectionStateDto =

@@ -30,6 +30,7 @@ android {
 
 dependencies {
     implementation(project(":core:ui"))
+    implementation(project(":core:domain"))
 }
 
 fun Provider<String>.toInt(): Int = get().toInt()

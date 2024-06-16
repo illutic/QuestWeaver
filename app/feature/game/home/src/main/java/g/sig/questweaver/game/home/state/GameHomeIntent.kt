@@ -1,25 +1,23 @@
 package g.sig.questweaver.game.home.state
 
+import g.sig.questweaver.domain.entities.blocks.Color
 import g.sig.questweaver.domain.entities.blocks.Point
-import kotlinx.coroutines.flow.Flow
+import g.sig.questweaver.domain.entities.blocks.Size
+import g.sig.questweaver.domain.entities.common.User
 
 sealed interface GameHomeIntent {
     data object Back : GameHomeIntent
-    sealed interface Request : GameHomeIntent {
-        data object RequestTextEdit : Request
-        data object RequestDrawing : Request
-        data object RequestSizeChange : Request
-        data object RequestOpacityChange : Request
-        data object RequestColorChange : Request
-        data object RequestDMTools : Request
-    }
+    data object Load : GameHomeIntent
 
-    sealed interface Select : GameHomeIntent {
-        data class SelectText(val text: String) : Select
-        data class SelectColor(val color: String) : Select
-        data class SelectSize(val size: Float) : Select
-        data class SelectOpacity(val opacity: Float) : Select
-    }
+    data class ChangeMode(val mode: GameHomeState.AnnotationMode) : GameHomeIntent
 
-    data class Drawing(val points: Flow<Point>)
+    data class AddText(val text: String, val size: Size, val anchor: Point) : GameHomeIntent
+    data class AddDrawing(val path: List<Point>, val strokeWidth: Int) : GameHomeIntent
+    data class AddImage(val uri: String) : GameHomeIntent
+
+    data class SelectColor(val color: Color) : GameHomeIntent
+    data class SelectOpacity(val opacity: Float) : GameHomeIntent
+    data class SelectSize(val size: Size) : GameHomeIntent
+
+    data class SelectPlayer(val player: User) : GameHomeIntent
 }

@@ -3,8 +3,6 @@ package g.sig.questweaver.game.screens
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -32,7 +30,6 @@ import g.sig.questweaver.game.home.navigation.gameHomeGraph
 import g.sig.questweaver.game.state.GameIntent
 import g.sig.questweaver.game.state.GameScreenEvent
 import g.sig.questweaver.ui.AppIcons
-import g.sig.questweaver.ui.largeSize
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -85,13 +82,10 @@ internal fun GameRoute(
         onItemClick = { viewModel.handleIntent(GameIntent.SelectRoute(it)) }
     ) {
         NavHost(
-            modifier = Modifier
-                .safeContentPadding()
-                .padding(horizontal = largeSize),
             navController = navController,
             startDestination = GameHomeRoute.path
         ) {
-            gameHomeGraph { navController.popBackStack() }
+            gameHomeGraph { showCloseGameDialog = true }
             gameChatGraph()
             gameAiGraph()
         }

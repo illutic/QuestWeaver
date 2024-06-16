@@ -91,7 +91,7 @@ fun startAdvertising(
 
     val options =
         AdvertisingOptions.Builder()
-            .setStrategy(Strategy.P2P_CLUSTER)
+            .setStrategy(Strategy.P2P_STAR)
             .setLowPower(isLowPower)
             .build()
 
@@ -160,7 +160,7 @@ fun startDiscovery(
 
     val options =
         DiscoveryOptions.Builder()
-            .setStrategy(Strategy.P2P_CLUSTER)
+            .setStrategy(Strategy.P2P_STAR)
             .setLowPower(isLowPower)
             .build()
 
