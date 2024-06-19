@@ -4,14 +4,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import g.sig.questweaver.common.ui.mappers.toColor
-import g.sig.questweaver.common.ui.mappers.toComposeColor
+import g.sig.questweaver.domain.entities.blocks.Size
 import g.sig.questweaver.domain.entities.common.Annotation
+import g.sig.questweaver.domain.entities.common.RemoveAnnotation
 import g.sig.questweaver.domain.usecases.game.GetGameStateUseCase
 import g.sig.questweaver.domain.usecases.nearby.BroadcastPayloadUseCase
+import g.sig.questweaver.domain.usecases.nearby.OnPayloadReceivedUseCase
 import g.sig.questweaver.domain.usecases.user.GetUserUseCase
 import g.sig.questweaver.game.home.state.GameHomeEvent
 import g.sig.questweaver.game.home.state.GameHomeIntent
 import g.sig.questweaver.game.home.state.GameHomeState
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -20,9 +23,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class GameHomeViewModel @Inject constructor(
-    private val broadcastPayloadUseCase: BroadcastPayloadUseCase,
-    private val getGameStateUseCase: GetGameStateUseCase,
-    private val getUserUseCase: GetUserUseCase
+    private val broadcastPayload: BroadcastPayloadUseCase,
+    private val onPayloadReceived: OnPayloadReceivedUseCase,
+    private val getGameState: GetGameStateUseCase,
+    private val getUser: GetUserUseCase
 ) : ViewModel() {
     private val _events = Channel<GameHomeEvent>()
     val events = _events.receiveAsFlow()
@@ -31,59 +35,101 @@ class GameHomeViewModel @Inject constructor(
     fun handleIntent(intent: GameHomeIntent) {
         when (intent) {
             is GameHomeIntent.Back -> sendEvent(GameHomeEvent.Back)
-            is GameHomeIntent.AddDrawing -> viewModelScope.launch {
-                val drawing = Annotation.Drawing(
-                    path = intent.path,
-                    strokeWidth = intent.strokeWidth,
-                    color = state.selectedColor.toColor(),
-                    createdBy = getUserUseCase().id,
-                    id = UUID.randomUUID().toString()
-                )
-                state.annotations.add(drawing)
-                viewModelScope.launch { broadcastPayloadUseCase(drawing) }
-            }
-
-            is GameHomeIntent.AddText -> viewModelScope.launch {
-                val text = Annotation.Text(
-                    text = intent.text,
-                    size = intent.size,
-                    color = state.selectedColor.toColor(),
-                    anchor = intent.anchor,
-                    createdBy = getUserUseCase().id,
-                    id = UUID.randomUUID().toString()
-                )
-                state.annotations.add(text)
-                broadcastPayloadUseCase(text)
-            }
-
-            is GameHomeIntent.SelectColor -> {
-                state.selectedColor = intent.color.toComposeColor()
-            }
+            is GameHomeIntent.Load -> loadHomeScreen()
+            is GameHomeIntent.AddDrawing -> addDrawing(intent)
+            is GameHomeIntent.AddText -> addText(intent)
+            is GameHomeIntent.SelectAnnotation -> selectAnnotation(intent)
+            is GameHomeIntent.SelectColor -> state.selectedColor = intent.color
+            is GameHomeIntent.SelectSize -> state.selectedSize = Size(intent.size, intent.size)
+            is GameHomeIntent.ChangeMode -> state.annotationMode = intent.mode
+            is GameHomeIntent.SelectPlayer -> state.selectedPlayer = intent.player
 
             is GameHomeIntent.SelectOpacity -> {
                 state.selectedColor = state.selectedColor.copy(alpha = intent.opacity)
             }
 
-            is GameHomeIntent.SelectSize -> state.selectedSize = intent.size
-            is GameHomeIntent.ChangeMode -> state.annotationMode = intent.mode
-            is GameHomeIntent.Load -> viewModelScope.launch {
-                val gameState = getGameStateUseCase()
-                val user = getUserUseCase()
-                val isDM = gameState.game.dmId == user.id
-
-                state.isDM = isDM
-                state.users = gameState.connectedUsers
-                state.annotations.addAll(gameState.gameHomeState.annotations)
-                state.allowAnnotations = gameState.gameHomeState.allowEditing || isDM
-            }
-
             is GameHomeIntent.AddImage -> {
                 // TODO Add image
             }
-
-            is GameHomeIntent.SelectPlayer -> state.selectedPlayer = intent.player
         }
     }
 
     private fun sendEvent(event: GameHomeEvent) = viewModelScope.launch { _events.send(event) }
+
+    private fun addDrawing(intent: GameHomeIntent.AddDrawing) = viewModelScope.launch {
+        val points = intent.path.runningReduce { acc, point ->
+            if (acc.distanceTo(point) > POINT_TOLERANCE) point else acc
+        }
+
+        val drawing = Annotation.Drawing(
+            path = points,
+            strokeSize = intent.strokeSize,
+            color = state.selectedColor.toColor(),
+            createdBy = getUser().id,
+            id = UUID.randomUUID().toString()
+        )
+        state.annotations.add(drawing)
+        broadcastPayload(drawing)
+    }
+
+    private fun addText(intent: GameHomeIntent.AddText) = viewModelScope.launch {
+        val text = Annotation.Text(
+            text = intent.text,
+            size = intent.size,
+            color = state.selectedColor.toColor(),
+            anchor = intent.anchor,
+            createdBy = getUser().id,
+            id = UUID.randomUUID().toString()
+        )
+        state.annotations.add(text)
+        broadcastPayload(text)
+    }
+
+    private var loadingJob: Job? = null
+        set(value) {
+            field?.cancel()
+            field = value
+        }
+
+    private fun loadHomeScreen() = viewModelScope.launch {
+        val gameState = getGameState()
+        val user = getUser()
+        val isDM = gameState.game.dmId == user.id
+
+        state.isDM = isDM
+        state.users = gameState.connectedUsers
+        state.annotations.addAll(gameState.gameHomeState.annotations)
+        state.allowAnnotations = gameState.gameHomeState.allowEditing || isDM
+
+        onPayloadReceived { payload ->
+            when (payload) {
+                is Annotation -> state.annotations.add(payload)
+                is RemoveAnnotation -> state.annotations.removeIf { it.id == payload.id }
+
+                else -> Unit
+            }
+        }
+    }.also { loadingJob = it }
+
+    private fun selectAnnotation(intent: GameHomeIntent.SelectAnnotation) = viewModelScope.launch {
+        when (state.annotationMode) {
+            GameHomeState.AnnotationMode.RemoveMode -> removeAnnotation(intent.annotation?.id)
+
+            else -> state.selectedAnnotation = intent.annotation
+        }
+    }
+
+    private fun removeAnnotation(annotationId: String?) = viewModelScope.launch {
+        val annotation = state.annotations.find { it.id == annotationId } ?: return@launch
+        val user = getUser()
+        val canRemoveAnnotation = state.isDM || annotation.createdBy == user.id
+        if (canRemoveAnnotation) {
+            state.annotations.remove(annotation)
+            broadcastPayload(RemoveAnnotation(annotation.id))
+        }
+    }
+
+    companion object {
+        private const val POINT_TOLERANCE = 0.01f
+    }
 }

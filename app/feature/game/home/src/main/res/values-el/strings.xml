@@ -4,4 +4,6 @@
     <string name="game_chat_label">Συνομιλία</string>
     <string name="game_ai_label">Τεχνητή Νοημοσύνη</string>
     <string name="dm_tools">Εργαλεία DM</string>
+    <string name="opacity">Διαφάνεια</string>
+    <string name="size">Μέγεθος</string>
 </resources>

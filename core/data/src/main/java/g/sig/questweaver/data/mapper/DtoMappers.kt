@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions")
+
 package g.sig.questweaver.data.mapper
 
 import g.sig.questweaver.data.dto.AnnotationDto
@@ -17,6 +19,7 @@ import g.sig.questweaver.data.dto.GameDto
 import g.sig.questweaver.data.dto.GameHomeStateDto
 import g.sig.questweaver.data.dto.GameStateDto
 import g.sig.questweaver.data.dto.PointDto
+import g.sig.questweaver.data.dto.RemoveAnnotationDto
 import g.sig.questweaver.data.dto.SizeDto
 import g.sig.questweaver.data.dto.UserDto
 import g.sig.questweaver.domain.entities.DomainEntity
@@ -27,6 +30,7 @@ import g.sig.questweaver.domain.entities.blocks.Uri
 import g.sig.questweaver.domain.entities.common.Annotation
 import g.sig.questweaver.domain.entities.common.Device
 import g.sig.questweaver.domain.entities.common.Game
+import g.sig.questweaver.domain.entities.common.RemoveAnnotation
 import g.sig.questweaver.domain.entities.common.User
 import g.sig.questweaver.domain.entities.io.File
 import g.sig.questweaver.domain.entities.io.FileMetadata
@@ -41,6 +45,7 @@ import g.sig.questweaver.domain.entities.states.GameHomeState
 import g.sig.questweaver.domain.entities.states.GameState
 import android.net.Uri as AndroidUri
 
+@Suppress("CyclomaticComplexMethod")
 fun Dto.toDomain(): DomainEntity = when (this) {
     is FileDto -> toDomain()
     is FileMetadataDto -> toDomain()
@@ -51,6 +56,11 @@ fun Dto.toDomain(): DomainEntity = when (this) {
     is AnnotationDto.TextDto -> toDomain()
     is PointDto -> toDomain()
     is SizeDto -> toDomain()
+    is GameStateDto -> toDomain()
+    is ConnectionStateDto -> toDomain()
+    is DeviceDto -> toDomain()
+    is GameHomeStateDto -> toDomain()
+    is RemoveAnnotationDto -> toDomain()
     else -> throw IllegalArgumentException("Unknown Dto type: $this")
 }
 
@@ -60,7 +70,7 @@ fun FileMetadataDto.toDomain() = FileMetadata(name, extension)
 fun GameDto.toDomain() =
     Game(gameId, title, description, AndroidUri.EMPTY.toDomain(), players, maxPlayers, dmId)
 
-fun UserDto.toDomain() = User(name, id.toString())
+fun UserDto.toDomain() = User(name = name, id = id)
 fun ColorDto.toDomain() = Color(value)
 fun PointDto.toDomain() = Point(x, y)
 fun SizeDto.toDomain() = Size(width, height)
@@ -84,7 +94,7 @@ fun GameStateDto.toDomain() = GameState(
 fun AnnotationDto.DrawingDto.toDomain() = Annotation.Drawing(
     id = id,
     createdBy = createdBy,
-    strokeWidth = strokeWidth,
+    strokeSize = strokeSize.toDomain(),
     color = colorDto.toDomain(),
     path = path.map { it.toDomain() }
 )
@@ -127,3 +137,5 @@ fun ConnectionStateDto.toDomain(): ConnectionState =
         is ErrorDto.ConnectionRequestError -> Error.ConnectionRequestError(throwable)
         is ErrorDto.DisconnectionError -> Error.DisconnectionError(endpointId)
     }
+
+fun RemoveAnnotationDto.toDomain(): RemoveAnnotation = RemoveAnnotation(id)

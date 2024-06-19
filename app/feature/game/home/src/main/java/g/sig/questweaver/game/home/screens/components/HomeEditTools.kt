@@ -2,13 +2,8 @@ package g.sig.questweaver.game.home.screens.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.material3.Button
-import androidx.compose.material3.FilledIconButton
-import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -35,119 +30,112 @@ fun AnnotationTools(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = if (isDM) Arrangement.SpaceBetween else Arrangement.End,
     ) {
-        if (isDM) {
-            AnnotationButton(
-                onClick = {
-                    if (annotationMode == GameHomeState.AnnotationMode.DMMode) {
-                        onAnnotationModeChanged(GameHomeState.AnnotationMode.Idle)
-                    } else {
-                        onAnnotationModeChanged(GameHomeState.AnnotationMode.DMMode)
-                    }
-                },
-                isSelected = annotationMode == GameHomeState.AnnotationMode.DMMode,
-                isLong = true,
-            ) {
-                Text(text = stringResource(R.string.dm_tools))
-            }
-        }
+        DMToolsButton(annotationMode, isDM, onAnnotationModeChanged)
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(smallSize)
         ) {
-            AnnotationButton(
-                onClick = {
-                    if (annotationMode == GameHomeState.AnnotationMode.RemoveMode) {
-                        onAnnotationModeChanged(GameHomeState.AnnotationMode.Idle)
-                    } else {
-                        onAnnotationModeChanged(GameHomeState.AnnotationMode.RemoveMode)
-                    }
-                },
-                isSelected = annotationMode == GameHomeState.AnnotationMode.RemoveMode,
-                isEnabled = allowEditing,
-                useTonal = true
-            ) {
-                Icon(painter = AppIcons.Bin, contentDescription = "")
-            }
+            RemoveButton(annotationMode, allowEditing, onAnnotationModeChanged)
 
-            AnnotationButton(
-                onClick = {
-                    if (annotationMode == GameHomeState.AnnotationMode.DrawingMode) {
-                        onAnnotationModeChanged(GameHomeState.AnnotationMode.Idle)
-                    } else {
-                        onAnnotationModeChanged(GameHomeState.AnnotationMode.DrawingMode)
-                    }
-                },
-                isSelected = annotationMode == GameHomeState.AnnotationMode.DrawingMode,
-                isEnabled = allowEditing,
-            ) {
-                Icon(painter = AppIcons.Edit, contentDescription = "")
-            }
+            AnnotationButton(annotationMode, allowEditing, onAnnotationModeChanged)
 
-            AnnotationButton(
-                onClick = {
-                    if (annotationMode == GameHomeState.AnnotationMode.TextMode) {
-                        onAnnotationModeChanged(GameHomeState.AnnotationMode.Idle)
-                    } else {
-                        onAnnotationModeChanged(GameHomeState.AnnotationMode.TextMode)
-                    }
-                },
-                isSelected = annotationMode == GameHomeState.AnnotationMode.TextMode,
-                isEnabled = allowEditing,
-            ) {
-                Text(
-                    "T",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-
+            TextButton(annotationMode, allowEditing, onAnnotationModeChanged)
         }
     }
 }
 
 @Composable
-fun AnnotationButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    isEnabled: Boolean = true,
-    isSelected: Boolean = false,
-    isLong: Boolean = false,
-    useTonal: Boolean = false,
-    content: @Composable () -> Unit,
+private fun RemoveButton(
+    annotationMode: GameHomeState.AnnotationMode,
+    allowEditing: Boolean,
+    onAnnotationModeChanged: (GameHomeState.AnnotationMode) -> Unit
 ) {
-    if (isLong) {
-        if (isSelected) {
-            Button(
-                modifier = modifier,
-                onClick = onClick,
-                enabled = isEnabled
-            ) {
-                content()
-            }
-        } else {
-            OutlinedButton(modifier = modifier, onClick = onClick, enabled = isEnabled) {
-                content()
-            }
-        }
-    } else {
-        if (isSelected) {
-            FilledIconButton(modifier = modifier, onClick = onClick, enabled = isEnabled) {
-                content()
-            }
-        } else {
-            if (useTonal) {
-                FilledTonalIconButton(modifier = modifier, onClick = onClick, enabled = isEnabled) {
-                    content()
-                }
+    HomeButton(
+        onClick = {
+            if (annotationMode == GameHomeState.AnnotationMode.RemoveMode) {
+                onAnnotationModeChanged(GameHomeState.AnnotationMode.Idle)
             } else {
-                OutlinedIconButton(modifier = modifier, onClick = onClick, enabled = isEnabled) {
-                    content()
-                }
+                onAnnotationModeChanged(GameHomeState.AnnotationMode.RemoveMode)
             }
-        }
+        },
+        isSelected = annotationMode == GameHomeState.AnnotationMode.RemoveMode,
+        isEnabled = allowEditing,
+        useTonal = true
+    ) {
+        Icon(painter = AppIcons.Bin, contentDescription = "")
     }
 }
+
+@Composable
+private fun AnnotationButton(
+    annotationMode: GameHomeState.AnnotationMode,
+    allowEditing: Boolean,
+    onAnnotationModeChanged: (GameHomeState.AnnotationMode) -> Unit,
+) {
+    HomeButton(
+        onClick = {
+            if (annotationMode == GameHomeState.AnnotationMode.DrawingMode) {
+                onAnnotationModeChanged(GameHomeState.AnnotationMode.Idle)
+            } else {
+                onAnnotationModeChanged(GameHomeState.AnnotationMode.DrawingMode)
+            }
+        },
+        isSelected = annotationMode == GameHomeState.AnnotationMode.DrawingMode,
+        isEnabled = allowEditing,
+    ) {
+        Icon(painter = AppIcons.Edit, contentDescription = "")
+    }
+}
+
+@Composable
+private fun TextButton(
+    annotationMode: GameHomeState.AnnotationMode,
+    allowEditing: Boolean,
+    onAnnotationModeChanged: (GameHomeState.AnnotationMode) -> Unit,
+) {
+    HomeButton(
+        onClick = {
+            if (annotationMode == GameHomeState.AnnotationMode.TextMode) {
+                onAnnotationModeChanged(GameHomeState.AnnotationMode.Idle)
+            } else {
+                onAnnotationModeChanged(GameHomeState.AnnotationMode.TextMode)
+            }
+        },
+        isSelected = annotationMode == GameHomeState.AnnotationMode.TextMode,
+        isEnabled = allowEditing,
+    ) {
+        Text(
+            "T",
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
+
+@Composable
+private fun DMToolsButton(
+    annotationMode: GameHomeState.AnnotationMode,
+    isDM: Boolean,
+    onAnnotationModeChanged: (GameHomeState.AnnotationMode) -> Unit,
+) {
+    if (!isDM) return
+
+    HomeButton(
+        onClick = {
+            if (annotationMode == GameHomeState.AnnotationMode.DMMode) {
+                onAnnotationModeChanged(GameHomeState.AnnotationMode.Idle)
+            } else {
+                onAnnotationModeChanged(GameHomeState.AnnotationMode.DMMode)
+            }
+        },
+        isSelected = annotationMode == GameHomeState.AnnotationMode.DMMode,
+        isLong = true,
+    ) {
+        Text(text = stringResource(R.string.dm_tools))
+    }
+}
+
 
 @Preview
 @Composable
@@ -169,67 +157,6 @@ fun AnnotationToolsDMPreview() {
             annotationMode = GameHomeState.AnnotationMode.Idle,
             isDM = true,
             onAnnotationModeChanged = {},
-        )
-    }
-}
-
-@Preview
-@Composable
-fun AnnotationButtonPreview() {
-    AppTheme {
-        AnnotationButton(
-            onClick = {},
-            content = {
-                Icon(painter = AppIcons.Edit, contentDescription = "")
-            },
-        )
-    }
-}
-
-@Preview
-@Composable
-fun AnnotationButtonTextPreview() {
-    AppTheme {
-        AnnotationButton(
-            onClick = {},
-            isSelected = true,
-            content = {
-                Text(
-                    "T",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
-                )
-            },
-        )
-    }
-}
-
-@Preview
-@Composable
-fun AnnotationLongButtonPreview() {
-    AppTheme {
-        AnnotationButton(
-            onClick = {},
-            isLong = true,
-            isSelected = true,
-            content = {
-                Icon(painter = AppIcons.Edit, contentDescription = "")
-            },
-        )
-    }
-}
-
-@Preview
-@Composable
-fun AnnotationLongButtonTextPreview() {
-    AppTheme {
-        AnnotationButton(
-            onClick = {},
-            isLong = true,
-            isSelected = true,
-            content = {
-                Text("DM Tools")
-            },
         )
     }
 }

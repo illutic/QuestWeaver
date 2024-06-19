@@ -3,9 +3,9 @@ package g.sig.questweaver.hostgame.state
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import g.sig.questweaver.domain.usecases.host.VerifyPlayerCountUseCase.Companion.MIN_PLAYERS
 
 @Stable
 class HostGameState {
@@ -19,7 +19,7 @@ class HostGameState {
     @delegate:StringRes
     var descriptionError by mutableStateOf<Int?>(null)
 
-    var playerCount by mutableIntStateOf(4)
+    var playerCount by mutableStateOf<Int?>(MIN_PLAYERS)
 
     @delegate:StringRes
     var playerCountError by mutableStateOf<Int?>(null)

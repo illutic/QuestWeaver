@@ -12,7 +12,7 @@ sealed interface AnnotationDto : Dto {
     data class DrawingDto(
         val id: String,
         val createdBy: String,
-        val strokeWidth: Int,
+        val strokeSize: SizeDto,
         val colorDto: ColorDto,
         val path: List<PointDto>
     ) : AnnotationDto

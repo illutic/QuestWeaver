@@ -9,6 +9,6 @@ sealed interface HostGameIntent {
     data object ShowConnectionDialog : HostGameIntent
     data class SetGameName(val gameName: String) : HostGameIntent
     data class SetDescription(val description: String) : HostGameIntent
-    data class SetPlayerCount(val playerCount: Int) : HostGameIntent
+    data class SetPlayerCount(val playerCount: Int?) : HostGameIntent
     data object CancelHostGame : HostGameIntent
 }

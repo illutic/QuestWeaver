@@ -12,7 +12,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -30,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import g.sig.questweaver.common.ui.components.AdaptiveImage
+import g.sig.questweaver.common.ui.components.CenteredProgressBar
 import g.sig.questweaver.common.ui.components.PermissionsAlert
 import g.sig.questweaver.common.ui.layouts.ScreenScaffold
 import g.sig.questweaver.domain.entities.blocks.Uri
@@ -76,7 +76,7 @@ internal fun HomeScreen(
             when (homeState) {
                 HomeState.Idle -> {}
                 is HomeState.Loaded -> HomeScreenContent(homeState = homeState, onIntent = onIntent)
-                HomeState.Loading -> CircularProgressIndicator()
+                HomeState.Loading -> CenteredProgressBar()
             }
         }
     }

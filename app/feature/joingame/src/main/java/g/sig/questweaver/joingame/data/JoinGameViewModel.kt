@@ -3,7 +3,7 @@ package g.sig.questweaver.joingame.data
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import g.sig.questweaver.domain.entities.common.Game
+import g.sig.questweaver.domain.entities.states.GameState
 import g.sig.questweaver.domain.usecases.device.GetDevicesUseCase
 import g.sig.questweaver.domain.usecases.nearby.AcceptConnectionUseCase
 import g.sig.questweaver.domain.usecases.nearby.CancelDiscoveryUseCase
@@ -79,7 +79,7 @@ class JoinGameViewModel @Inject constructor(
         viewModelScope.launch {
             onPayloadReceived { payload ->
                 when (payload) {
-                    is Game -> handleIntent(JoinGameIntent.JoinGame(payload))
+                    is GameState -> handleIntent(JoinGameIntent.JoinGame(payload.game))
                     else -> Unit
                 }
             }

@@ -107,7 +107,7 @@ class HostGameViewModel @Inject constructor(
                 UUID.randomUUID().toString(),
                 state.gameName,
                 state.description,
-                state.playerCount
+                state.playerCount!!
             )
             handleIntent(HostGameIntent.ShowConnectionDialog)
         }

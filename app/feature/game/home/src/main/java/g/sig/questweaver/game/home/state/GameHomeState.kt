@@ -1,8 +1,8 @@
 package g.sig.questweaver.game.home.state
 
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -19,9 +19,10 @@ class GameHomeState {
 
     var annotations = mutableStateListOf<Annotation>()
 
-    var opacity by mutableFloatStateOf(1f)
-    var selectedColor by mutableStateOf(Color.Unspecified)
+    var selectedColor by mutableStateOf(Color.Black)
+    val opacity by derivedStateOf { selectedColor.alpha }
     var selectedSize by mutableStateOf(Size.Default)
+    var selectedAnnotation: Annotation? by mutableStateOf(null)
 
     var selectedPlayer: User? by mutableStateOf(null)
     var users: List<User> by mutableStateOf(emptyList())

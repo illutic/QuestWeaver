@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions")
+
 package g.sig.questweaver.data.mapper
 
 import g.sig.questweaver.data.dto.AnnotationDto
@@ -19,6 +21,7 @@ import g.sig.questweaver.data.dto.GameDto
 import g.sig.questweaver.data.dto.GameHomeStateDto
 import g.sig.questweaver.data.dto.GameStateDto
 import g.sig.questweaver.data.dto.PointDto
+import g.sig.questweaver.data.dto.RemoveAnnotationDto
 import g.sig.questweaver.data.dto.SizeDto
 import g.sig.questweaver.data.dto.UserDto
 import g.sig.questweaver.domain.entities.DomainEntity
@@ -29,15 +32,16 @@ import g.sig.questweaver.domain.entities.blocks.Uri
 import g.sig.questweaver.domain.entities.common.Annotation
 import g.sig.questweaver.domain.entities.common.Device
 import g.sig.questweaver.domain.entities.common.Game
+import g.sig.questweaver.domain.entities.common.RemoveAnnotation
 import g.sig.questweaver.domain.entities.common.User
 import g.sig.questweaver.domain.entities.io.File
 import g.sig.questweaver.domain.entities.io.FileMetadata
 import g.sig.questweaver.domain.entities.states.ConnectionState
 import g.sig.questweaver.domain.entities.states.GameHomeState
 import g.sig.questweaver.domain.entities.states.GameState
-import java.util.UUID
 import android.net.Uri as AndroidUri
 
+@Suppress("CyclomaticComplexMethod")
 fun DomainEntity.toDto(): Dto = when (this) {
     is File -> toDto()
     is FileMetadata -> toDto()
@@ -52,6 +56,7 @@ fun DomainEntity.toDto(): Dto = when (this) {
     is ConnectionState -> toDto()
     is GameHomeState -> toDto()
     is GameState -> toDto()
+    is RemoveAnnotation -> toDto()
     else -> throw IllegalArgumentException("Unknown DomainEntity type: $this")
 }
 
@@ -59,7 +64,7 @@ fun Uri.toDto(): AndroidUri = AndroidUri.parse(value)
 fun File.toDto() = FileDto(uri.toDto(), metadata.toDto())
 fun FileMetadata.toDto() = FileMetadataDto(name, extension)
 fun Game.toDto() = GameDto(gameId, title, description, players, maxPlayers, dmId.orEmpty())
-fun User.toDto() = UserDto(UUID.fromString(id), name)
+fun User.toDto() = UserDto(id = id, name = name)
 fun Color.toDto() = ColorDto(value)
 fun Point.toDto() = PointDto(x, y)
 fun Size.toDto() = SizeDto(width, height)
@@ -83,7 +88,7 @@ fun GameState.toDto() = GameStateDto(
 fun Annotation.Drawing.toDto() = DrawingDto(
     id = id,
     createdBy = createdBy,
-    strokeWidth = strokeWidth,
+    strokeSize = strokeSize.toDto(),
     colorDto = color.toDto(),
     path = path.map { it.toDto() }
 )
@@ -128,3 +133,5 @@ fun ConnectionState.toDto(): ConnectionStateDto =
         is ConnectionState.Error.DisconnectionError ->
             ErrorDto.DisconnectionError(endpointId)
     }
+
+fun RemoveAnnotation.toDto() = RemoveAnnotationDto(id)

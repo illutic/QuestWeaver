@@ -3,7 +3,9 @@ package g.sig.questweaver.user
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import g.sig.questweaver.domain.usecases.user.CreateUserUseCase
 import g.sig.questweaver.domain.usecases.user.GetUserUseCase
+import g.sig.questweaver.domain.usecases.user.HasUserUseCase
 import g.sig.questweaver.domain.usecases.user.UpdateUserNameUseCase
 import g.sig.questweaver.domain.usecases.user.ValidateUserNameUseCase
 import g.sig.questweaver.user.state.UserEvent
@@ -14,11 +16,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
 class UserViewModel @Inject constructor(
+    private val createUser: CreateUserUseCase,
     private val getUser: GetUserUseCase,
+    private val hasUser: HasUserUseCase,
     private val updateUserName: UpdateUserNameUseCase,
     private val validateUser: ValidateUserNameUseCase
 ) : ViewModel() {
@@ -41,7 +46,11 @@ class UserViewModel @Inject constructor(
 
                     when (validationState) {
                         is ValidateUserNameUseCase.ValidationState.Valid -> {
-                            updateUserName(intent.name)
+                            if (hasUser()) {
+                                updateUserName(intent.name)
+                            } else {
+                                createUser(UUID.randomUUID().toString(), intent.name)
+                            }
                             _events.send(UserEvent.UserSaved)
                         }
 

@@ -31,6 +31,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -93,7 +94,6 @@ internal fun HostGameScreen(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun HostGameContent(
     modifier: Modifier = Modifier,
@@ -102,7 +102,7 @@ private fun HostGameContent(
 ) {
     Column(
         modifier = modifier
-            .fillMaxSize()
+            .fillMaxWidth()
             .padding(horizontal = largeSize),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(mediumSize)
@@ -114,82 +114,97 @@ private fun HostGameContent(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(smallSize)
         ) {
-            FlowRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(smallSize)
-            ) {
-                AppOutlinedTextField(
-                    value = state.gameName,
-                    onValueChanged = { onIntent(HostGameIntent.SetGameName(it)) },
-                    label = stringResource(R.string.game_title_label),
-                    placeholder = stringResource(R.string.game_title_placeholder),
-                    error = state.gameNameError?.let { stringResource(it) },
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
-                )
+            NameAndDescriptionFields(state, onIntent)
 
-                AppOutlinedTextField(
-                    value = state.description,
-                    onValueChanged = { onIntent(HostGameIntent.SetDescription(it)) },
-                    label = stringResource(R.string.game_description_label),
-                    placeholder = stringResource(R.string.game_description_placeholder),
-                    error = state.descriptionError?.let { stringResource(it) },
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
-                )
-            }
+            MaxPlayersInputField(state, onIntent)
 
-            Row(
-                modifier = Modifier
-                    .defaultMinSize(minWidth = HostGameSize.minTextSize),
-                horizontalArrangement = Arrangement.spacedBy(mediumSize),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(R.string.max_players_label),
-                    style = MaterialTheme.typography.labelLarge
-                )
-                Spacer(modifier = Modifier.weight(1f))
-
-                val keyboardController = LocalSoftwareKeyboardController.current
-                AppOutlinedTextField(
-                    modifier = Modifier.widthIn(min = HostGameSize.numberTextSize),
-                    style = MaterialTheme.typography.labelMedium.copy(textAlign = TextAlign.Center),
-                    value = state.playerCount.toString(),
-                    onValueChanged = {
-                        onIntent(
-                            HostGameIntent.SetPlayerCount(
-                                it.toIntOrNull() ?: 0
-                            )
-                        )
-                    },
-                    placeholder = stringResource(R.string.max_players_placeholder),
-                    error = state.playerCountError?.let { stringResource(it) },
-                    keyboardActions = KeyboardActions(onDone = {
-                        keyboardController?.hide()
-                        onIntent(HostGameIntent.StartHosting)
-                    })
-                )
-            }
-
-            Alert(
-                modifier = Modifier.fillMaxWidth(),
-                content = {
-                    Text(
-                        text = stringResource(R.string.host_game_alert),
-                        style = MaterialTheme.typography.labelLarge
-                    )
-                },
-                leadingContent = {
-                    Icon(AppIcons.Info, contentDescription = null)
-                }
-            )
+            InformationAlert()
 
             if (!state.hasPermissions) {
-                PermissionsAlert(
-                    modifier = Modifier.fillMaxWidth(),
-                ) { onIntent(HostGameIntent.NavigateToPermissions) }
+                PermissionsAlert(modifier = Modifier.fillMaxWidth()) {
+                    onIntent(HostGameIntent.NavigateToPermissions)
+                }
             }
         }
     }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun NameAndDescriptionFields(state: HostGameState, onIntent: (HostGameIntent) -> Unit) {
+    FlowRow(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(smallSize)
+    ) {
+        AppOutlinedTextField(
+            value = state.gameName,
+            onValueChanged = { onIntent(HostGameIntent.SetGameName(it)) },
+            label = stringResource(R.string.game_title_label),
+            placeholder = stringResource(R.string.game_title_placeholder),
+            error = state.gameNameError?.let { stringResource(it) },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+        )
+
+        AppOutlinedTextField(
+            value = state.description,
+            onValueChanged = { onIntent(HostGameIntent.SetDescription(it)) },
+            label = stringResource(R.string.game_description_label),
+            placeholder = stringResource(R.string.game_description_placeholder),
+            error = state.descriptionError?.let { stringResource(it) },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+        )
+    }
+}
+
+@Composable
+private fun MaxPlayersInputField(state: HostGameState, onIntent: (HostGameIntent) -> Unit) {
+    Row(
+        modifier = Modifier
+            .defaultMinSize(minWidth = HostGameSize.minTextSize),
+        horizontalArrangement = Arrangement.spacedBy(mediumSize),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = stringResource(R.string.max_players_label),
+            style = MaterialTheme.typography.labelLarge
+        )
+        Spacer(modifier = Modifier.weight(1f))
+
+        val keyboardController = LocalSoftwareKeyboardController.current
+        val localFocusManager = LocalFocusManager.current
+
+        AppOutlinedTextField(
+            modifier = Modifier.widthIn(min = HostGameSize.numberTextSize),
+            style = MaterialTheme.typography.labelMedium.copy(textAlign = TextAlign.Center),
+            value = state.playerCount.toString(),
+            onValueChanged = {
+                onIntent(HostGameIntent.SetPlayerCount(it.toIntOrNull()))
+            },
+            placeholder = stringResource(R.string.max_players_placeholder),
+            error = state.playerCountError?.let { stringResource(it) },
+            keyboardActions = KeyboardActions(onDone = {
+                localFocusManager.clearFocus(true)
+                keyboardController?.hide()
+                onIntent(HostGameIntent.StartHosting)
+            })
+        )
+    }
+}
+
+@Composable
+private fun InformationAlert() {
+    Alert(
+        modifier = Modifier.fillMaxWidth(),
+        content = {
+            Text(
+                text = stringResource(R.string.host_game_alert),
+                style = MaterialTheme.typography.labelLarge
+            )
+        },
+        leadingContent = {
+            Icon(AppIcons.Info, contentDescription = null)
+        }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
