@@ -43,6 +43,7 @@ class GameHomeViewModel @Inject constructor(
             is GameHomeIntent.SelectSize -> state.selectedSize = Size(intent.size, intent.size)
             is GameHomeIntent.ChangeMode -> state.annotationMode = intent.mode
             is GameHomeIntent.SelectPlayer -> state.selectedPlayer = intent.player
+            GameHomeIntent.ShowColorPicker -> state.showColorPicker = true
 
             is GameHomeIntent.SelectOpacity -> {
                 state.selectedColor = state.selectedColor.copy(alpha = intent.opacity)
@@ -51,12 +52,15 @@ class GameHomeViewModel @Inject constructor(
             is GameHomeIntent.AddImage -> {
                 // TODO Add image
             }
+
         }
     }
 
     private fun sendEvent(event: GameHomeEvent) = viewModelScope.launch { _events.send(event) }
 
     private fun addDrawing(intent: GameHomeIntent.AddDrawing) = viewModelScope.launch {
+        if (state.opacity < ALPHA_MIN) return@launch
+
         val points = intent.path.runningReduce { acc, point ->
             if (acc.distanceTo(point) > POINT_TOLERANCE) point else acc
         }
@@ -130,6 +134,7 @@ class GameHomeViewModel @Inject constructor(
     }
 
     companion object {
+        private const val ALPHA_MIN = 0.1f
         private const val POINT_TOLERANCE = 0.01f
     }
 }

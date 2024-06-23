@@ -6,4 +6,7 @@
     <string name="dm_tools">Εργαλεία DM</string>
     <string name="opacity">Διαφάνεια</string>
     <string name="size">Μέγεθος</string>
+    <string name="ok">Επιλογή</string>
+    <string name="cancel">Ακύρωση</string>
+    <string name="select_color">Επιλογή χρώματος</string>
 </resources>

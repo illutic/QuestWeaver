@@ -176,7 +176,7 @@ private fun MaxPlayersInputField(state: HostGameState, onIntent: (HostGameIntent
         AppOutlinedTextField(
             modifier = Modifier.widthIn(min = HostGameSize.numberTextSize),
             style = MaterialTheme.typography.labelMedium.copy(textAlign = TextAlign.Center),
-            value = state.playerCount.toString(),
+            value = state.playerCount?.toString().orEmpty(),
             onValueChanged = {
                 onIntent(HostGameIntent.SetPlayerCount(it.toIntOrNull()))
             },

@@ -6,4 +6,7 @@
     <string name="dm_tools">DM Tools</string>
     <string name="opacity">Opacity</string>
     <string name="size">Size</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="select_color">Select color</string>
 </resources>

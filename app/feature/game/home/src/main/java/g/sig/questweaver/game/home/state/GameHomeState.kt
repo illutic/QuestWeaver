@@ -16,16 +16,15 @@ class GameHomeState {
     var allowAnnotations by mutableStateOf(true)
     var isDM by mutableStateOf(false)
     var annotationMode by mutableStateOf(AnnotationMode.Idle)
-
     var annotations = mutableStateListOf<Annotation>()
-
     var selectedColor by mutableStateOf(Color.Black)
     val opacity by derivedStateOf { selectedColor.alpha }
     var selectedSize by mutableStateOf(Size.Default)
     var selectedAnnotation: Annotation? by mutableStateOf(null)
-
+    var selectedText by mutableStateOf("")
     var selectedPlayer: User? by mutableStateOf(null)
     var users: List<User> by mutableStateOf(emptyList())
+    var showColorPicker by mutableStateOf(false)
 
     enum class AnnotationMode {
         Idle,

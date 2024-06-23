@@ -40,4 +40,5 @@ object AppIcons {
     val Refresh @Composable get() = MaterialIcons.Outlined.Refresh.painter
     val Edit @Composable get() = MaterialIcons.Outlined.Edit.painter
     val Bin @Composable get() = MaterialIcons.Outlined.Delete.painter
+    val Color @Composable get() = R.drawable.ic_color_lens_24.painter
 }

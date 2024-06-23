@@ -13,6 +13,7 @@ import androidx.compose.ui.res.stringResource
 import g.sig.questweaver.game.home.R
 import g.sig.questweaver.game.home.state.GameHomeIntent
 import g.sig.questweaver.game.home.state.GameHomeState
+import g.sig.questweaver.ui.largeSize
 
 @Suppress("TopLevelPropertyNaming")
 private const val SLIDER_WIDTH_PERCENT = 0.8f
@@ -27,6 +28,18 @@ fun HomeEditControls(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
+        Row(
+            modifier = Modifier.align(Alignment.End),
+            horizontalArrangement = Arrangement.spacedBy(largeSize),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            ColorButton(
+                color = state.selectedColor,
+                onClick = { postIntent(GameHomeIntent.ShowColorPicker) }
+            )
+        }
+
         HomeSlider(
             label = stringResource(id = R.string.size),
             value = state.selectedSize.width,
