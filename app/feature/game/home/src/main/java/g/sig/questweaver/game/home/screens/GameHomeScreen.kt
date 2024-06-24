@@ -116,6 +116,7 @@ internal fun GameHomeScreen(
         Canvas(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(it)
                 .selectAnnotations(state, canvasSize, postIntent)
                 .annotateDrawing(state, canvasSize, currentlyDrawnPoints, postIntent)
                 .annotateText(state, textMeasurer, textStyle, canvasSize, postIntent)

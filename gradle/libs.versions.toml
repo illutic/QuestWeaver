@@ -11,7 +11,7 @@ jvmTarget = "17"
 playServicesNearby = "19.3.0"
 accompanistPermissions = "0.34.0"
 googleServices = "4.4.2"
-firebaseBom = "33.1.0"
+firebaseBom = "33.1.1"
 firebaseCrashlytics = "3.0.1"
 
 # Android

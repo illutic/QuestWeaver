@@ -3,7 +3,6 @@ package g.sig.questweaver.game.screens
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -77,9 +76,7 @@ internal fun GameRoute(
     }
 
     GameNavigation(
-        modifier = Modifier
-            .fillMaxSize()
-            .safeDrawingPadding(),
+        modifier = Modifier.fillMaxSize(),
         selectedRoute = viewModel.selectedRoute,
         routes = viewModel.gameRoutes,
         onItemClick = { viewModel.handleIntent(GameIntent.SelectRoute(it)) }
