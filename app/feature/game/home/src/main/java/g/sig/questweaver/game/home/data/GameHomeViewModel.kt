@@ -9,6 +9,7 @@ import g.sig.questweaver.domain.entities.blocks.Size
 import g.sig.questweaver.domain.entities.common.Annotation
 import g.sig.questweaver.domain.entities.common.RemoveAnnotation
 import g.sig.questweaver.domain.usecases.game.GetGameStateUseCase
+import g.sig.questweaver.domain.usecases.game.UpdateGameSessionUseCase
 import g.sig.questweaver.domain.usecases.nearby.BroadcastPayloadUseCase
 import g.sig.questweaver.domain.usecases.nearby.OnPayloadReceivedUseCase
 import g.sig.questweaver.domain.usecases.user.GetUserUseCase
@@ -21,17 +22,20 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
+import g.sig.questweaver.domain.entities.states.GameState as DomainGameState
 
 @HiltViewModel
 class GameHomeViewModel @Inject constructor(
     private val broadcastPayload: BroadcastPayloadUseCase,
     private val onPayloadReceived: OnPayloadReceivedUseCase,
     private val getGameState: GetGameStateUseCase,
+    private val updateGameSessionUseCase: UpdateGameSessionUseCase,
     private val getUser: GetUserUseCase
 ) : ViewModel() {
     private val _events = Channel<GameHomeEvent>()
     val events = _events.receiveAsFlow()
     val state = GameHomeState()
+    private var gameState: DomainGameState? = null
 
     fun handleIntent(intent: GameHomeIntent) {
         when (intent) {
@@ -74,7 +78,7 @@ class GameHomeViewModel @Inject constructor(
             id = UUID.randomUUID().toString()
         )
         broadcastPayload(drawing)
-        updateAnnotations(drawing)
+        updateGameState(drawing)
     }
 
     private fun addText(intent: GameHomeIntent.AddText) = viewModelScope.launch {
@@ -87,7 +91,7 @@ class GameHomeViewModel @Inject constructor(
             id = UUID.randomUUID().toString()
         )
         broadcastPayload(text)
-        updateAnnotations(text)
+        updateGameState(text)
     }
 
     private var loadingJob: Job? = null
@@ -97,16 +101,16 @@ class GameHomeViewModel @Inject constructor(
         }
 
     private fun loadHomeScreen() = viewModelScope.launch {
-        val gameState = getGameState()
+        gameState = getGameState()
         val user = getUser()
-        val isDM = gameState.game.dmId == user.id
+        val isDM = gameState?.game?.dmId == user.id
 
         state.isDM = isDM
-        state.users = gameState.connectedUsers
-        state.annotations = gameState.gameHomeState.annotations.toSet()
-        state.allowAnnotations = gameState.gameHomeState.allowEditing || isDM
+        state.users = gameState?.connectedUsers.orEmpty()
+        state.annotations = gameState?.gameHomeState?.annotations.orEmpty().toSet()
+        state.allowAnnotations = (gameState?.gameHomeState?.allowEditing ?: false) || isDM
 
-        onPayloadReceived(::updateAnnotations)
+        onPayloadReceived(::updateGameState)
     }.also { loadingJob = it }
 
     private fun selectAnnotation(intent: GameHomeIntent.SelectAnnotation) = viewModelScope.launch {
@@ -124,11 +128,11 @@ class GameHomeViewModel @Inject constructor(
         if (canRemoveAnnotation) {
             val payload = RemoveAnnotation(annotation.id)
             broadcastPayload(payload)
-            updateAnnotations(payload)
+            updateGameState(payload)
         }
     }
 
-    private fun updateAnnotations(data: DomainEntity) {
+    private fun updateGameState(data: DomainEntity) {
         when (data) {
             is Annotation -> synchronized(state.annotations) {
                 val updatedAnnotations = state.annotations.toMutableSet()
@@ -143,6 +147,16 @@ class GameHomeViewModel @Inject constructor(
             }
 
             else -> Unit
+        }
+
+        val updatedGameHomeState =
+            gameState?.gameHomeState?.copy(annotations = state.annotations.toList()) ?: return
+
+        val updatedGameState = gameState?.copy(gameHomeState = updatedGameHomeState) ?: return
+        gameState = updatedGameState
+
+        viewModelScope.launch {
+            updateGameSessionUseCase(updatedGameState)
         }
     }
 
