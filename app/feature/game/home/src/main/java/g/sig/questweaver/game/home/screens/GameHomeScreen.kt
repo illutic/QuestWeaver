@@ -22,17 +22,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.view.HapticFeedbackConstantsCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import g.sig.questweaver.common.ui.components.AppOutlinedTextField
 import g.sig.questweaver.common.ui.mappers.getClickedAnnotation
@@ -228,23 +231,28 @@ private fun Modifier.annotateText(
     localTextStyle: TextStyle,
     canvasSize: Size,
     postIntent: (GameHomeIntent) -> Unit
-) = pointerInput(state.annotationMode) {
-    if (state.annotationMode != GameHomeState.AnnotationMode.TextMode) return@pointerInput
-    detectTapGestures { offset ->
-        val result = textMeasurer.measure(
-            text = state.selectedText,
-            style = localTextStyle.merge(
-                color = state.selectedColor,
-                fontSize = state.selectedSize.toSp(canvasSize).toSp()
+) = composed {
+    val view = LocalView.current
+    pointerInput(state.annotationMode) {
+        if (state.annotationMode != GameHomeState.AnnotationMode.TextMode) return@pointerInput
+        detectTapGestures { offset ->
+            val result = textMeasurer.measure(
+                text = state.selectedText,
+                style = localTextStyle.merge(
+                    color = state.selectedColor,
+                    fontSize = state.selectedSize.toSp(canvasSize).toSp()
+                )
             )
-        )
-        postIntent(
-            GameHomeIntent.AddText(
-                state.selectedText,
-                result.size.toSize(size),
-                offset.toPoint(canvasSize)
+
+            view.performHapticFeedback(HapticFeedbackConstantsCompat.SEGMENT_FREQUENT_TICK)
+            postIntent(
+                GameHomeIntent.AddText(
+                    state.selectedText,
+                    result.size.toSize(size),
+                    offset.toPoint(canvasSize)
+                )
             )
-        )
+        }
     }
 }
 
@@ -253,18 +261,23 @@ private fun Modifier.annotateDrawing(
     canvasSize: Size,
     drawnPoints: MutableList<Point>,
     postIntent: (GameHomeIntent) -> Unit
-) = pointerInput(state.annotationMode) {
-    if (state.annotationMode != GameHomeState.AnnotationMode.DrawingMode) return@pointerInput
-    detectDragGestures(
-        onDragEnd = {
-            postIntent(GameHomeIntent.AddDrawing(drawnPoints, state.selectedSize))
-            drawnPoints.clear()
-        },
-        onDragStart = { drawnPoints.clear() },
-        onDragCancel = { drawnPoints.clear() }
-    ) { change, _ ->
-        val point = change.position.toPoint(canvasSize)
-        drawnPoints.add(point)
+) = composed {
+    val view = LocalView.current
+
+    pointerInput(state.annotationMode) {
+        if (state.annotationMode != GameHomeState.AnnotationMode.DrawingMode) return@pointerInput
+        detectDragGestures(
+            onDragEnd = {
+                postIntent(GameHomeIntent.AddDrawing(drawnPoints, state.selectedSize))
+                drawnPoints.clear()
+            },
+            onDragStart = { drawnPoints.clear() },
+            onDragCancel = { drawnPoints.clear() }
+        ) { change, _ ->
+            view.performHapticFeedback(HapticFeedbackConstantsCompat.SEGMENT_FREQUENT_TICK)
+            val point = change.position.toPoint(canvasSize)
+            drawnPoints.add(point)
+        }
     }
 }
 
@@ -272,11 +285,16 @@ private fun Modifier.selectAnnotations(
     state: GameHomeState,
     canvasSize: Size,
     postIntent: (GameHomeIntent) -> Unit
-) = pointerInput(state.annotationMode) {
-    if (state.annotationMode != GameHomeState.AnnotationMode.RemoveMode) return@pointerInput
-    detectTapGestures { offset ->
-        state.annotations.getClickedAnnotation(offset, canvasSize)?.let {
-            postIntent(GameHomeIntent.SelectAnnotation(it))
+) = composed {
+    val view = LocalView.current
+
+    pointerInput(state.annotationMode) {
+        if (state.annotationMode != GameHomeState.AnnotationMode.RemoveMode) return@pointerInput
+        detectTapGestures { offset ->
+            state.annotations.getClickedAnnotation(offset, canvasSize)?.let {
+                view.performHapticFeedback(HapticFeedbackConstantsCompat.SEGMENT_FREQUENT_TICK)
+                postIntent(GameHomeIntent.SelectAnnotation(it))
+            }
         }
     }
 }
