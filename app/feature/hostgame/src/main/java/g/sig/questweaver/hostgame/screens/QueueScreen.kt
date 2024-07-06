@@ -10,6 +10,7 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,8 +18,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,7 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import g.sig.questweaver.common.ui.components.AdaptiveImage
+import g.sig.questweaver.common.ui.components.ImageWithPlaceholder
 import g.sig.questweaver.common.ui.layouts.ScreenScaffold
 import g.sig.questweaver.domain.entities.common.Device
 import g.sig.questweaver.domain.entities.states.ConnectionState
@@ -61,13 +62,6 @@ internal fun QueueScreen(
         modifier = Modifier.fillMaxSize(),
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = { QueueScreenTopBar { onIntent(QueueIntent.Back) } },
-        decoration = {
-            AdaptiveImage(
-                modifier = Modifier.width(HostGameSize.imageSize),
-                model = R.drawable.graphic_10,
-                contentDescription = ""
-            )
-        },
         navigation = {
             Button(
                 modifier = Modifier
@@ -92,21 +86,29 @@ private fun JoinGameScreenContent(
     state: QueueState,
     onIntent: (QueueIntent) -> Unit
 ) {
-    LazyColumn(
+    val scrollState = rememberScrollState()
+
+    ImageWithPlaceholder(
+        modifier = Modifier
+            .verticalScroll(scrollState)
+            .width(HostGameSize.imageSize),
+        model = R.drawable.graphic_10,
+        contentDescription = ""
+    )
+
+    Column(
         modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = largeSize),
+            .verticalScroll(scrollState)
+            .padding(largeSize),
         verticalArrangement = Arrangement.spacedBy(largeSize),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if (state.advertising) {
-            item {
-                LinearProgressIndicator(Modifier.width(IntrinsicSize.Max))
-            }
+            LinearProgressIndicator(Modifier.width(IntrinsicSize.Max))
         }
 
         if (state.devicesToConnect.isNotEmpty()) {
-            items(state.devicesToConnect) { deviceState ->
+            state.devicesToConnect.forEach { deviceState ->
                 DeviceCard(
                     device = deviceState,
                     onAcceptClicked = { onIntent(QueueIntent.AcceptConnection(it)) },
@@ -114,12 +116,10 @@ private fun JoinGameScreenContent(
                 )
             }
         } else {
-            item {
-                Text(
-                    text = stringResource(R.string.queue_empty),
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
+            Text(
+                text = stringResource(R.string.queue_empty),
+                style = MaterialTheme.typography.bodyMedium
+            )
         }
     }
 }

@@ -17,10 +17,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import g.sig.questweaver.common.ui.components.AdaptiveImage
+import g.sig.questweaver.common.ui.components.ImageWithPlaceholder
 import g.sig.questweaver.common.ui.layouts.ScreenScaffold
 import g.sig.questweaver.onboarding.R
-import g.sig.questweaver.onboarding.screens.OnboardingSize.imageSize
 import g.sig.questweaver.ui.largeSize
 
 @Composable
@@ -28,13 +27,6 @@ internal fun ExplanationScreen(
     onNavigateToUserCreation: () -> Unit
 ) {
     ScreenScaffold(
-        decoration = {
-            AdaptiveImage(
-                modifier = Modifier.size(imageSize),
-                model = R.drawable.graphic_1,
-                contentDescription = null,
-            )
-        },
         navigation = {
             Button(
                 modifier = Modifier
@@ -46,6 +38,16 @@ internal fun ExplanationScreen(
             }
         }
     ) {
+        val scrollState = rememberScrollState()
+
+        ImageWithPlaceholder(
+            modifier = Modifier
+                .verticalScroll(scrollState)
+                .size(ExplanationSize.imageSize),
+            model = R.drawable.graphic_1,
+            contentDescription = null,
+        )
+
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())

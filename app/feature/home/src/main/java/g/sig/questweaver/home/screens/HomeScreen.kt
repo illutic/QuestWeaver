@@ -4,13 +4,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -28,8 +27,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import g.sig.questweaver.common.ui.components.AdaptiveImage
 import g.sig.questweaver.common.ui.components.CenteredProgressBar
+import g.sig.questweaver.common.ui.components.ImageWithPlaceholder
 import g.sig.questweaver.common.ui.components.PermissionsAlert
 import g.sig.questweaver.common.ui.layouts.ScreenScaffold
 import g.sig.questweaver.domain.entities.blocks.Uri
@@ -49,13 +48,7 @@ internal fun HomeScreen(
     onIntent: (HomeIntent) -> Unit
 ) {
     ScreenScaffold(
-        decoration = {
-            AdaptiveImage(
-                modifier = Modifier.size(HomeScreenSize.graphicSize),
-                model = R.drawable.graphic_3,
-                contentDescription = null
-            )
-        },
+        modifier = Modifier.fillMaxSize(),
         navigation = {
             if (homeState is HomeState.Loaded) {
                 HomeScreenBottomContent(
@@ -68,16 +61,10 @@ internal fun HomeScreen(
             }
         }
     ) {
-        Column(
-            modifier = Modifier.padding(largeSize),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            when (homeState) {
-                HomeState.Idle -> {}
-                is HomeState.Loaded -> HomeScreenContent(homeState = homeState, onIntent = onIntent)
-                HomeState.Loading -> CenteredProgressBar()
-            }
+        when (homeState) {
+            HomeState.Idle -> {}
+            is HomeState.Loaded -> HomeScreenContent(homeState = homeState, onIntent = onIntent)
+            HomeState.Loading -> CenteredProgressBar()
         }
     }
 }
@@ -87,10 +74,14 @@ private fun HomeScreenContent(
     homeState: HomeState.Loaded,
     onIntent: (HomeIntent) -> Unit
 ) {
+    ImageWithPlaceholder(
+        modifier = Modifier.size(HomeScreenSize.imageSize),
+        model = R.drawable.graphic_3,
+        contentDescription = null
+    )
+
     HomeScreenTopContent(
-        modifier = Modifier
-            .fillMaxWidth()
-            .verticalScroll(rememberScrollState()),
+        modifier = Modifier.padding(horizontal = largeSize),
         state = homeState,
         onNavigateToHostGame = { onIntent(HomeIntent.NavigateToHost) },
         onNavigateToJoinGame = { onIntent(HomeIntent.NavigateToJoin) },
@@ -111,7 +102,7 @@ private fun RecentGameCard(
         shape = MediumRoundedShape
     ) {
         Box {
-            AdaptiveImage(
+            ImageWithPlaceholder(
                 modifier = Modifier.matchParentSize(),
                 model = recentGame.imageUri?.value,
                 contentDescription = null,

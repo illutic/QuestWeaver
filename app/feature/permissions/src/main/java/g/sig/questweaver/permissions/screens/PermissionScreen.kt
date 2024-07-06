@@ -31,10 +31,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.PermissionState
-import g.sig.questweaver.common.ui.components.AdaptiveImage
+import g.sig.questweaver.common.ui.components.ImageWithPlaceholder
 import g.sig.questweaver.common.ui.layouts.ScreenScaffold
 import g.sig.questweaver.permissions.R
-import g.sig.questweaver.permissions.screens.PermissionSizes.graphicSize
 import g.sig.questweaver.ui.AppIcons
 import g.sig.questweaver.ui.largeSize
 
@@ -48,17 +47,6 @@ internal fun PermissionScreen(
     ScreenScaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = { PermissionTopBar(onBack) },
-        decoration = {
-            AdaptiveImage(
-                modifier = Modifier.size(graphicSize),
-                model = if (userDeniedPermission) {
-                    R.drawable.graphic_5
-                } else {
-                    R.drawable.graphic_4
-                },
-                contentDescription = ""
-            )
-        },
         navigation = {
             val context = LocalContext.current
             Button(
@@ -83,10 +71,23 @@ internal fun PermissionScreen(
             }
         }
     ) {
+        val scrollState = rememberScrollState()
+
+        ImageWithPlaceholder(
+            modifier = Modifier
+                .verticalScroll(scrollState)
+                .size(PermissionSize.imageSize),
+            model = if (userDeniedPermission) {
+                R.drawable.graphic_5
+            } else {
+                R.drawable.graphic_4
+            },
+            contentDescription = ""
+        )
+
         Column(
             modifier = Modifier
-                .verticalScroll(rememberScrollState())
-                .fillMaxSize()
+                .verticalScroll(scrollState)
                 .padding(largeSize),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(largeSize)

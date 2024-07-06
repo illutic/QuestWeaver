@@ -1,17 +1,14 @@
 package g.sig.questweaver.common.ui.layouts
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
@@ -24,16 +21,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.window.core.layout.WindowHeightSizeClass
-import androidx.window.core.layout.WindowSizeClass
 import androidx.window.core.layout.WindowWidthSizeClass
 import g.sig.questweaver.common.ui.components.AdaptiveNavigationButton
 import g.sig.questweaver.ui.AppTheme
@@ -42,7 +33,6 @@ import g.sig.questweaver.ui.AppTheme
 fun ScreenScaffold(
     modifier: Modifier = Modifier,
     navigation: @Composable RowScope.() -> Unit = {},
-    decoration: @Composable () -> Unit = {},
     topBar: @Composable () -> Unit = {},
     bottomBar: @Composable () -> Unit = {},
     snackbarHost: @Composable () -> Unit = {},
@@ -53,26 +43,15 @@ fun ScreenScaffold(
     contentWindowInsets: WindowInsets = ScaffoldDefaults.contentWindowInsets,
     content: @Composable () -> Unit
 ) {
-    @Composable
-    fun keyboardAsState(): State<Boolean> {
-        val isImeVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
-        return rememberUpdatedState(isImeVisible)
-    }
-
-    val isKeyboardVisible by keyboardAsState()
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
-    val shouldCenter = windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.EXPANDED ||
-            windowSizeClass.windowHeightSizeClass != WindowHeightSizeClass.COMPACT
-    val hideExtras = when (windowSizeClass.windowHeightSizeClass) {
-        WindowHeightSizeClass.COMPACT -> !isKeyboardVisible
-        else -> true
-    }
 
     val adaptiveModifier =
         if (windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT) {
             Modifier.fillMaxWidth()
         } else {
-            Modifier.width(IntrinsicSize.Max)
+            Modifier
+                .width(IntrinsicSize.Max)
+                .displayCutoutPadding()
         }
 
     Scaffold(
@@ -89,63 +68,34 @@ fun ScreenScaffold(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding),
+                .padding(padding)
         ) {
-            AdaptiveContentLayout(
-                windowSizeClass = windowSizeClass,
-                isKeyboardVisible = isKeyboardVisible,
-                shouldCenter = shouldCenter,
-                decoration = decoration,
-                content = content
-            )
+            val contentModifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
 
-            AnimatedVisibility(
-                hideExtras,
-                modifier = adaptiveModifier.align(Alignment.End)
-            ) {
-                Row { navigation() }
-            }
-        }
-    }
-}
-
-@Composable
-private fun ColumnScope.AdaptiveContentLayout(
-    windowSizeClass: WindowSizeClass,
-    isKeyboardVisible: Boolean,
-    shouldCenter: Boolean,
-    decoration: @Composable () -> Unit,
-    content: @Composable () -> Unit
-) {
-    if (windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT) {
-        Column(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            AnimatedVisibility(visible = !isKeyboardVisible) {
-                Box(contentAlignment = Alignment.Center) {
-                    decoration()
+            if (windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT) {
+                Column(
+                    modifier = contentModifier,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    content()
                 }
-            }
-            content()
-        }
-    } else {
-        Row(
-            modifier = Modifier.weight(1f),
-            verticalAlignment = if (shouldCenter) {
-                Alignment.CenterVertically
             } else {
-                Alignment.Top
-            },
-            horizontalArrangement = Arrangement.Center
-        ) {
-            AnimatedVisibility(visible = !isKeyboardVisible) {
-                Box(contentAlignment = Alignment.Center) {
-                    decoration()
+                Row(
+                    modifier = contentModifier
+                        .displayCutoutPadding(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    content()
                 }
             }
-            content()
+
+            Row(
+                modifier = adaptiveModifier.align(Alignment.End)
+            ) { navigation() }
         }
     }
 }

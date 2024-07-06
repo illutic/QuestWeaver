@@ -18,8 +18,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import g.sig.questweaver.common.ui.components.AdaptiveImage
 import g.sig.questweaver.common.ui.components.CenteredProgressBar
+import g.sig.questweaver.common.ui.components.ImageWithPlaceholder
 import g.sig.questweaver.common.ui.layouts.ScreenScaffold
 import g.sig.questweaver.settings.state.SettingsIntent
 import g.sig.questweaver.settings.state.SettingsState
@@ -51,8 +51,20 @@ private fun SettingsTopBar(
 private fun SettingsScreenContent(
     modifier: Modifier = Modifier
 ) {
+    val scrollState = rememberScrollState()
+
+    ImageWithPlaceholder(
+        modifier = Modifier
+            .verticalScroll(scrollState)
+            .padding(top = largeSize)
+            .size(SettingsSize.imageSize),
+        model = R.drawable.graphic_7,
+        contentDescription = null,
+    )
+
     Column(
-        modifier = modifier,
+        modifier = modifier
+            .verticalScroll(scrollState),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
@@ -76,15 +88,6 @@ internal fun SettingsScreen(
 ) {
     ScreenScaffold(
         topBar = { SettingsTopBar { onIntent(SettingsIntent.Back) } },
-        decoration = {
-            AdaptiveImage(
-                modifier = Modifier
-                    .padding(top = largeSize)
-                    .size(SettingsSize.imageSize),
-                model = R.drawable.graphic_7,
-                contentDescription = null,
-            )
-        },
         navigation = {
             TextButton(
                 modifier = Modifier
@@ -102,9 +105,7 @@ internal fun SettingsScreen(
             SettingsState.Idle,
             is SettingsState.Loaded -> {
                 SettingsScreenContent(
-                    modifier = Modifier
-                        .verticalScroll(rememberScrollState())
-                        .padding(largeSize),
+                    modifier = Modifier.padding(largeSize),
                 )
             }
         }

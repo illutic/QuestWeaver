@@ -11,6 +11,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Arrangement.spacedBy
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,15 +19,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -45,8 +45,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import g.sig.questweaver.common.ui.components.AdaptiveImage
+import g.sig.questweaver.common.ui.components.AdaptiveProgressBar
+import g.sig.questweaver.common.ui.components.ImageWithPlaceholder
 import g.sig.questweaver.common.ui.components.PermissionsAlert
 import g.sig.questweaver.common.ui.layouts.ScreenScaffold
 import g.sig.questweaver.domain.entities.common.Device
@@ -63,13 +63,6 @@ internal fun JoinGameScreen(state: JoinGameState, onIntent: (JoinGameIntent) -> 
     ScreenScaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = { JoinGameTopBar { onIntent(JoinGameIntent.Back) } },
-        decoration = {
-            AdaptiveImage(
-                modifier = Modifier.size(250.dp),
-                model = R.drawable.graphic_8,
-                contentDescription = ""
-            )
-        }
     ) {
         var showDeviceConfirmationDialog by remember {
             mutableStateOf<JoinGameState.ShowDeviceConfirmationDialog?>(
@@ -101,42 +94,44 @@ private fun JoinGameScreenContent(
     onDeviceClicked: (Device) -> Unit,
     onIntent: (JoinGameIntent) -> Unit
 ) {
-    LazyColumn(
+    val scrollState = rememberScrollState()
+
+    ImageWithPlaceholder(
+        modifier = Modifier
+            .verticalScroll(scrollState)
+            .size(JoinGameSize.imageSize),
+        model = R.drawable.graphic_8,
+        contentDescription = ""
+    )
+
+    Column(
         modifier = modifier
-            .fillMaxSize()
+            .verticalScroll(scrollState)
             .padding(horizontal = largeSize),
         verticalArrangement = spacedBy(largeSize),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if (state.discovering && state.hasPermissions) {
-            item {
-                LinearProgressIndicator(Modifier.width(IntrinsicSize.Max))
-            }
+            AdaptiveProgressBar(Modifier.width(IntrinsicSize.Max))
         } else {
-            item {
-                Button(onClick = { onIntent(JoinGameIntent.Load) }) {
-                    Text(text = stringResource(R.string.join_game_refresh))
-                }
+            Button(onClick = { onIntent(JoinGameIntent.Load) }) {
+                Text(text = stringResource(R.string.join_game_refresh))
             }
         }
 
         if (!state.hasPermissions) {
-            item {
-                PermissionsAlert(onClick = { onIntent(JoinGameIntent.NavigateToPermissions) })
-            }
+            PermissionsAlert(onClick = { onIntent(JoinGameIntent.NavigateToPermissions) })
         }
 
         if (state.devices.isNotEmpty()) {
-            items(state.devices) { deviceState ->
+            state.devices.forEach { deviceState ->
                 DeviceCard(device = deviceState, onDeviceClicked = onDeviceClicked)
             }
         } else if (state.hasPermissions) {
-            item {
-                Text(
-                    text = stringResource(R.string.join_game_empty),
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
+            Text(
+                text = stringResource(R.string.join_game_empty),
+                style = MaterialTheme.typography.bodyMedium
+            )
         }
     }
 }

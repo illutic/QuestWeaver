@@ -37,9 +37,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import g.sig.questweaver.common.ui.components.AdaptiveImage
 import g.sig.questweaver.common.ui.components.Alert
 import g.sig.questweaver.common.ui.components.AppOutlinedTextField
+import g.sig.questweaver.common.ui.components.ImageWithPlaceholder
 import g.sig.questweaver.common.ui.components.PermissionsAlert
 import g.sig.questweaver.common.ui.layouts.ScreenScaffold
 import g.sig.questweaver.hostgame.R
@@ -61,13 +61,6 @@ internal fun HostGameScreen(
         modifier = Modifier.fillMaxSize(),
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = { HostGameTopBar { onIntent(HostGameIntent.Back) } },
-        decoration = {
-            AdaptiveImage(
-                modifier = Modifier.size(HostGameSize.imageSize),
-                model = R.drawable.graphic_9,
-                contentDescription = ""
-            )
-        },
         navigation = {
             Button(
                 modifier = Modifier
@@ -96,34 +89,37 @@ internal fun HostGameScreen(
 
 @Composable
 private fun HostGameContent(
-    modifier: Modifier = Modifier,
     state: HostGameState,
     onIntent: (HostGameIntent) -> Unit
 ) {
+    val verticalScrollState = rememberScrollState()
+
+    ImageWithPlaceholder(
+        modifier = Modifier
+            .padding(horizontal = largeSize)
+            .verticalScroll(verticalScrollState)
+            .size(HostGameSize.imageSize),
+        model = R.drawable.graphic_9,
+        contentDescription = ""
+    )
+
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = largeSize),
+        modifier = Modifier
+            .verticalScroll(verticalScrollState)
+            .padding(horizontal = largeSize)
+            .width(IntrinsicSize.Max),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(mediumSize)
+        verticalArrangement = Arrangement.spacedBy(smallSize)
     ) {
-        Column(
-            modifier = Modifier
-                .verticalScroll(rememberScrollState())
-                .width(IntrinsicSize.Max),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(smallSize)
-        ) {
-            NameAndDescriptionFields(state, onIntent)
+        NameAndDescriptionFields(state, onIntent)
 
-            MaxPlayersInputField(state, onIntent)
+        MaxPlayersInputField(state, onIntent)
 
-            InformationAlert()
+        InformationAlert()
 
-            if (!state.hasPermissions) {
-                PermissionsAlert(modifier = Modifier.fillMaxWidth()) {
-                    onIntent(HostGameIntent.NavigateToPermissions)
-                }
+        if (!state.hasPermissions) {
+            PermissionsAlert(modifier = Modifier.fillMaxWidth()) {
+                onIntent(HostGameIntent.NavigateToPermissions)
             }
         }
     }
