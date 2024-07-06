@@ -3,6 +3,7 @@ package g.sig.questweaver.game.screens
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -82,6 +83,7 @@ internal fun GameRoute(
         onItemClick = { viewModel.handleIntent(GameIntent.SelectRoute(it)) }
     ) {
         NavHost(
+            modifier = Modifier.systemBarsPadding(),
             navController = navController,
             startDestination = GameHomeRoute.path
         ) {
