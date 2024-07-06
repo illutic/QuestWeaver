@@ -13,7 +13,9 @@ import g.sig.questweaver.data.repositories.NearbyRepositoryImpl
 import g.sig.questweaver.domain.repositories.DeviceRepository
 import g.sig.questweaver.domain.repositories.NearbyRepository
 import g.sig.questweaver.domain.repositories.PayloadRepository
+import g.sig.questweaver.domain.usecases.game.GetGameStateUseCase
 import g.sig.questweaver.domain.usecases.nearby.AdvertiseGameUseCase
+import g.sig.questweaver.domain.usecases.nearby.BroadcastPayloadUseCase
 import g.sig.questweaver.domain.usecases.nearby.CancelAdvertisementUseCase
 import g.sig.questweaver.domain.usecases.nearby.CancelDiscoveryUseCase
 import g.sig.questweaver.domain.usecases.nearby.DiscoverNearbyDevicesUseCase
@@ -96,9 +98,18 @@ object NearbyModule {
     @Provides
     @Singleton
     fun provideOnPayloadReceivedUseCase(
+        getUserUseCase: GetUserUseCase,
+        getGameStateUseCase: GetGameStateUseCase,
+        broadcastPayloadUseCase: BroadcastPayloadUseCase,
         payloadRepository: PayloadRepository,
         @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
     ): OnPayloadReceivedUseCase {
-        return OnPayloadReceivedUseCase(payloadRepository, defaultDispatcher)
+        return OnPayloadReceivedUseCase(
+            getUserUseCase,
+            getGameStateUseCase,
+            broadcastPayloadUseCase,
+            payloadRepository,
+            defaultDispatcher
+        )
     }
 }
