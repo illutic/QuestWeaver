@@ -3,6 +3,7 @@ package g.sig.questweaver.hostgame.navigation
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
@@ -15,6 +16,8 @@ import g.sig.questweaver.hostgame.state.HostGameEvent
 import g.sig.questweaver.hostgame.state.HostGameIntent
 import g.sig.questweaver.hostgame.state.QueueEvent
 import g.sig.questweaver.hostgame.state.QueueIntent
+import g.sig.questweaver.navigation.SharedElementKeys
+import g.sig.questweaver.ui.sharedBounds
 import kotlinx.coroutines.flow.collectLatest
 
 fun NavGraphBuilder.hostGameGraph(
@@ -48,8 +51,10 @@ fun NavGraphBuilder.hostGameGraph(
         }
 
         HostGameScreen(
+            modifier = Modifier.sharedBounds(SharedElementKeys.HOST_KEY, this),
             snackbarHostState = snackbarHostState,
             state = viewModel.state,
+            animationScope = this,
             onIntent = viewModel::handleIntent
         )
     }
@@ -71,6 +76,7 @@ fun NavGraphBuilder.hostGameGraph(
         }
 
         QueueScreen(
+            modifier = Modifier.sharedBounds(SharedElementKeys.HOST_QUEUE_KEY, this),
             state = viewModel.state,
             snackbarHostState = snackbarHostState,
             onIntent = viewModel::handleIntent

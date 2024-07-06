@@ -44,6 +44,7 @@ fun NavGraphBuilder.homeGraph(
 
         HomeScreen(
             homeState = state,
+            animationScope = this,
             onIntent = viewModel::handleIntent
         )
     }

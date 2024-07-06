@@ -2,12 +2,6 @@ package g.sig.questweaver.hostgame.screens
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -49,6 +44,8 @@ import g.sig.questweaver.hostgame.R
 import g.sig.questweaver.hostgame.state.QueueIntent
 import g.sig.questweaver.hostgame.state.QueueState
 import g.sig.questweaver.ui.AppIcons
+import g.sig.questweaver.ui.defaultAnimationSpec
+import g.sig.questweaver.ui.defaultContentTransform
 import g.sig.questweaver.ui.largeSize
 import g.sig.questweaver.ui.mediumSize
 
@@ -56,10 +53,11 @@ import g.sig.questweaver.ui.mediumSize
 internal fun QueueScreen(
     state: QueueState,
     snackbarHostState: SnackbarHostState,
+    modifier: Modifier = Modifier,
     onIntent: (QueueIntent) -> Unit
 ) {
     ScreenScaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = { QueueScreenTopBar { onIntent(QueueIntent.Back) } },
         navigation = {
@@ -110,6 +108,7 @@ private fun JoinGameScreenContent(
         if (state.devicesToConnect.isNotEmpty()) {
             state.devicesToConnect.forEach { deviceState ->
                 DeviceCard(
+                    modifier = Modifier.widthIn(max = HostGameSize.maxDeviceCardSize),
                     device = deviceState,
                     onAcceptClicked = { onIntent(QueueIntent.AcceptConnection(it)) },
                     onRejectClicked = { onIntent(QueueIntent.RejectConnection(it)) }
@@ -131,8 +130,6 @@ private fun DeviceCard(
     onAcceptClicked: (Device) -> Unit,
     onRejectClicked: (Device) -> Unit
 ) {
-    fun <T> defaultAnimation() = tween<T>(1000)
-
     val contentColors by animateColorAsState(
         targetValue = when (device.connectionState) {
             is ConnectionState.Found,
@@ -145,7 +142,7 @@ private fun DeviceCard(
 
             is ConnectionState.Error -> contentColorFor(MaterialTheme.colorScheme.errorContainer)
         },
-        animationSpec = defaultAnimation(),
+        animationSpec = defaultAnimationSpec(),
         label = "content color"
     )
 
@@ -161,7 +158,7 @@ private fun DeviceCard(
 
             is ConnectionState.Error -> MaterialTheme.colorScheme.errorContainer
         },
-        animationSpec = defaultAnimation(),
+        animationSpec = defaultAnimationSpec(),
         label = "background color"
     )
 
@@ -187,11 +184,7 @@ private fun DeviceCard(
             AnimatedContent(
                 targetState = device.connectionState,
                 label = "icon",
-                transitionSpec = {
-                    val enterTransition = fadeIn(defaultAnimation()) + scaleIn(defaultAnimation())
-                    val exitTransition = fadeOut(defaultAnimation()) + scaleOut(defaultAnimation())
-                    enterTransition togetherWith exitTransition
-                }
+                transitionSpec = { defaultContentTransform }
             ) { state ->
                 when (state) {
                     is ConnectionState.Found,

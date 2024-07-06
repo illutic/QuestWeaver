@@ -84,6 +84,7 @@ private fun SettingsScreenContent(
 @Composable
 internal fun SettingsScreen(
     state: SettingsState,
+    modifier: Modifier = Modifier,
     onIntent: (intent: SettingsIntent) -> Unit
 ) {
     ScreenScaffold(
@@ -105,7 +106,7 @@ internal fun SettingsScreen(
             SettingsState.Idle,
             is SettingsState.Loaded -> {
                 SettingsScreenContent(
-                    modifier = Modifier.padding(largeSize),
+                    modifier = modifier.padding(largeSize),
                 )
             }
         }

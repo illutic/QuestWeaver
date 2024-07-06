@@ -33,6 +33,9 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
 
+    // Beta
+    api(libs.androidx.compose.animation)
+
     api(libs.coil.compose)
     api(libs.coil)
     api(libs.androidx.ui)

@@ -2,12 +2,6 @@ package g.sig.questweaver.joingame.screens
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Arrangement.spacedBy
@@ -55,11 +49,17 @@ import g.sig.questweaver.joingame.R
 import g.sig.questweaver.joingame.state.JoinGameIntent
 import g.sig.questweaver.joingame.state.JoinGameState
 import g.sig.questweaver.ui.AppIcons
+import g.sig.questweaver.ui.defaultAnimationSpec
+import g.sig.questweaver.ui.defaultContentTransform
 import g.sig.questweaver.ui.largeSize
 import g.sig.questweaver.ui.mediumSize
 
 @Composable
-internal fun JoinGameScreen(state: JoinGameState, onIntent: (JoinGameIntent) -> Unit) {
+internal fun JoinGameScreen(
+    state: JoinGameState,
+    modifier: Modifier = Modifier,
+    onIntent: (JoinGameIntent) -> Unit
+) {
     ScreenScaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = { JoinGameTopBar { onIntent(JoinGameIntent.Back) } },
@@ -78,6 +78,7 @@ internal fun JoinGameScreen(state: JoinGameState, onIntent: (JoinGameIntent) -> 
         }
 
         JoinGameScreenContent(
+            modifier = modifier,
             state = state,
             onDeviceClicked = { device ->
                 showDeviceConfirmationDialog = JoinGameState.ShowDeviceConfirmationDialog(device)
@@ -182,8 +183,6 @@ private fun DeviceCard(
     device: Device,
     onDeviceClicked: (Device) -> Unit
 ) {
-    fun <T> defaultAnimation() = tween<T>(1000)
-
     val contentColors by animateColorAsState(
         targetValue = when (device.connectionState) {
             is ConnectionState.Found,
@@ -196,7 +195,7 @@ private fun DeviceCard(
 
             is ConnectionState.Error -> contentColorFor(MaterialTheme.colorScheme.errorContainer)
         },
-        animationSpec = defaultAnimation(),
+        animationSpec = defaultAnimationSpec(),
         label = "content color"
     )
 
@@ -212,7 +211,7 @@ private fun DeviceCard(
 
             is ConnectionState.Error -> MaterialTheme.colorScheme.errorContainer
         },
-        animationSpec = defaultAnimation(),
+        animationSpec = defaultAnimationSpec(),
         label = "background color"
     )
 
@@ -240,11 +239,7 @@ private fun DeviceCard(
             AnimatedContent(
                 targetState = device.connectionState,
                 label = "icon",
-                transitionSpec = {
-                    val enterTransition = fadeIn(defaultAnimation()) + scaleIn(defaultAnimation())
-                    val exitTransition = fadeOut(defaultAnimation()) + scaleOut(defaultAnimation())
-                    enterTransition togetherWith exitTransition
-                }
+                transitionSpec = { defaultContentTransform }
             ) { state ->
                 when (state) {
                     is ConnectionState.Found,

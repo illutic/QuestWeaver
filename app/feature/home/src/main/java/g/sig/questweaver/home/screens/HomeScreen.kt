@@ -1,5 +1,7 @@
 package g.sig.questweaver.home.screens
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,15 +38,18 @@ import g.sig.questweaver.domain.entities.common.Game
 import g.sig.questweaver.home.R
 import g.sig.questweaver.home.state.HomeIntent
 import g.sig.questweaver.home.state.HomeState
+import g.sig.questweaver.navigation.SharedElementKeys
 import g.sig.questweaver.ui.AppIcons
 import g.sig.questweaver.ui.MediumRoundedShape
 import g.sig.questweaver.ui.largeSize
 import g.sig.questweaver.ui.mediumSize
+import g.sig.questweaver.ui.sharedBounds
 import g.sig.questweaver.ui.smallSize
 
 @Composable
 internal fun HomeScreen(
     homeState: HomeState,
+    animationScope: AnimatedContentScope,
     onIntent: (HomeIntent) -> Unit
 ) {
     ScreenScaffold(
@@ -54,6 +59,7 @@ internal fun HomeScreen(
                 HomeScreenBottomContent(
                     modifier = Modifier.padding(horizontal = largeSize),
                     state = homeState,
+                    animationScope = animationScope,
                     onNavigateToProfile = { onIntent(HomeIntent.NavigateToProfile) },
                     onNavigateToSettings = { onIntent(HomeIntent.NavigateToSettings) },
                     onNavigateToPermissions = { onIntent(HomeIntent.NavigateToPermissions) }
@@ -63,7 +69,12 @@ internal fun HomeScreen(
     ) {
         when (homeState) {
             HomeState.Idle -> {}
-            is HomeState.Loaded -> HomeScreenContent(homeState = homeState, onIntent = onIntent)
+            is HomeState.Loaded -> HomeScreenContent(
+                homeState = homeState,
+                animationScope = animationScope,
+                onIntent = onIntent
+            )
+
             HomeState.Loading -> CenteredProgressBar()
         }
     }
@@ -72,6 +83,7 @@ internal fun HomeScreen(
 @Composable
 private fun HomeScreenContent(
     homeState: HomeState.Loaded,
+    animationScope: AnimatedContentScope,
     onIntent: (HomeIntent) -> Unit
 ) {
     ImageWithPlaceholder(
@@ -83,6 +95,7 @@ private fun HomeScreenContent(
     HomeScreenTopContent(
         modifier = Modifier.padding(horizontal = largeSize),
         state = homeState,
+        animationScope = animationScope,
         onNavigateToHostGame = { onIntent(HomeIntent.NavigateToHost) },
         onNavigateToJoinGame = { onIntent(HomeIntent.NavigateToJoin) },
         onNavigateToGame = { gameId -> onIntent(HomeIntent.NavigateToGame(gameId)) }
@@ -144,6 +157,7 @@ private fun HomeScreenRecentGamesCarousel(
 private fun HomeScreenTopContent(
     modifier: Modifier = Modifier,
     state: HomeState.Loaded,
+    animationScope: AnimatedContentScope,
     onNavigateToHostGame: () -> Unit,
     onNavigateToJoinGame: () -> Unit,
     onNavigateToGame: (String) -> Unit
@@ -168,13 +182,16 @@ private fun HomeScreenTopContent(
         )
 
         FilledTonalButton(
-            modifier = Modifier.padding(mediumSize),
+            modifier = Modifier
+                .padding(mediumSize)
+                .sharedBounds(SharedElementKeys.HOST_KEY, animationScope),
             onClick = onNavigateToHostGame
         ) {
             Text(text = stringResource(id = R.string.home_cta_1))
         }
 
         Button(
+            modifier = Modifier.sharedBounds(SharedElementKeys.JOIN_KEY, animationScope),
             onClick = onNavigateToJoinGame
         ) {
             Text(text = stringResource(id = R.string.home_cta_2))
@@ -187,6 +204,7 @@ private fun HomeScreenTopContent(
 private fun HomeScreenBottomContent(
     modifier: Modifier = Modifier,
     state: HomeState.Loaded,
+    animationScope: AnimatedContentScope,
     onNavigateToProfile: () -> Unit,
     onNavigateToSettings: () -> Unit,
     onNavigateToPermissions: () -> Unit
@@ -211,7 +229,9 @@ private fun HomeScreenBottomContent(
             horizontalArrangement = Arrangement.spacedBy(mediumSize)
         ) {
             OutlinedButton(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .sharedBounds(SharedElementKeys.PROFILE_KEY, animationScope),
                 onClick = onNavigateToProfile
             ) {
                 Icon(painter = AppIcons.PersonOutline, contentDescription = "")
@@ -219,7 +239,9 @@ private fun HomeScreenBottomContent(
             }
 
             OutlinedButton(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .sharedBounds(SharedElementKeys.SETTINGS_KEY, animationScope),
                 onClick = onNavigateToSettings
             ) {
                 Icon(painter = AppIcons.SettingsOutline, contentDescription = "")
@@ -232,16 +254,19 @@ private fun HomeScreenBottomContent(
 @Preview
 @Composable
 private fun HomeScreenPreview() {
-    HomeScreen(
-        homeState = HomeState.Loaded(
-            userName = "John Doe",
-            permissions = emptyList(),
-            recentGames = listOf(
-                Game("1", "Game 1", "", Uri("https://example.com"), 0, 0),
-                Game("2", "Game 2", "", Uri("https://example.com"), 0, 0),
-                Game("3", "Game 3", "", Uri("https://example.com"), 0, 0)
-            )
-        ),
-        onIntent = {}
-    )
+    AnimatedContent(true, label = "home_preview") {
+        HomeScreen(
+            homeState = HomeState.Loaded(
+                userName = "John Doe",
+                permissions = emptyList(),
+                recentGames = listOf(
+                    Game("1", "Game 1", "", Uri("https://example.com"), 0, 0),
+                    Game("2", "Game 2", "", Uri("https://example.com"), 0, 0),
+                    Game("3", "Game 3", "", Uri("https://example.com"), 0, 0)
+                )
+            ),
+            animationScope = this,
+            onIntent = {}
+        )
+    }
 }

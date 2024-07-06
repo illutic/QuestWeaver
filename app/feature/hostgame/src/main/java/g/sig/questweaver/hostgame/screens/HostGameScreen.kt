@@ -1,5 +1,7 @@
 package g.sig.questweaver.hostgame.screens
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -45,16 +47,20 @@ import g.sig.questweaver.common.ui.layouts.ScreenScaffold
 import g.sig.questweaver.hostgame.R
 import g.sig.questweaver.hostgame.state.HostGameIntent
 import g.sig.questweaver.hostgame.state.HostGameState
+import g.sig.questweaver.navigation.SharedElementKeys
 import g.sig.questweaver.ui.AppIcons
 import g.sig.questweaver.ui.AppTheme
 import g.sig.questweaver.ui.largeSize
 import g.sig.questweaver.ui.mediumSize
+import g.sig.questweaver.ui.sharedBounds
 import g.sig.questweaver.ui.smallSize
 
 @Composable
 internal fun HostGameScreen(
     snackbarHostState: SnackbarHostState,
     state: HostGameState,
+    animationScope: AnimatedContentScope,
+    modifier: Modifier = Modifier,
     onIntent: (HostGameIntent) -> Unit
 ) {
     ScreenScaffold(
@@ -65,7 +71,8 @@ internal fun HostGameScreen(
             Button(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = largeSize),
+                    .padding(horizontal = largeSize)
+                    .sharedBounds(SharedElementKeys.HOST_QUEUE_KEY, animationScope),
                 onClick = { onIntent(HostGameIntent.StartHosting) }
             ) {
                 Text(text = stringResource(R.string.create_game_button))
@@ -81,6 +88,7 @@ internal fun HostGameScreen(
         }
 
         HostGameContent(
+            modifier = modifier,
             state = state,
             onIntent = onIntent
         )
@@ -90,6 +98,7 @@ internal fun HostGameScreen(
 @Composable
 private fun HostGameContent(
     state: HostGameState,
+    modifier: Modifier = Modifier,
     onIntent: (HostGameIntent) -> Unit
 ) {
     val verticalScrollState = rememberScrollState()
@@ -104,7 +113,7 @@ private fun HostGameContent(
     )
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .verticalScroll(verticalScrollState)
             .padding(horizontal = largeSize)
             .width(IntrinsicSize.Max),
@@ -228,10 +237,13 @@ private fun HostGameTopBar(
 @Composable
 private fun HostGameScreenPreview() {
     AppTheme {
-        HostGameScreen(
-            snackbarHostState = SnackbarHostState(),
-            state = HostGameState(),
-            onIntent = {}
-        )
+        AnimatedContent(true, label = "queue_preview") {
+            HostGameScreen(
+                snackbarHostState = SnackbarHostState(),
+                state = HostGameState(),
+                animationScope = this,
+                onIntent = {}
+            )
+        }
     }
 }

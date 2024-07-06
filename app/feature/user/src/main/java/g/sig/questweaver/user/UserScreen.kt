@@ -133,6 +133,7 @@ private fun UserScreenContent(
 @Composable
 internal fun UserScreen(
     state: UserState,
+    modifier: Modifier = Modifier,
     onIntent: (intent: UserIntent) -> Unit
 ) {
     var name by remember { mutableStateOf("") }
@@ -157,6 +158,7 @@ internal fun UserScreen(
                     name = state.user.name
                 }
                 UserScreenContent(
+                    modifier = modifier,
                     isUserPresent = isUserPresent,
                     name = name,
                     error = state.getError(),
