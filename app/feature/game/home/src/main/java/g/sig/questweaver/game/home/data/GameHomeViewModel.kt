@@ -1,10 +1,10 @@
 package g.sig.questweaver.game.home.data
 
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import g.sig.questweaver.common.ui.mappers.toColor
+import g.sig.questweaver.domain.entities.DomainEntity
 import g.sig.questweaver.domain.entities.blocks.Size
 import g.sig.questweaver.domain.entities.common.Annotation
 import g.sig.questweaver.domain.entities.common.RemoveAnnotation
@@ -73,8 +73,8 @@ class GameHomeViewModel @Inject constructor(
             createdBy = getUser().id,
             id = UUID.randomUUID().toString()
         )
-        state.annotations.addSynchronized(drawing)
         broadcastPayload(drawing)
+        updateAnnotations(drawing)
     }
 
     private fun addText(intent: GameHomeIntent.AddText) = viewModelScope.launch {
@@ -86,8 +86,8 @@ class GameHomeViewModel @Inject constructor(
             createdBy = getUser().id,
             id = UUID.randomUUID().toString()
         )
-        state.annotations.addSynchronized(text)
         broadcastPayload(text)
+        updateAnnotations(text)
     }
 
     private var loadingJob: Job? = null
@@ -103,19 +103,10 @@ class GameHomeViewModel @Inject constructor(
 
         state.isDM = isDM
         state.users = gameState.connectedUsers
-        state.annotations.addAllSynchronized(gameState.gameHomeState.annotations)
+        state.annotations = gameState.gameHomeState.annotations.toSet()
         state.allowAnnotations = gameState.gameHomeState.allowEditing || isDM
 
-        onPayloadReceived { payload ->
-            when (payload) {
-                is Annotation -> state.annotations.addSynchronized(payload)
-                is RemoveAnnotation -> state.annotations
-                    .find { it.id == payload.id }
-                    ?.let { state.annotations.removeSynchronized(it) }
-
-                else -> Unit
-            }
-        }
+        onPayloadReceived(::updateAnnotations)
     }.also { loadingJob = it }
 
     private fun selectAnnotation(intent: GameHomeIntent.SelectAnnotation) = viewModelScope.launch {
@@ -131,25 +122,29 @@ class GameHomeViewModel @Inject constructor(
         val user = getUser()
         val canRemoveAnnotation = state.isDM || annotation.createdBy == user.id
         if (canRemoveAnnotation) {
-            state.annotations.removeSynchronized(annotation)
-            broadcastPayload(RemoveAnnotation(annotation.id))
+            val payload = RemoveAnnotation(annotation.id)
+            broadcastPayload(payload)
+            updateAnnotations(payload)
         }
     }
 
-    private fun SnapshotStateList<Annotation>.addAllSynchronized(annotations: List<Annotation>) =
-        synchronized(this) {
-            addAll(annotations)
-        }
+    private fun updateAnnotations(data: DomainEntity) {
+        when (data) {
+            is Annotation -> synchronized(state.annotations) {
+                val updatedAnnotations = state.annotations.toMutableSet()
+                updatedAnnotations.add(data)
+                state.annotations = updatedAnnotations
+            }
 
-    private fun SnapshotStateList<Annotation>.addSynchronized(annotation: Annotation) =
-        synchronized(this) {
-            add(annotation)
-        }
+            is RemoveAnnotation -> synchronized(state.annotations) {
+                val updatedAnnotations = state.annotations.toMutableSet()
+                updatedAnnotations.removeIf { it.id == data.id }
+                state.annotations = updatedAnnotations
+            }
 
-    private fun SnapshotStateList<Annotation>.removeSynchronized(annotation: Annotation) =
-        synchronized(this) {
-            remove(annotation)
+            else -> Unit
         }
+    }
 
     companion object {
         private const val ALPHA_MIN = 0.1f

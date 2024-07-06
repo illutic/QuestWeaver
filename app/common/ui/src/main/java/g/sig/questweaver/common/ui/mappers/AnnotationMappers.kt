@@ -18,5 +18,5 @@ fun Annotation.getBounds(canvasSize: Size) = when (this) {
     ).toRect()
 }
 
-fun List<Annotation>.getClickedAnnotation(touchPoint: Offset, canvasSize: Size): Annotation? =
+fun Iterable<Annotation>.getClickedAnnotation(touchPoint: Offset, canvasSize: Size): Annotation? =
     firstOrNull { annotation -> annotation.getBounds(canvasSize).contains(touchPoint) }
