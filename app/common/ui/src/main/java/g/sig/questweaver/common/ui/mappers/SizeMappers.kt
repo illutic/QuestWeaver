@@ -9,6 +9,7 @@ import androidx.compose.ui.geometry.Size as ComposeSize
 @Suppress("TopLevelPropertyNaming")
 private const val STROKE_WIDTH_FACTOR = 0.2f
 
+@Suppress("TopLevelPropertyNaming")
 private const val DEFAULT_TEXT_SIZE_PERCENT = .4f
 
 fun Size.getStrokeWidth(canvasSize: ComposeSize) =

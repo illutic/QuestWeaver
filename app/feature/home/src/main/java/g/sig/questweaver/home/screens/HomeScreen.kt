@@ -1,5 +1,6 @@
 package g.sig.questweaver.home.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.foundation.layout.Arrangement
@@ -251,6 +252,7 @@ private fun HomeScreenBottomContent(
     }
 }
 
+@SuppressLint("UnusedContentLambdaTargetStateParameter")
 @Preview
 @Composable
 private fun HomeScreenPreview() {

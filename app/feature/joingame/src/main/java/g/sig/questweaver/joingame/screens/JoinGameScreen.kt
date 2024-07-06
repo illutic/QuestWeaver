@@ -1,13 +1,8 @@
 package g.sig.questweaver.joingame.screens
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,17 +12,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -36,10 +28,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import g.sig.questweaver.common.ui.components.AdaptiveProgressBar
+import g.sig.questweaver.common.ui.components.DeviceCard
 import g.sig.questweaver.common.ui.components.ImageWithPlaceholder
 import g.sig.questweaver.common.ui.components.PermissionsAlert
 import g.sig.questweaver.common.ui.layouts.ScreenScaffold
@@ -49,10 +41,7 @@ import g.sig.questweaver.joingame.R
 import g.sig.questweaver.joingame.state.JoinGameIntent
 import g.sig.questweaver.joingame.state.JoinGameState
 import g.sig.questweaver.ui.AppIcons
-import g.sig.questweaver.ui.defaultAnimationSpec
-import g.sig.questweaver.ui.defaultContentTransform
 import g.sig.questweaver.ui.largeSize
-import g.sig.questweaver.ui.mediumSize
 
 @Composable
 internal fun JoinGameScreen(
@@ -177,116 +166,6 @@ internal fun ConnectionDialog(
     )
 }
 
-@Composable
-private fun DeviceCard(
-    modifier: Modifier = Modifier,
-    device: Device,
-    onDeviceClicked: (Device) -> Unit
-) {
-    val contentColors by animateColorAsState(
-        targetValue = when (device.connectionState) {
-            is ConnectionState.Found,
-            ConnectionState.Idle -> contentColorFor(MaterialTheme.colorScheme.surface)
-
-            is ConnectionState.Connected -> contentColorFor(MaterialTheme.colorScheme.primaryContainer)
-
-            ConnectionState.Loading,
-            is ConnectionState.Connecting -> contentColorFor(MaterialTheme.colorScheme.secondaryContainer)
-
-            is ConnectionState.Error -> contentColorFor(MaterialTheme.colorScheme.errorContainer)
-        },
-        animationSpec = defaultAnimationSpec(),
-        label = "content color"
-    )
-
-    val backgroundColor by animateColorAsState(
-        targetValue = when (device.connectionState) {
-            is ConnectionState.Found,
-            ConnectionState.Idle -> MaterialTheme.colorScheme.surface
-
-            is ConnectionState.Connected -> MaterialTheme.colorScheme.primaryContainer
-
-            ConnectionState.Loading,
-            is ConnectionState.Connecting -> MaterialTheme.colorScheme.secondaryContainer
-
-            is ConnectionState.Error -> MaterialTheme.colorScheme.errorContainer
-        },
-        animationSpec = defaultAnimationSpec(),
-        label = "background color"
-    )
-
-    Surface(
-        modifier = modifier,
-        tonalElevation = mediumSize,
-        color = backgroundColor,
-        contentColor = contentColors,
-        border = BorderStroke(JoinGameSize.borderWidth, contentColors.copy(alpha = 0.5f)),
-        shape = MaterialTheme.shapes.medium,
-        enabled = device.connectionState == ConnectionState.Idle,
-        onClick = { onDeviceClicked(device) }
-    ) {
-        Row(
-            modifier = Modifier.padding(largeSize),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            Text(
-                modifier = Modifier.weight(1f),
-                text = device.name,
-                style = MaterialTheme.typography.titleSmall
-            )
-
-            AnimatedContent(
-                targetState = device.connectionState,
-                label = "icon",
-                transitionSpec = { defaultContentTransform }
-            ) { state ->
-                when (state) {
-                    is ConnectionState.Found,
-                    ConnectionState.Idle -> {
-                        Icon(
-                            modifier = Modifier
-                                .size(JoinGameSize.iconSize)
-                                .padding(start = mediumSize),
-                            painter = AppIcons.ChevronRight,
-                            contentDescription = null
-                        )
-                    }
-
-                    is ConnectionState.Connected -> {
-                        Icon(
-                            modifier = Modifier
-                                .size(JoinGameSize.iconSize)
-                                .padding(start = mediumSize),
-                            painter = AppIcons.Check,
-                            contentDescription = null
-                        )
-                    }
-
-                    ConnectionState.Loading,
-                    is ConnectionState.Connecting -> {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(JoinGameSize.iconSize),
-                            color = contentColors,
-                            trackColor = contentColors.copy(alpha = 0.2f),
-                            strokeCap = StrokeCap.Round,
-                        )
-                    }
-
-                    is ConnectionState.Error -> {
-                        Icon(
-                            modifier = Modifier
-                                .size(JoinGameSize.iconSize)
-                                .padding(start = mediumSize),
-                            painter = AppIcons.Close,
-                            contentDescription = null
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

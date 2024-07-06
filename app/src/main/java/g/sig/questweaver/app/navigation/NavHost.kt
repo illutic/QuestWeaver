@@ -43,6 +43,7 @@ fun AppNavHost(
     }
 }
 
+@Suppress("LongMethod")
 private fun NavGraphBuilder.appGraph(navController: NavHostController) {
     onboardingGraph(
         onNavigateToUserCreation = {

@@ -32,7 +32,7 @@ internal fun GameNavigation(
         modifier = modifier,
         navigationSuiteItems = {
             routes.forEach { route ->
-                val isSelected = selectedRoute::class.isInstance(route)
+                val isSelected = selectedRoute.path == route.path
                 item(
                     selected = isSelected,
                     alwaysShowLabel = false,

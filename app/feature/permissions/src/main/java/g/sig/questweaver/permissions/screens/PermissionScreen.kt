@@ -6,6 +6,7 @@ import android.net.Uri
 import android.provider.Settings
 import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -48,42 +49,12 @@ internal fun PermissionScreen(
         modifier = Modifier.fillMaxSize(),
         topBar = { PermissionTopBar(onBack) },
         navigation = {
-            val context = LocalContext.current
-            Button(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = largeSize),
-                onClick = {
-                    if (userDeniedPermission) {
-                        context.launchSystemSettings()
-                    } else {
-                        permissionsState.launchMultiplePermissionRequest()
-                    }
-                }
-            ) {
-                Text(
-                    text = if (userDeniedPermission) {
-                        stringResource(id = R.string.permission_cta_denied)
-                    } else {
-                        stringResource(id = R.string.permission_cta)
-                    }
-                )
-            }
+            RequestPermissionsButton(permissionsState, permissionsState.allPermissionsGranted)
         }
     ) {
         val scrollState = rememberScrollState()
 
-        ImageWithPlaceholder(
-            modifier = Modifier
-                .verticalScroll(scrollState)
-                .size(PermissionSize.imageSize),
-            model = if (userDeniedPermission) {
-                R.drawable.graphic_5
-            } else {
-                R.drawable.graphic_4
-            },
-            contentDescription = ""
-        )
+        DecorationImage(scrollState, permissionsState.allPermissionsGranted)
 
         Column(
             modifier = Modifier
@@ -124,6 +95,35 @@ internal fun PermissionScreen(
     }
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+private fun RequestPermissionsButton(
+    permissionsState: MultiplePermissionsState,
+    permissionsGranted: Boolean
+) {
+    val context = LocalContext.current
+    Button(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = largeSize),
+        onClick = {
+            if (!permissionsGranted) {
+                context.launchSystemSettings()
+            } else {
+                permissionsState.launchMultiplePermissionRequest()
+            }
+        }
+    ) {
+        Text(
+            text = if (!permissionsGranted) {
+                stringResource(id = R.string.permission_cta_denied)
+            } else {
+                stringResource(id = R.string.permission_cta)
+            }
+        )
+    }
+}
+
 private fun Context.launchSystemSettings() {
     val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
     val uri = Uri.fromParts("package", packageName, null)
@@ -137,6 +137,21 @@ private fun Context.launchSystemSettings() {
         intent.action = Settings.ACTION_SETTINGS
         startActivity(intent)
     }
+}
+
+@Composable
+private fun DecorationImage(scrollState: ScrollState, isPermissionsGranted: Boolean) {
+    ImageWithPlaceholder(
+        modifier = Modifier
+            .verticalScroll(scrollState)
+            .size(PermissionSize.imageSize),
+        model = if (!isPermissionsGranted) {
+            R.drawable.graphic_5
+        } else {
+            R.drawable.graphic_4
+        },
+        contentDescription = ""
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
