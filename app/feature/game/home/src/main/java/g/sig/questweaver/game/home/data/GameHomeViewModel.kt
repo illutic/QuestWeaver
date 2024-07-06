@@ -1,5 +1,6 @@
 package g.sig.questweaver.game.home.data
 
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -72,7 +73,7 @@ class GameHomeViewModel @Inject constructor(
             createdBy = getUser().id,
             id = UUID.randomUUID().toString()
         )
-        state.annotations.add(drawing)
+        state.annotations.addSynchronized(drawing)
         broadcastPayload(drawing)
     }
 
@@ -85,7 +86,7 @@ class GameHomeViewModel @Inject constructor(
             createdBy = getUser().id,
             id = UUID.randomUUID().toString()
         )
-        state.annotations.add(text)
+        state.annotations.addSynchronized(text)
         broadcastPayload(text)
     }
 
@@ -102,13 +103,15 @@ class GameHomeViewModel @Inject constructor(
 
         state.isDM = isDM
         state.users = gameState.connectedUsers
-        state.annotations.addAll(gameState.gameHomeState.annotations)
+        state.annotations.addAllSynchronized(gameState.gameHomeState.annotations)
         state.allowAnnotations = gameState.gameHomeState.allowEditing || isDM
 
         onPayloadReceived { payload ->
             when (payload) {
-                is Annotation -> state.annotations.add(payload)
-                is RemoveAnnotation -> state.annotations.removeIf { it.id == payload.id }
+                is Annotation -> state.annotations.addSynchronized(payload)
+                is RemoveAnnotation -> state.annotations
+                    .find { it.id == payload.id }
+                    ?.let { state.annotations.removeSynchronized(it) }
 
                 else -> Unit
             }
@@ -128,10 +131,25 @@ class GameHomeViewModel @Inject constructor(
         val user = getUser()
         val canRemoveAnnotation = state.isDM || annotation.createdBy == user.id
         if (canRemoveAnnotation) {
-            state.annotations.remove(annotation)
+            state.annotations.removeSynchronized(annotation)
             broadcastPayload(RemoveAnnotation(annotation.id))
         }
     }
+
+    private fun SnapshotStateList<Annotation>.addAllSynchronized(annotations: List<Annotation>) =
+        synchronized(this) {
+            addAll(annotations)
+        }
+
+    private fun SnapshotStateList<Annotation>.addSynchronized(annotation: Annotation) =
+        synchronized(this) {
+            add(annotation)
+        }
+
+    private fun SnapshotStateList<Annotation>.removeSynchronized(annotation: Annotation) =
+        synchronized(this) {
+            remove(annotation)
+        }
 
     companion object {
         private const val ALPHA_MIN = 0.1f
