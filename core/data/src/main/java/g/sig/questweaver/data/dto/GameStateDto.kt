@@ -4,11 +4,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class GameStateDto(
-    val game: GameDto,
-    val connectedUsers: List<UserDto>,
-    val gameHomeState: GameHomeStateDto
-) : Dto {
-    companion object {
-        val Empty = GameStateDto(GameDto.Empty, emptyList(), GameHomeStateDto.Empty)
-    }
-}
+    val gameId: String,
+    val connectedUsers: List<UserDto> = emptyList(),
+    val annotationDtos: List<AnnotationDto> = emptyList(),
+    val allowEditing: Boolean = true,
+) : Dto

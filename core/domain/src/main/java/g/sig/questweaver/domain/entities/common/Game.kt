@@ -11,4 +11,5 @@ data class Game(
     val players: Int = 0,
     val maxPlayers: Int,
     val dmId: String? = null,
+    val hostDeviceId: String? = null,
 ) : DomainEntity

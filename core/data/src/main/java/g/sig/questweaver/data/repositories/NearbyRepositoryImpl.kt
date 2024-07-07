@@ -13,29 +13,28 @@ import kotlinx.coroutines.flow.Flow
 
 class NearbyRepositoryImpl(
     private val nearbyDataSource: NearbyDataSource,
-    private val recentGamesDataStore: RecentGamesDataSource
+    private val recentGamesDataStore: RecentGamesDataSource,
 ) : NearbyRepository {
     override suspend fun getRecentGames(): List<Game> =
         recentGamesDataStore
             .getRecentGames()
+            .filter { it.gameId.isNotEmpty() }
             .map { it.toDomain() }
 
-    override fun discoverNearbyDevices(user: User): Flow<ConnectionState> =
-        nearbyDataSource.discover(user.toDto())
+    override fun discoverNearbyDevices(user: User): Flow<ConnectionState> = nearbyDataSource.discover(user.toDto())
 
-    override fun advertiseGame(game: String): Flow<ConnectionState> =
-        nearbyDataSource.advertise(game)
+    override fun advertiseGame(game: String): Flow<ConnectionState> = nearbyDataSource.advertise(game)
 
     override fun cancelAdvertisement() = nearbyDataSource.cancelAdvertisement()
 
     override fun cancelDiscovery() = nearbyDataSource.cancelDiscovery()
 
-    override fun requestConnection(user: User, device: Device): Flow<ConnectionState> =
-        nearbyDataSource.requestConnection(user.toDto(), device.id)
+    override fun requestConnection(
+        user: User,
+        deviceId: String,
+    ): Flow<ConnectionState> = nearbyDataSource.requestConnection(user.toDto(), deviceId)
 
-    override fun acceptConnection(device: Device): Flow<ConnectionState> =
-        nearbyDataSource.acceptConnection(device.id)
+    override fun acceptConnection(device: Device): Flow<ConnectionState> = nearbyDataSource.acceptConnection(device.id)
 
-    override fun rejectConnection(device: Device): Flow<ConnectionState> =
-        nearbyDataSource.rejectConnection(device.id)
+    override fun rejectConnection(device: Device): Flow<ConnectionState> = nearbyDataSource.rejectConnection(device.id)
 }

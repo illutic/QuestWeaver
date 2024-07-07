@@ -38,11 +38,12 @@ fun NavGraphBuilder.hostGameGraph(
                 when (event) {
                     HostGameEvent.Back -> onBack()
                     HostGameEvent.NavigateToPermissions -> onNavigateToPermissions()
-                    is HostGameEvent.Error -> event.messageId?.let {
-                        snackbarHostState.showSnackbar(
-                            context.getString(event.messageId)
-                        )
-                    }
+                    is HostGameEvent.Error ->
+                        event.messageId?.let {
+                            snackbarHostState.showSnackbar(
+                                context.getString(event.messageId),
+                            )
+                        }
 
                     HostGameEvent.CancelHostGame -> onNavigateHome()
                     HostGameEvent.NavigateToQueue -> onNavigateToQueue()
@@ -55,16 +56,17 @@ fun NavGraphBuilder.hostGameGraph(
             snackbarHostState = snackbarHostState,
             state = viewModel.state,
             animationScope = this,
-            onIntent = viewModel::handleIntent
+            onIntent = viewModel::handleIntent,
         )
     }
 
-    composable(HostGameRoute.QUEUE_PATH) {
+    composable(HostGameRoute.QUEUE_PATH, HostGameRoute.queueArguments) {
         val viewModel = hiltViewModel<QueueViewModel>()
         val snackbarHostState = remember { SnackbarHostState() }
+        val gameIdArgument = it.arguments?.getString("id")
 
         LaunchedEffect(Unit) {
-            viewModel.handleIntent(QueueIntent.Load)
+            viewModel.handleIntent(QueueIntent.Load(gameIdArgument))
             viewModel.events.collectLatest { event ->
                 when (event) {
                     is QueueEvent.Error -> snackbarHostState.showSnackbar("Error")
@@ -79,7 +81,7 @@ fun NavGraphBuilder.hostGameGraph(
             modifier = Modifier.sharedBounds(SharedElementKeys.HOST_QUEUE_KEY, this),
             state = viewModel.state,
             snackbarHostState = snackbarHostState,
-            onIntent = viewModel::handleIntent
+            onIntent = viewModel::handleIntent,
         )
     }
 }

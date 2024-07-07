@@ -14,6 +14,7 @@ import g.sig.questweaver.data.repositories.PayloadRepositoryImpl
 import g.sig.questweaver.domain.repositories.DeviceRepository
 import g.sig.questweaver.domain.repositories.NearbyRepository
 import g.sig.questweaver.domain.repositories.PayloadRepository
+import g.sig.questweaver.domain.usecases.game.GetDmIdUseCase
 import g.sig.questweaver.domain.usecases.nearby.AcceptConnectionUseCase
 import g.sig.questweaver.domain.usecases.nearby.BroadcastPayloadUseCase
 import g.sig.questweaver.domain.usecases.nearby.CancelDiscoveryUseCase
@@ -30,11 +31,12 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object ConnectionsClient {
-
     @Provides
     @Singleton
     @ServiceId
-    fun provideServiceId(@ApplicationContext context: Context): String = context.packageName
+    fun provideServiceId(
+        @ApplicationContext context: Context,
+    ): String = context.packageName
 
     @Provides
     @Singleton
@@ -43,23 +45,22 @@ object ConnectionsClient {
         nearbyRepository: NearbyRepository,
         deviceRepository: DeviceRepository,
         getUserUseCase: GetUserUseCase,
-        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
-    ): RequestConnectionUseCase {
-        return RequestConnectionUseCase(
+        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher,
+    ): RequestConnectionUseCase =
+        RequestConnectionUseCase(
             cancelDiscoveryUseCase,
             nearbyRepository,
             deviceRepository,
             getUserUseCase,
-            defaultDispatcher
+            defaultDispatcher,
         )
-    }
 
     @Provides
     @Singleton
     fun provideAcceptConnectionUseCase(
         nearbyRepository: NearbyRepository,
         deviceRepository: DeviceRepository,
-        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
+        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher,
     ): AcceptConnectionUseCase {
         val connectedDeviceScope =
             CoroutineScope(defaultDispatcher + CoroutineName("AcceptConnectionScope"))
@@ -71,54 +72,51 @@ object ConnectionsClient {
     fun provideRejectConnectionUseCase(
         deviceRepository: DeviceRepository,
         nearbyRepository: NearbyRepository,
-        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
-    ): RejectConnectionUseCase {
-        return RejectConnectionUseCase(deviceRepository, nearbyRepository, defaultDispatcher)
-    }
+        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher,
+    ): RejectConnectionUseCase = RejectConnectionUseCase(deviceRepository, nearbyRepository, defaultDispatcher)
 
     @Provides
     @Singleton
     fun providePayloadCallback(
         @ApplicationContext context: Context,
-        @IODispatcher ioDispatcher: CoroutineDispatcher
-    ): PayloadCallback {
-        return CorePayloadCallback(context, ioDispatcher)
-    }
+        @IODispatcher ioDispatcher: CoroutineDispatcher,
+    ): PayloadCallback = CorePayloadCallback(context, ioDispatcher)
 
     @Provides
     @Singleton
     fun provideConnectionsClient(
-        @ApplicationContext context: Context
-    ): ConnectionsClient {
-        return Nearby.getConnectionsClient(context)
-    }
+        @ApplicationContext context: Context,
+    ): ConnectionsClient = Nearby.getConnectionsClient(context)
 
     @Provides
     @Singleton
     fun providePayloadRepository(
         connectionsClient: ConnectionsClient,
-        payloadCallback: PayloadCallback
-    ): PayloadRepository {
-        return PayloadRepositoryImpl(connectionsClient, payloadCallback)
-    }
+        payloadCallback: PayloadCallback,
+    ): PayloadRepository = PayloadRepositoryImpl(connectionsClient, payloadCallback)
 
     @Provides
     @Singleton
     fun provideSendPayloadUseCase(
-        payloadRepository: PayloadRepository
-    ): SendPayloadUseCase {
-        return SendPayloadUseCase(payloadRepository)
-    }
+        getDmIdUseCase: GetDmIdUseCase,
+        deviceRepository: DeviceRepository,
+        payloadRepository: PayloadRepository,
+        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher,
+    ): SendPayloadUseCase =
+        SendPayloadUseCase(
+            getDmIdUseCase,
+            deviceRepository,
+            payloadRepository,
+            defaultDispatcher,
+        )
 
     @Provides
     @Singleton
     fun provideBroadcastPayloadUseCase(
         payloadRepository: PayloadRepository,
         deviceRepository: DeviceRepository,
-        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
-    ): BroadcastPayloadUseCase {
-        return BroadcastPayloadUseCase(payloadRepository, deviceRepository, defaultDispatcher)
-    }
+        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher,
+    ): BroadcastPayloadUseCase = BroadcastPayloadUseCase(payloadRepository, deviceRepository, defaultDispatcher)
 }
 
 @Retention(AnnotationRetention.BINARY)

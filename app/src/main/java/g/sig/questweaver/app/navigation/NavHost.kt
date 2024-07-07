@@ -28,7 +28,7 @@ import g.sig.questweaver.user.navigation.userGraph
 @Composable
 fun AppNavHost(
     modifier: Modifier = Modifier,
-    navController: NavHostController
+    navController: NavHostController,
 ) {
     SharedTransitionsLayout {
         NavHost(
@@ -36,7 +36,7 @@ fun AppNavHost(
             navController = navController,
             startDestination = HomeRoute.path,
             enterTransition = { defaultNavigationEnterTransition },
-            exitTransition = { defaultNavigationExitTransition }
+            exitTransition = { defaultNavigationExitTransition },
         ) {
             appGraph(navController)
         }
@@ -48,7 +48,7 @@ private fun NavGraphBuilder.appGraph(navController: NavHostController) {
     onboardingGraph(
         onNavigateToUserCreation = {
             navController.navigate(UserRoute.path)
-        }
+        },
     )
 
     userGraph(
@@ -58,7 +58,7 @@ private fun NavGraphBuilder.appGraph(navController: NavHostController) {
                 launchSingleTop = true
                 popUpTo(navController.graph.id) { inclusive = true }
             }
-        }
+        },
     )
 
     homeGraph(
@@ -82,7 +82,17 @@ private fun NavGraphBuilder.appGraph(navController: NavHostController) {
         onNavigateToPermissions = {
             navController.navigate(PermissionRoute.path)
         },
-        onNavigateToGame = {}
+        onNavigateToQueue = {
+            navController.navigate(HostGameRoute.createPath(it)) {
+                launchSingleTop = true
+            }
+        },
+        onNavigateToGame = {
+            navController.navigate(GameRoute.createPath(it)) {
+                launchSingleTop = true
+                popUpTo(navController.graph.id) { inclusive = true }
+            }
+        },
     )
 
     permissionGraph(navController) {
@@ -101,7 +111,7 @@ private fun NavGraphBuilder.appGraph(navController: NavHostController) {
                 launchSingleTop = true
                 popUpTo(navController.graph.id) { inclusive = true }
             }
-        }
+        },
     )
 
     hostGameGraph(
@@ -120,7 +130,7 @@ private fun NavGraphBuilder.appGraph(navController: NavHostController) {
                 launchSingleTop = true
                 popUpTo(navController.graph.id) { inclusive = true }
             }
-        }
+        },
     )
 
     gameGraph {

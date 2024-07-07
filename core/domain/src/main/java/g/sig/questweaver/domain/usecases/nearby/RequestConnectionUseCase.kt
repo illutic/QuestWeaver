@@ -1,6 +1,5 @@
 package g.sig.questweaver.domain.usecases.nearby
 
-import g.sig.questweaver.domain.entities.common.Device
 import g.sig.questweaver.domain.entities.states.ConnectionState
 import g.sig.questweaver.domain.repositories.DeviceRepository
 import g.sig.questweaver.domain.repositories.NearbyRepository
@@ -13,32 +12,36 @@ class RequestConnectionUseCase(
     private val nearbyRepository: NearbyRepository,
     private val deviceRepository: DeviceRepository,
     private val getUser: GetUserUseCase,
-    private val defaultDispatcher: CoroutineDispatcher
+    private val defaultDispatcher: CoroutineDispatcher,
 ) {
-    suspend operator fun invoke(device: Device) {
+    suspend operator fun invoke(
+        deviceId: String,
+        onConnected: suspend () -> Unit = {},
+        onError: suspend () -> Unit = {},
+    ) {
         withContext(defaultDispatcher) {
             nearbyRepository
-                .requestConnection(getUser(), device)
+                .requestConnection(getUser(), deviceId)
                 .collect { state ->
                     when (state) {
                         is ConnectionState.Connected -> {
                             stopDiscovery()
-                            deviceRepository.updateState(device.id, state)
                             deviceRepository.devices.value
+                                .filter { it.id != deviceId }
                                 .forEach {
-                                    if (it.connectionState !is ConnectionState.Connected) {
-                                        deviceRepository.removeDevice(it.id)
-                                    }
+                                    deviceRepository.removeDevice(it.id)
                                 }
+                            deviceRepository.updateState(deviceId, state)
+
+                            onConnected()
                         }
 
-                        is ConnectionState.Error.DisconnectionError -> deviceRepository.removeDevice(
-                            state.endpointId
-                        )
+                        is ConnectionState.Error -> {
+                            deviceRepository.removeDevice(deviceId)
+                            onError()
+                        }
 
-                        is ConnectionState.Error.LostError -> deviceRepository.removeDevice(state.endpointId)
-
-                        else -> deviceRepository.updateState(device.id, state)
+                        else -> deviceRepository.updateState(deviceId, state)
                     }
                 }
         }

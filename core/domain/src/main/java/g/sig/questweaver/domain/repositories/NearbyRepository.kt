@@ -17,7 +17,10 @@ interface NearbyRepository {
 
     fun cancelAdvertisement()
 
-    fun requestConnection(user: User, device: Device): Flow<ConnectionState>
+    fun requestConnection(
+        user: User,
+        deviceId: String,
+    ): Flow<ConnectionState>
 
     fun acceptConnection(device: Device): Flow<ConnectionState>
 

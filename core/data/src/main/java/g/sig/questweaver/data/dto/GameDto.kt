@@ -14,8 +14,5 @@ data class GameDto(
     val players: Int = 0,
     val maxPlayers: Int = 0,
     val dmId: String = "",
-) : Dto {
-    companion object {
-        val Empty = GameDto("", "", "", 0, 0)
-    }
-}
+    val hostDeviceId: String = "",
+) : Dto

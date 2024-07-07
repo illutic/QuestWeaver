@@ -13,14 +13,12 @@ import g.sig.questweaver.data.repositories.NearbyRepositoryImpl
 import g.sig.questweaver.domain.repositories.DeviceRepository
 import g.sig.questweaver.domain.repositories.NearbyRepository
 import g.sig.questweaver.domain.repositories.PayloadRepository
-import g.sig.questweaver.domain.usecases.game.GetGameStateUseCase
+import g.sig.questweaver.domain.usecases.game.HandleDmPayloadUseCase
 import g.sig.questweaver.domain.usecases.nearby.AdvertiseGameUseCase
-import g.sig.questweaver.domain.usecases.nearby.BroadcastPayloadUseCase
 import g.sig.questweaver.domain.usecases.nearby.CancelAdvertisementUseCase
 import g.sig.questweaver.domain.usecases.nearby.CancelDiscoveryUseCase
 import g.sig.questweaver.domain.usecases.nearby.DiscoverNearbyDevicesUseCase
 import g.sig.questweaver.domain.usecases.nearby.OnPayloadReceivedUseCase
-import g.sig.questweaver.domain.usecases.nearby.SendPayloadUseCase
 import g.sig.questweaver.domain.usecases.user.GetUserUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Singleton
@@ -33,38 +31,28 @@ object NearbyModule {
     fun provideAdvertiseGameUseCase(
         nearbyRepository: NearbyRepository,
         deviceRepository: DeviceRepository,
-        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
-    ): AdvertiseGameUseCase {
-        return AdvertiseGameUseCase(nearbyRepository, deviceRepository, defaultDispatcher)
-    }
+        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher,
+    ): AdvertiseGameUseCase = AdvertiseGameUseCase(nearbyRepository, deviceRepository, defaultDispatcher)
 
     @Provides
     @Singleton
-    fun provideCancelAdvertisementGameUseCase(
-        nearbyRepository: NearbyRepository
-    ): CancelAdvertisementUseCase {
-        return CancelAdvertisementUseCase(nearbyRepository)
-    }
+    fun provideCancelAdvertisementGameUseCase(nearbyRepository: NearbyRepository): CancelAdvertisementUseCase =
+        CancelAdvertisementUseCase(nearbyRepository)
 
     @Provides
     @Singleton
-    fun provideCancelDiscoveryUseCase(
-        nearbyRepository: NearbyRepository
-    ): CancelDiscoveryUseCase {
-        return CancelDiscoveryUseCase(nearbyRepository)
-    }
+    fun provideCancelDiscoveryUseCase(nearbyRepository: NearbyRepository): CancelDiscoveryUseCase = CancelDiscoveryUseCase(nearbyRepository)
 
     @Provides
     @Singleton
     fun provideNearbyGamesRepository(
         nearbyDataSource: NearbyDataSource,
-        recentGamesDataSource: RecentGamesDataSource
-    ): NearbyRepository {
-        return NearbyRepositoryImpl(
+        recentGamesDataSource: RecentGamesDataSource,
+    ): NearbyRepository =
+        NearbyRepositoryImpl(
             nearbyDataSource,
-            recentGamesDataSource
+            recentGamesDataSource,
         )
-    }
 
     @Provides
     @Singleton
@@ -72,47 +60,38 @@ object NearbyModule {
         repository: NearbyRepository,
         deviceRepository: DeviceRepository,
         getUserUseCase: GetUserUseCase,
-        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
-    ): DiscoverNearbyDevicesUseCase {
-        return DiscoverNearbyDevicesUseCase(
+        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher,
+    ): DiscoverNearbyDevicesUseCase =
+        DiscoverNearbyDevicesUseCase(
             repository,
             deviceRepository,
             getUserUseCase,
-            defaultDispatcher
+            defaultDispatcher,
         )
-    }
 
     @Provides
     @Singleton
     fun provideNearbyGamesDataSource(
         connectionsClient: ConnectionsClient,
         payloadCallback: PayloadCallback,
-        @ServiceId serviceId: String
-    ): NearbyDataSource {
-        return NearbyDataSourceImpl(
+        @ServiceId serviceId: String,
+    ): NearbyDataSource =
+        NearbyDataSourceImpl(
             connectionsClient,
             payloadCallback,
-            serviceId
+            serviceId,
         )
-    }
 
     @Provides
     @Singleton
     fun provideOnPayloadReceivedUseCase(
-        getUserUseCase: GetUserUseCase,
-        getGameStateUseCase: GetGameStateUseCase,
-        broadcastPayloadUseCase: BroadcastPayloadUseCase,
-        sendPayloadUseCase: SendPayloadUseCase,
+        handleDmPayloadUseCase: HandleDmPayloadUseCase,
         payloadRepository: PayloadRepository,
-        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
-    ): OnPayloadReceivedUseCase {
-        return OnPayloadReceivedUseCase(
-            getUserUseCase,
-            getGameStateUseCase,
-            broadcastPayloadUseCase,
-            sendPayloadUseCase,
+        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher,
+    ): OnPayloadReceivedUseCase =
+        OnPayloadReceivedUseCase(
+            handleDmPayloadUseCase,
             payloadRepository,
-            defaultDispatcher
+            defaultDispatcher,
         )
-    }
 }

@@ -5,4 +5,8 @@
     <string name="home_cta_2">Θέλω να μπώ σε παιχνίδι</string>
     <string name="home_profile">Προφίλ</string>
     <string name="home_settings">Ρυθμίσεις</string>
+    <string name="game_not_found">Δεν βρέθηκε παιχνίδι</string>
+    <string name="game_not_found_message">Το παιχνίδι %1$s δεν βρέθηκε. Τι θα ήθελες να κάνεις?</string>
+    <string name="remove_game">Διαγραφή παιχνιδιού</string>
+    <string name="host_game">Φτιάξε το παιχνίδι</string>
 </resources>
