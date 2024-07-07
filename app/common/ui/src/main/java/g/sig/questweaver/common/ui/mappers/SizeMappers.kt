@@ -1,5 +1,6 @@
 package g.sig.questweaver.common.ui.mappers
 
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.toSize
@@ -21,3 +22,6 @@ fun ComposeSize.toSize(canvasSize: ComposeSize) =
     Size(width / canvasSize.width, height / canvasSize.height)
 
 fun IntSize.toSize(canvasSize: IntSize) = toSize().toSize(canvasSize.toSize())
+
+fun Size.toOffset(canvasSize: ComposeSize) =
+    Offset(width * canvasSize.width, height * canvasSize.height)

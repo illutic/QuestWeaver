@@ -49,12 +49,12 @@ internal fun PermissionScreen(
         modifier = Modifier.fillMaxSize(),
         topBar = { PermissionTopBar(onBack) },
         navigation = {
-            RequestPermissionsButton(permissionsState, permissionsState.allPermissionsGranted)
+            RequestPermissionsButton(permissionsState, userDeniedPermission)
         }
     ) {
         val scrollState = rememberScrollState()
 
-        DecorationImage(scrollState, permissionsState.allPermissionsGranted)
+        DecorationImage(scrollState, userDeniedPermission)
 
         Column(
             modifier = Modifier
@@ -99,7 +99,7 @@ internal fun PermissionScreen(
 @Composable
 private fun RequestPermissionsButton(
     permissionsState: MultiplePermissionsState,
-    permissionsGranted: Boolean
+    permissionsDenied: Boolean
 ) {
     val context = LocalContext.current
     Button(
@@ -107,7 +107,7 @@ private fun RequestPermissionsButton(
             .fillMaxWidth()
             .padding(horizontal = largeSize),
         onClick = {
-            if (!permissionsGranted) {
+            if (permissionsDenied) {
                 context.launchSystemSettings()
             } else {
                 permissionsState.launchMultiplePermissionRequest()
@@ -115,7 +115,7 @@ private fun RequestPermissionsButton(
         }
     ) {
         Text(
-            text = if (!permissionsGranted) {
+            text = if (permissionsDenied) {
                 stringResource(id = R.string.permission_cta_denied)
             } else {
                 stringResource(id = R.string.permission_cta)
@@ -140,12 +140,12 @@ private fun Context.launchSystemSettings() {
 }
 
 @Composable
-private fun DecorationImage(scrollState: ScrollState, isPermissionsGranted: Boolean) {
+private fun DecorationImage(scrollState: ScrollState, permissionsDenied: Boolean) {
     ImageWithPlaceholder(
         modifier = Modifier
             .verticalScroll(scrollState)
             .size(PermissionSize.imageSize),
-        model = if (!isPermissionsGranted) {
+        model = if (permissionsDenied) {
             R.drawable.graphic_5
         } else {
             R.drawable.graphic_4

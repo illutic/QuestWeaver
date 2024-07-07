@@ -1,6 +1,7 @@
 package g.sig.questweaver.game.home.screens
 
 import android.content.Context
+import android.content.pm.ApplicationInfo
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -24,7 +25,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -38,6 +41,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.HapticFeedbackConstantsCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import g.sig.questweaver.common.ui.components.AppOutlinedTextField
+import g.sig.questweaver.common.ui.mappers.getBounds
 import g.sig.questweaver.common.ui.mappers.getClickedAnnotation
 import g.sig.questweaver.common.ui.mappers.getStrokeWidth
 import g.sig.questweaver.common.ui.mappers.load
@@ -110,6 +114,8 @@ internal fun GameHomeScreen(
         },
         sheetContent = { GameHomeScreenSheetContent(state, postIntent) }
     ) {
+        val applicationInfo = context.applicationInfo
+        val isDebuggable = 0 != applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE
         var canvasSize by remember { mutableStateOf(Size.Zero) }
         val currentlyDrawnPoints = remember { mutableStateListOf<Point>() }
         val isDrawingMode by remember(state.annotationMode) {
@@ -126,6 +132,9 @@ internal fun GameHomeScreen(
         ) {
             canvasSize = size
             drawAnnotations(state, textMeasurer, textStyle, context)
+            if (isDebuggable) {
+                drawAnnotationBounds(state.annotations.values.toList())
+            }
 
             if (isDrawingMode) {
                 drawPath(
@@ -296,6 +305,18 @@ private fun Modifier.selectAnnotations(
                 postIntent(GameHomeIntent.SelectAnnotation(it))
             }
         }
+    }
+}
+
+private fun DrawScope.drawAnnotationBounds(annotations: List<Annotation>) {
+    annotations.forEach { annotation ->
+        val bounds = annotation.getBounds(size)
+        drawRect(
+            color = Color.Red,
+            topLeft = bounds.topLeft,
+            size = bounds.size,
+            style = Stroke(2f)
+        )
     }
 }
 
