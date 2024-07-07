@@ -15,7 +15,7 @@ class GameHomeState {
     var allowAnnotations by mutableStateOf(true)
     var isDM by mutableStateOf(false)
     var annotationMode by mutableStateOf(AnnotationMode.Idle)
-    var annotations by mutableStateOf(setOf<Annotation>())
+    var annotations by mutableStateOf(mapOf<String, Annotation>())
     var selectedColor by mutableStateOf(Color.Black)
     val opacity by derivedStateOf { selectedColor.alpha }
     var selectedSize by mutableStateOf(Size.Default)

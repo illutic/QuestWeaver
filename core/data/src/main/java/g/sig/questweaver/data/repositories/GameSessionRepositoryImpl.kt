@@ -6,6 +6,8 @@ import g.sig.questweaver.data.mapper.toDomain
 import g.sig.questweaver.data.mapper.toDto
 import g.sig.questweaver.domain.entities.states.GameState
 import g.sig.questweaver.domain.repositories.GameSessionRepository
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 class GameSessionRepositoryImpl(
     private val dataSource: GameSessionDataSource,
@@ -16,9 +18,11 @@ class GameSessionRepositoryImpl(
     override suspend fun startGameSession(game: GameState) =
         dataSource.startGameSession(game.toDto())
 
-    override suspend fun updateGameSession(game: GameState) {
+    override suspend fun updateGameSession(game: GameState): Unit = coroutineScope {
         dataSource.updateGameSession(game.toDto())
-        recentGamesDataSource.saveGame(game.toDto().game)
+        launch {
+            recentGamesDataSource.saveGame(game.toDto().game)
+        }
     }
 
     override suspend fun endGameSession() = dataSource.endGameSession()

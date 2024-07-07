@@ -22,7 +22,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
-import g.sig.questweaver.domain.entities.states.GameState as DomainGameState
 
 @HiltViewModel
 class GameHomeViewModel @Inject constructor(
@@ -35,7 +34,6 @@ class GameHomeViewModel @Inject constructor(
     private val _events = Channel<GameHomeEvent>()
     val events = _events.receiveAsFlow()
     val state = GameHomeState()
-    private var gameState: DomainGameState? = null
 
     fun handleIntent(intent: GameHomeIntent) {
         when (intent) {
@@ -101,28 +99,28 @@ class GameHomeViewModel @Inject constructor(
         }
 
     private fun loadHomeScreen() = viewModelScope.launch {
-        gameState = getGameState()
+        val gameState = getGameState()
         val user = getUser()
-        val isDM = gameState?.game?.dmId == user.id
+        val isDM = gameState.game.dmId == user.id
 
         state.isDM = isDM
-        state.users = gameState?.connectedUsers.orEmpty()
-        state.annotations = gameState?.gameHomeState?.annotations.orEmpty().toSet()
-        state.allowAnnotations = (gameState?.gameHomeState?.allowEditing ?: false) || isDM
+        state.users = gameState.connectedUsers
+        state.annotations = gameState.gameHomeState.annotations.associateBy { it.id }
+        state.allowAnnotations = gameState.gameHomeState.allowEditing || isDM
 
         onPayloadReceived(::updateGameState)
     }.also { loadingJob = it }
 
     private fun selectAnnotation(intent: GameHomeIntent.SelectAnnotation) = viewModelScope.launch {
         when (state.annotationMode) {
-            GameHomeState.AnnotationMode.RemoveMode -> removeAnnotation(intent.annotation?.id)
+            GameHomeState.AnnotationMode.RemoveMode -> attemptRemoveAnnotation(intent.annotation?.id)
 
             else -> state.selectedAnnotation = intent.annotation
         }
     }
 
-    private fun removeAnnotation(annotationId: String?) = viewModelScope.launch {
-        val annotation = state.annotations.find { it.id == annotationId } ?: return@launch
+    private fun attemptRemoveAnnotation(annotationId: String?) = viewModelScope.launch {
+        val annotation = state.annotations[annotationId] ?: return@launch
         val user = getUser()
         val canRemoveAnnotation = state.isDM || annotation.createdBy == user.id
         if (canRemoveAnnotation) {
@@ -133,30 +131,20 @@ class GameHomeViewModel @Inject constructor(
     }
 
     private fun updateGameState(data: DomainEntity) {
-        when (data) {
-            is Annotation -> synchronized(state.annotations) {
-                val updatedAnnotations = state.annotations.toMutableSet()
-                updatedAnnotations.add(data)
-                state.annotations = updatedAnnotations
-            }
+        val updatedAnnotations = state.annotations.toMutableMap()
 
-            is RemoveAnnotation -> synchronized(state.annotations) {
-                val updatedAnnotations = state.annotations.toMutableSet()
-                updatedAnnotations.removeIf { it.id == data.id }
-                state.annotations = updatedAnnotations
-            }
+        when (data) {
+            is Annotation -> updatedAnnotations[data.id] = data
+
+            is RemoveAnnotation -> updatedAnnotations.remove(data.id)
 
             else -> Unit
         }
 
-        val updatedGameHomeState =
-            gameState?.gameHomeState?.copy(annotations = state.annotations.toList()) ?: return
-
-        val updatedGameState = gameState?.copy(gameHomeState = updatedGameHomeState) ?: return
-        gameState = updatedGameState
+        state.annotations = updatedAnnotations
 
         viewModelScope.launch {
-            updateGameSessionUseCase(updatedGameState)
+            updateGameSessionUseCase(updatedAnnotations.values.toList())
         }
     }
 

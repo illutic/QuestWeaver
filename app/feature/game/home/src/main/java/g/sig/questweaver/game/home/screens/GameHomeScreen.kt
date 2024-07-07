@@ -196,7 +196,7 @@ private fun DrawScope.drawAnnotations(
     textStyle: TextStyle,
     context: Context
 ) {
-    state.annotations.forEach { annotation ->
+    state.annotations.forEach { (_, annotation) ->
         when (annotation) {
             is Annotation.Drawing -> drawPath(
                 path = annotation.path.toPath(size),
@@ -291,7 +291,7 @@ private fun Modifier.selectAnnotations(
     pointerInput(state.annotationMode) {
         if (state.annotationMode != GameHomeState.AnnotationMode.RemoveMode) return@pointerInput
         detectTapGestures { offset ->
-            state.annotations.getClickedAnnotation(offset, canvasSize)?.let {
+            state.annotations.values.getClickedAnnotation(offset, canvasSize)?.let {
                 view.performHapticFeedback(HapticFeedbackConstantsCompat.SEGMENT_FREQUENT_TICK)
                 postIntent(GameHomeIntent.SelectAnnotation(it))
             }

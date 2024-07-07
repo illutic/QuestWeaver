@@ -83,9 +83,14 @@ object GamesModule {
     @Provides
     @Singleton
     fun provideUpdateGameSessionUseCase(
+        getGameStateUseCase: GetGameStateUseCase,
         gameSessionRepository: GameSessionRepository,
         @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
     ): UpdateGameSessionUseCase {
-        return UpdateGameSessionUseCase(gameSessionRepository, defaultDispatcher)
+        return UpdateGameSessionUseCase(
+            getGameStateUseCase,
+            gameSessionRepository,
+            defaultDispatcher
+        )
     }
 }
