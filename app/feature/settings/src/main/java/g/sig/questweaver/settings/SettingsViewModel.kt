@@ -16,25 +16,27 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SettingsViewModel @Inject constructor(
-    private val fetchRemoteConfigValue: FetchRemoteConfigValueUseCase
-) : ViewModel() {
-    private val _events = Channel<SettingsEvent>()
-    private val _state = MutableStateFlow<SettingsState>(SettingsState.Idle)
-    val state = _state.asStateFlow()
-    val events = _events.receiveAsFlow()
+class SettingsViewModel
+    @Inject
+    constructor(
+        private val fetchRemoteConfigValue: FetchRemoteConfigValueUseCase,
+    ) : ViewModel() {
+        private val _events = Channel<SettingsEvent>()
+        private val _state = MutableStateFlow<SettingsState>(SettingsState.Idle)
+        val state = _state.asStateFlow()
+        val events = _events.receiveAsFlow()
 
-    fun handleIntent(intent: SettingsIntent) {
-        viewModelScope.launch {
-            when (intent) {
-                SettingsIntent.Back -> _events.send(SettingsEvent.Back)
-                SettingsIntent.OpenPrivacyPolicy -> {
-                    _state.value = SettingsState.Loading
-                    val url = fetchRemoteConfigValue(RemoteConfigKeys.PRIVACY_POLICY_URL_KEY)
-                    _events.send(SettingsEvent.OpenPrivacyPolicy(url))
-                    _state.value = SettingsState.Loaded
+        fun handleIntent(intent: SettingsIntent) {
+            viewModelScope.launch {
+                when (intent) {
+                    SettingsIntent.Back -> _events.send(SettingsEvent.Back)
+                    SettingsIntent.OpenPrivacyPolicy -> {
+                        _state.value = SettingsState.Loading
+                        val url = fetchRemoteConfigValue(RemoteConfigKeys.PRIVACY_POLICY_URL_KEY)
+                        _events.send(SettingsEvent.OpenPrivacyPolicy(url))
+                        _state.value = SettingsState.Loaded
+                    }
                 }
             }
         }
     }
-}

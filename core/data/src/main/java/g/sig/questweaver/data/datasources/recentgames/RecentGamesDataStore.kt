@@ -8,7 +8,9 @@ import g.sig.questweaver.data.dto.GamesDto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class RecentGamesDataStore(private val context: Context) : DataStore<List<GameDto>> {
+class RecentGamesDataStore(
+    private val context: Context,
+) : DataStore<List<GameDto>> {
     private val Context.dataStore by dataStore("recentGame.pb", RecentGameSerializer)
 
     override val data: Flow<List<GameDto>> = context.dataStore.data.map { it.gameDtos }

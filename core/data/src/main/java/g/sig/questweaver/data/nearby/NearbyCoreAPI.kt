@@ -19,7 +19,7 @@ import java.io.InputStream
 fun requestConnection(
     client: ConnectionsClient,
     user: String,
-    endpointId: String
+    endpointId: String,
 ) = callbackFlow {
     trySend(ConnectionState.Loading)
 
@@ -42,8 +42,8 @@ fun requestConnection(
                         trySend(
                             ConnectionState.Error.GenericError(
                                 endpointId,
-                                connectionResolution.status.statusMessage
-                            )
+                                connectionResolution.status.statusMessage,
+                            ),
                         )
                     }
                 }
@@ -58,18 +58,19 @@ fun requestConnection(
             user,
             endpointId,
             connectionLifecycleCallback,
-        )
-        .doOnSuccess { trySend(ConnectionState.Loading) }
+        ).doOnSuccess { trySend(ConnectionState.Loading) }
         .doOnFailure {
             if (it is ApiException) {
                 when (it.statusCode) {
-                    ConnectionsStatusCodes.STATUS_ALREADY_CONNECTED_TO_ENDPOINT -> trySend(
-                        ConnectionState.Connected(endpointId)
-                    )
+                    ConnectionsStatusCodes.STATUS_ALREADY_CONNECTED_TO_ENDPOINT ->
+                        trySend(
+                            ConnectionState.Connected(endpointId),
+                        )
 
-                    ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> trySend(
-                        ConnectionState.Error.RejectError(endpointId)
-                    )
+                    ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED ->
+                        trySend(
+                            ConnectionState.Error.RejectError(endpointId),
+                        )
 
                     else -> trySend(ConnectionState.Error.GenericError(endpointId, it.message))
                 }
@@ -90,7 +91,8 @@ fun startAdvertising(
     trySend(ConnectionState.Loading)
 
     val options =
-        AdvertisingOptions.Builder()
+        AdvertisingOptions
+            .Builder()
             .setStrategy(Strategy.P2P_STAR)
             .setLowPower(isLowPower)
             .build()
@@ -114,8 +116,8 @@ fun startAdvertising(
                         trySend(
                             ConnectionState.Error.GenericError(
                                 endpointId,
-                                connectionResolution.status.statusMessage
-                            )
+                                connectionResolution.status.statusMessage,
+                            ),
                         )
                     }
                 }
@@ -131,8 +133,7 @@ fun startAdvertising(
             serviceId,
             connectionLifecycleCallback,
             options,
-        )
-        .doOnSuccess { trySend(ConnectionState.Loading) }
+        ).doOnSuccess { trySend(ConnectionState.Loading) }
         .doOnFailure {
             if (it is ApiException) {
                 when (it.statusCode) {
@@ -159,7 +160,8 @@ fun startDiscovery(
     trySend(ConnectionState.Loading)
 
     val options =
-        DiscoveryOptions.Builder()
+        DiscoveryOptions
+            .Builder()
             .setStrategy(Strategy.P2P_STAR)
             .setLowPower(isLowPower)
             .build()
@@ -187,8 +189,7 @@ fun startDiscovery(
             serviceId,
             callback,
             options,
-        )
-        .doOnSuccess { trySend(ConnectionState.Loading) }
+        ).doOnSuccess { trySend(ConnectionState.Loading) }
         .doOnFailure {
             if (it is ApiException) {
                 when (it.statusCode) {
@@ -204,7 +205,7 @@ fun startDiscovery(
 fun acceptConnection(
     client: ConnectionsClient,
     endpointId: String,
-    payloadCallback: PayloadCallback
+    payloadCallback: PayloadCallback,
 ) = callbackFlow {
     trySend(ConnectionState.Loading)
 
@@ -212,13 +213,13 @@ fun acceptConnection(
         .acceptConnection(endpointId, payloadCallback)
         .doOnSuccess {
             trySend(ConnectionState.Connected(endpointId))
-        }
-        .doOnFailure {
+        }.doOnFailure {
             if (it is ApiException) {
                 when (it.statusCode) {
-                    ConnectionsStatusCodes.STATUS_ALREADY_CONNECTED_TO_ENDPOINT -> trySend(
-                        ConnectionState.Connected(endpointId)
-                    )
+                    ConnectionsStatusCodes.STATUS_ALREADY_CONNECTED_TO_ENDPOINT ->
+                        trySend(
+                            ConnectionState.Connected(endpointId),
+                        )
 
                     else -> trySend(ConnectionState.Error.GenericError(endpointId, it.message))
                 }
@@ -229,14 +230,13 @@ fun acceptConnection(
 
 fun rejectConnection(
     client: ConnectionsClient,
-    endpointId: String
+    endpointId: String,
 ) = callbackFlow {
     client
         .rejectConnection(endpointId)
         .doOnSuccess {
             trySend(ConnectionState.Error.RejectError(endpointId))
-        }
-        .doOnFailure {
+        }.doOnFailure {
             trySend(ConnectionState.Error.GenericError(endpointId, it.message))
         }
     awaitClose()

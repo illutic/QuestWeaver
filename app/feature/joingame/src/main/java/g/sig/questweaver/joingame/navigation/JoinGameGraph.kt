@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.collectLatest
 fun NavGraphBuilder.joinGameGraph(
     onBack: () -> Unit,
     onNavigateToPermissions: () -> Unit,
-    onNavigateToGame: (String) -> Unit
+    onNavigateToGame: (String) -> Unit,
 ) {
     composable(JoinGameRoute.path) {
         val viewModel = hiltViewModel<JoinGameViewModel>()
@@ -35,7 +35,7 @@ fun NavGraphBuilder.joinGameGraph(
         JoinGameScreen(
             modifier = Modifier.sharedBounds(SharedElementKeys.JOIN_KEY, this),
             state = viewModel.state,
-            onIntent = viewModel::handleIntent
+            onIntent = viewModel::handleIntent,
         )
     }
 }

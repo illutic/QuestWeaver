@@ -6,9 +6,10 @@ import kotlinx.coroutines.withContext
 
 class FetchRemoteConfigValueUseCase(
     private val remoteConfigRepository: RemoteConfigRepository,
-    private val mainDispatcher: CoroutineDispatcher
+    private val mainDispatcher: CoroutineDispatcher,
 ) {
-    suspend operator fun invoke(key: String) = withContext(mainDispatcher) {
-        remoteConfigRepository.getRemoteConfigValue(key)
-    }
+    suspend operator fun invoke(key: String) =
+        withContext(mainDispatcher) {
+            remoteConfigRepository.getRemoteConfigValue(key)
+        }
 }

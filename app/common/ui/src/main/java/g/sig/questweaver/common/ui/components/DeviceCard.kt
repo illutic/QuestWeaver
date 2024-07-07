@@ -29,25 +29,26 @@ import g.sig.questweaver.ui.defaultContentTransform
 import g.sig.questweaver.ui.largeSize
 import g.sig.questweaver.ui.mediumSize
 
-
 @Composable
 fun DeviceCard(
     device: Device,
     modifier: Modifier = Modifier,
     onDeviceClicked: ((Device) -> Unit)? = null,
-    trailingContent: (@Composable () -> Unit)? = null
+    trailingContent: (@Composable () -> Unit)? = null,
 ) {
     val contentColor by deviceCardContentColors(device)
     val backgroundColor by deviceCardBackgroundColors(device)
 
-    Surface(modifier = modifier,
+    Surface(
+        modifier = modifier,
         tonalElevation = mediumSize,
         color = backgroundColor,
         contentColor = contentColor,
         border = BorderStroke(1.dp, contentColor.copy(alpha = 0.5f)),
         shape = MaterialTheme.shapes.medium,
         enabled = device.connectionState !is ConnectionState.Connected && onDeviceClicked != null,
-        onClick = { onDeviceClicked?.invoke(device) }) {
+        onClick = { onDeviceClicked?.invoke(device) },
+    ) {
         Row(
             modifier = Modifier.padding(largeSize),
             verticalAlignment = Alignment.CenterVertically,
@@ -56,12 +57,14 @@ fun DeviceCard(
             Text(
                 modifier = Modifier.weight(1f),
                 text = device.name,
-                style = MaterialTheme.typography.titleSmall
+                style = MaterialTheme.typography.titleSmall,
             )
 
-            AnimatedContent(targetState = device.connectionState,
+            AnimatedContent(
+                targetState = device.connectionState,
                 label = "icon",
-                transitionSpec = { defaultContentTransform }) { state ->
+                transitionSpec = { defaultContentTransform },
+            ) { state ->
                 when (state) {
                     is ConnectionState.Found, ConnectionState.Idle ->
                         if (trailingContent != null) {
@@ -72,9 +75,10 @@ fun DeviceCard(
 
                     is ConnectionState.Connected -> DeviceCardIcon(AppIcons.Check)
 
-                    ConnectionState.Loading, is ConnectionState.Connecting -> LoadingIndicator(
-                        contentColor
-                    )
+                    ConnectionState.Loading, is ConnectionState.Connecting ->
+                        LoadingIndicator(
+                            contentColor,
+                        )
 
                     is ConnectionState.Error -> DeviceCardIcon(AppIcons.Close)
                 }
@@ -96,45 +100,54 @@ private fun LoadingIndicator(contentColors: Color) {
 @Composable
 private fun DeviceCardIcon(painter: Painter) {
     Icon(
-        modifier = Modifier
-            .size(24.dp)
-            .padding(start = mediumSize),
+        modifier =
+            Modifier
+                .size(24.dp)
+                .padding(start = mediumSize),
         painter = painter,
-        contentDescription = null
+        contentDescription = null,
     )
 }
 
 @Composable
-private fun deviceCardContentColors(device: Device) = animateColorAsState(
-    targetValue = when (device.connectionState) {
-        is ConnectionState.Found,
-        ConnectionState.Idle -> contentColorFor(MaterialTheme.colorScheme.surface)
+private fun deviceCardContentColors(device: Device) =
+    animateColorAsState(
+        targetValue =
+            when (device.connectionState) {
+                is ConnectionState.Found,
+                ConnectionState.Idle,
+                -> contentColorFor(MaterialTheme.colorScheme.surface)
 
-        is ConnectionState.Connected -> contentColorFor(MaterialTheme.colorScheme.primaryContainer)
+                is ConnectionState.Connected -> contentColorFor(MaterialTheme.colorScheme.primaryContainer)
 
-        ConnectionState.Loading,
-        is ConnectionState.Connecting -> contentColorFor(
-            MaterialTheme.colorScheme.secondaryContainer
-        )
+                ConnectionState.Loading,
+                is ConnectionState.Connecting,
+                ->
+                    contentColorFor(
+                        MaterialTheme.colorScheme.secondaryContainer,
+                    )
 
-        is ConnectionState.Error -> contentColorFor(MaterialTheme.colorScheme.errorContainer)
-    },
-    animationSpec = defaultAnimationSpec(),
-    label = "content color"
-)
+                is ConnectionState.Error -> contentColorFor(MaterialTheme.colorScheme.errorContainer)
+            },
+        animationSpec = defaultAnimationSpec(),
+        label = "content color",
+    )
 
 @Composable
-private fun deviceCardBackgroundColors(device: Device) = animateColorAsState(
-    targetValue = when (device.connectionState) {
-        is ConnectionState.Found, ConnectionState.Idle -> MaterialTheme.colorScheme.surface
+private fun deviceCardBackgroundColors(device: Device) =
+    animateColorAsState(
+        targetValue =
+            when (device.connectionState) {
+                is ConnectionState.Found, ConnectionState.Idle -> MaterialTheme.colorScheme.surface
 
-        is ConnectionState.Connected -> MaterialTheme.colorScheme.primaryContainer
+                is ConnectionState.Connected -> MaterialTheme.colorScheme.primaryContainer
 
-        ConnectionState.Loading,
-        is ConnectionState.Connecting -> MaterialTheme.colorScheme.secondaryContainer
+                ConnectionState.Loading,
+                is ConnectionState.Connecting,
+                -> MaterialTheme.colorScheme.secondaryContainer
 
-        is ConnectionState.Error -> MaterialTheme.colorScheme.errorContainer
-    },
-    animationSpec = defaultAnimationSpec(),
-    label = "background color"
-)
+                is ConnectionState.Error -> MaterialTheme.colorScheme.errorContainer
+            },
+        animationSpec = defaultAnimationSpec(),
+        label = "background color",
+    )

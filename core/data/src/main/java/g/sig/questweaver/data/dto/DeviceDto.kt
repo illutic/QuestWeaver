@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 data class DeviceDto(
     val id: String,
     val name: String,
-    val connectionState: ConnectionStateDto
+    val connectionState: ConnectionStateDto,
 ) : Dto

@@ -16,7 +16,7 @@ import g.sig.questweaver.permissions.screens.PermissionScreen
 @OptIn(ExperimentalPermissionsApi::class)
 fun NavGraphBuilder.permissionGraph(
     navController: NavController,
-    onPermissionsGranted: () -> Unit
+    onPermissionsGranted: () -> Unit,
 ) {
     composable(PermissionRoute.path) {
         val viewModel = hiltViewModel<PermissionViewModel>()

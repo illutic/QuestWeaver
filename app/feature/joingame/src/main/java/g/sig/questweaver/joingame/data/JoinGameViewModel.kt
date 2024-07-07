@@ -24,6 +24,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class JoinGameViewModel
+    @Suppress("LongParameterList")
     @Inject
     constructor(
         private val createGameUseCase: CreateGameUseCase,
@@ -85,12 +86,12 @@ class JoinGameViewModel
                     when (val payload = incomingPayload.payloadData.data) {
                         is Game -> {
                             createGameUseCase(payload.copy(hostDeviceId = incomingPayload.origin))
-                        handleIntent(JoinGameIntent.JoinGame(payload))
-                    }
+                            handleIntent(JoinGameIntent.JoinGame(payload))
+                        }
 
-                    else -> Unit
+                        else -> Unit
+                    }
                 }
             }
         }
     }
-}

@@ -8,4 +8,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 
 @Serializable
-data class FileDto(val uri: Uri, val metadata: FileMetadataDto) : Dto
+data class FileDto(
+    val uri: Uri,
+    val metadata: FileMetadataDto,
+) : Dto

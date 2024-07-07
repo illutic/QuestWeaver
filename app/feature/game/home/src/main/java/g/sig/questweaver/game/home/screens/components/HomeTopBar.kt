@@ -16,7 +16,7 @@ internal fun GameHomeTopBar(
     title: String,
     modifier: Modifier = Modifier,
     icon: Painter? = null,
-    onBackPressed: () -> Unit = {}
+    onBackPressed: () -> Unit = {},
 ) {
     TopAppBar(
         title = { Text(text = title) },

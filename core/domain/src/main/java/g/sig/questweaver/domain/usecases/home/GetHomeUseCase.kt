@@ -11,12 +11,13 @@ class GetHomeUseCase(
     private val nearbyPermissions: GetNearbyPermissionUseCase,
     private val nearbyRepository: NearbyRepository,
     private val userRepository: UserRepository,
-    private val mainDispatcher: CoroutineDispatcher
+    private val mainDispatcher: CoroutineDispatcher,
 ) {
-    suspend operator fun invoke(): Home = withContext(mainDispatcher) {
-        val user = userRepository.getUser()
-        val recentGames = nearbyRepository.getRecentGames()
-        val permissions = nearbyPermissions()
-        Home(user, recentGames, permissions)
-    }
+    suspend operator fun invoke(): Home =
+        withContext(mainDispatcher) {
+            val user = userRepository.getUser()
+            val recentGames = nearbyRepository.getRecentGames()
+            val permissions = nearbyPermissions()
+            Home(user, recentGames, permissions)
+        }
 }

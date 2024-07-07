@@ -22,44 +22,49 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class GameViewModel @Inject constructor(
-    @ApplicationContext context: Context,
-    private val getDevices: GetDevicesUseCase
-) : ViewModel() {
-    private val _events = MutableSharedFlow<GameScreenEvent>()
-    val events = _events.asSharedFlow()
-    var selectedRoute: DecoratedRoute by mutableStateOf(
-        GameHomeRoute(label = context.getString(R.string.game_home_label))
-    )
-    val gameRoutes = listOf(
-        GameHomeRoute(label = context.getString(R.string.game_home_label)),
-        GameChatRoute(label = context.getString(R.string.game_chat_label)),
-        GameAiRoute(label = context.getString(R.string.game_ai_label)),
-    )
+class GameViewModel
+    @Inject
+    constructor(
+        @ApplicationContext context: Context,
+        private val getDevices: GetDevicesUseCase,
+    ) : ViewModel() {
+        private val _events = MutableSharedFlow<GameScreenEvent>()
+        val events = _events.asSharedFlow()
+        var selectedRoute: DecoratedRoute by mutableStateOf(
+            GameHomeRoute(label = context.getString(R.string.game_home_label)),
+        )
+        val gameRoutes =
+            listOf(
+                GameHomeRoute(label = context.getString(R.string.game_home_label)),
+                GameChatRoute(label = context.getString(R.string.game_chat_label)),
+                GameAiRoute(label = context.getString(R.string.game_ai_label)),
+            )
 
-    fun handleIntent(intent: GameIntent) {
-        when (intent) {
-            is GameIntent.Load -> listenForConnectedState()
-            is GameIntent.RequestCloseGame -> sendEvent(GameScreenEvent.RequestCloseGame)
-            is GameIntent.CloseGame -> sendEvent(GameScreenEvent.CloseGame)
-            is GameIntent.SelectRoute -> gameRoutes.find { it == intent.route }
-                ?.let { selectedRoute = it }
+        fun handleIntent(intent: GameIntent) {
+            when (intent) {
+                is GameIntent.Load -> listenForConnectedState()
+                is GameIntent.RequestCloseGame -> sendEvent(GameScreenEvent.RequestCloseGame)
+                is GameIntent.CloseGame -> sendEvent(GameScreenEvent.CloseGame)
+                is GameIntent.SelectRoute ->
+                    gameRoutes
+                        .find { it == intent.route }
+                        ?.let { selectedRoute = it }
+            }
         }
-    }
 
-    private fun listenForConnectedState() {
-        viewModelScope.launch {
-            getDevices().collect { devices ->
-                if (devices.isEmpty()) {
-                    sendEvent(GameScreenEvent.DeviceDisconnected)
+        private fun listenForConnectedState() {
+            viewModelScope.launch {
+                getDevices().collect { devices ->
+                    if (devices.isEmpty()) {
+                        sendEvent(GameScreenEvent.DeviceDisconnected)
+                    }
                 }
             }
         }
-    }
 
-    private fun sendEvent(event: GameScreenEvent) {
-        viewModelScope.launch {
-            _events.emit(event)
+        private fun sendEvent(event: GameScreenEvent) {
+            viewModelScope.launch {
+                _events.emit(event)
+            }
         }
     }
-}

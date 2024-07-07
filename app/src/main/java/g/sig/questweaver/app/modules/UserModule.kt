@@ -26,65 +26,52 @@ object UserModule {
     @Singleton
     fun provideUserLocalDataSource(
         @ApplicationContext context: Context,
-        @IODispatcher ioDispatcher: CoroutineDispatcher
-    ): UserDataSource {
-        return UserLocalDataSource(context, ioDispatcher)
-    }
+        @IODispatcher ioDispatcher: CoroutineDispatcher,
+    ): UserDataSource = UserLocalDataSource(context, ioDispatcher)
 
     @Provides
     @Singleton
-    fun provideUserRepository(dataSource: UserDataSource): UserRepository {
-        return UserRepositoryImpl(userDataSource = dataSource)
-    }
+    fun provideUserRepository(dataSource: UserDataSource): UserRepository =
+        UserRepositoryImpl(
+            userDataSource = dataSource,
+        )
 
     @Provides
     @Singleton
     fun providesGetUserUseCase(
         userRepository: UserRepository,
-        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
-    ): GetUserUseCase {
-        return GetUserUseCase(userRepository, defaultDispatcher)
-    }
+        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher,
+    ): GetUserUseCase = GetUserUseCase(userRepository, defaultDispatcher)
 
     @Provides
     @Singleton
     fun provideCreateUserUseCase(
         userRepository: UserRepository,
-        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
-    ): CreateUserUseCase {
-        return CreateUserUseCase(userRepository, defaultDispatcher)
-    }
+        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher,
+    ): CreateUserUseCase = CreateUserUseCase(userRepository, defaultDispatcher)
 
     @Provides
     @Singleton
     fun provideDeleteUserUseCase(
         userRepository: UserRepository,
-        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
-    ): DeleteUserUseCase {
-        return DeleteUserUseCase(userRepository, defaultDispatcher)
-    }
+        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher,
+    ): DeleteUserUseCase = DeleteUserUseCase(userRepository, defaultDispatcher)
 
     @Provides
     @Singleton
     fun provideUpdateUserUseCase(
         userRepository: UserRepository,
-        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
-    ): UpdateUserNameUseCase {
-        return UpdateUserNameUseCase(userRepository, defaultDispatcher)
-    }
+        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher,
+    ): UpdateUserNameUseCase = UpdateUserNameUseCase(userRepository, defaultDispatcher)
 
     @Provides
     @Singleton
     fun provideShouldShowOnBoardingUseCase(
         userRepository: UserRepository,
-        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
-    ): HasUserUseCase {
-        return HasUserUseCase(userRepository, defaultDispatcher)
-    }
+        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher,
+    ): HasUserUseCase = HasUserUseCase(userRepository, defaultDispatcher)
 
     @Provides
     @Singleton
-    fun provideValidateUserUseCase(): ValidateUserNameUseCase {
-        return ValidateUserNameUseCase()
-    }
+    fun provideValidateUserUseCase(): ValidateUserNameUseCase = ValidateUserNameUseCase()
 }

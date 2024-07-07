@@ -107,25 +107,25 @@ class HostGameViewModel
 
             if (verifiedForm && state.hasPermissions) {
                 createGame(
-                Game(
-                    gameId = UUID.randomUUID().toString(),
-                    title = state.gameName,
-                    description = state.description,
-                    maxPlayers = state.playerCount!!,
-                ),
-            )
-            handleIntent(HostGameIntent.ShowConnectionDialog)
+                    Game(
+                        gameId = UUID.randomUUID().toString(),
+                        title = state.gameName,
+                        description = state.description,
+                        maxPlayers = state.playerCount!!,
+                    ),
+                )
+                handleIntent(HostGameIntent.ShowConnectionDialog)
+            }
         }
-    }
 
-    private fun showConnectionDialog() {
-        state.showConnectionDialog = true
-    }
+        private fun showConnectionDialog() {
+            state.showConnectionDialog = true
+        }
 
-    private suspend fun cancelHosting() {
-        deleteGame()
-        _events.emit(HostGameEvent.CancelHostGame)
-    }
+        private suspend fun cancelHosting() {
+            deleteGame()
+            _events.emit(HostGameEvent.CancelHostGame)
+        }
 
-    private suspend fun sendEvent(event: HostGameEvent) = _events.emit(event)
-}
+        private suspend fun sendEvent(event: HostGameEvent) = _events.emit(event)
+    }

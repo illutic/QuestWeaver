@@ -30,7 +30,7 @@ fun HomeButton(
             Button(
                 modifier = modifier,
                 onClick = onClick,
-                enabled = isEnabled
+                enabled = isEnabled,
             ) {
                 content()
             }
@@ -82,7 +82,7 @@ fun ButtonTextPreview() {
                 Text(
                     "T",
                     style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
                 )
             },
         )

@@ -7,7 +7,7 @@ import g.sig.questweaver.game.screens.GameRoute
 fun NavGraphBuilder.gameGraph(onGameClosed: () -> Unit) {
     composable(
         route = GameRoute.path,
-        arguments = GameRoute.arguments
+        arguments = GameRoute.arguments,
     ) {
         GameRoute(onGameClosed)
     }

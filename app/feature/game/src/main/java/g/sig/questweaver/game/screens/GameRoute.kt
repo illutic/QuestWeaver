@@ -36,7 +36,7 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 internal fun GameRoute(
     onGameClosed: () -> Unit,
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
 ) {
     val viewModel = hiltViewModel<GameViewModel>()
     var showCloseGameDialog by rememberSaveable { mutableStateOf(false) }
@@ -62,7 +62,7 @@ internal fun GameRoute(
             message = stringResource(R.string.game_close_game_message),
             onDismissRequest = { showCloseGameDialog = false },
             onCancel = { showCloseGameDialog = false },
-            onConfirm = { viewModel.handleIntent(GameIntent.CloseGame) }
+            onConfirm = { viewModel.handleIntent(GameIntent.CloseGame) },
         )
     }
 
@@ -72,7 +72,7 @@ internal fun GameRoute(
             title = stringResource(R.string.game_device_disconnected_title),
             message = stringResource(R.string.game_device_disconnected_message),
             onDismissRequest = { onGameClosed() },
-            onConfirm = { onGameClosed() }
+            onConfirm = { onGameClosed() },
         )
     }
 
@@ -80,12 +80,12 @@ internal fun GameRoute(
         modifier = Modifier.fillMaxSize(),
         selectedRoute = viewModel.selectedRoute,
         routes = viewModel.gameRoutes,
-        onItemClick = { viewModel.handleIntent(GameIntent.SelectRoute(it)) }
+        onItemClick = { viewModel.handleIntent(GameIntent.SelectRoute(it)) },
     ) {
         NavHost(
             modifier = Modifier.systemBarsPadding(),
             navController = navController,
-            startDestination = GameHomeRoute.path
+            startDestination = GameHomeRoute.path,
         ) {
             gameHomeGraph { showCloseGameDialog = true }
             gameChatGraph()
@@ -101,13 +101,13 @@ private fun GameAlertDialog(
     message: String = "",
     onDismissRequest: () -> Unit,
     onConfirm: () -> Unit,
-    onCancel: (() -> Unit)? = null
+    onCancel: (() -> Unit)? = null,
 ) {
     AlertDialog(
         icon = {
             Icon(
                 painter = icon,
-                contentDescription = null
+                contentDescription = null,
             )
         },
         onDismissRequest = onDismissRequest,
@@ -115,7 +115,7 @@ private fun GameAlertDialog(
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 style = MaterialTheme.typography.titleLarge,
-                text = title
+                text = title,
             )
         },
         text = {
@@ -135,6 +135,6 @@ private fun GameAlertDialog(
             }) {
                 Text(text = stringResource(R.string.confirm))
             }
-        }
+        },
     )
 }

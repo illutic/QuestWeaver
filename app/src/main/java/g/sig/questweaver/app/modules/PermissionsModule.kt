@@ -29,8 +29,7 @@ object PermissionsModule {
 
     @Provides
     @Singleton
-    fun provideBluetoothPermission(): Permission.Bluetooth =
-        Permission.Bluetooth(android.Manifest.permission.BLUETOOTH)
+    fun provideBluetoothPermission(): Permission.Bluetooth = Permission.Bluetooth(android.Manifest.permission.BLUETOOTH)
 
     @Provides
     @Singleton
@@ -132,22 +131,23 @@ object PermissionsModule {
         readAudio: Permission.ReadAudio,
     ): List<Permission> {
         val version = Build.VERSION.SDK_INT
-        val permissions = mutableListOf(
-            accessWifiState,
-            changeWifiState,
-            bluetooth,
-            bluetoothAdmin,
-            accessCoarseLocation,
-            accessFineLocation,
-            bluetoothAdvertise,
-            bluetoothConnect,
-            bluetoothScan,
-            nearbyWifiDevices,
-            readExternalStorage,
-            readPhotos,
-            readVideos,
-            readAudio,
-        )
+        val permissions =
+            mutableListOf(
+                accessWifiState,
+                changeWifiState,
+                bluetooth,
+                bluetoothAdmin,
+                accessCoarseLocation,
+                accessFineLocation,
+                bluetoothAdvertise,
+                bluetoothConnect,
+                bluetoothScan,
+                nearbyWifiDevices,
+                readExternalStorage,
+                readPhotos,
+                readVideos,
+                readAudio,
+            )
 
         if (version >= Build.VERSION_CODES.S) {
             permissions.remove(bluetooth)
@@ -186,22 +186,23 @@ object PermissionsModule {
         readVideos: Permission.ReadVideos,
         readAudio: Permission.ReadAudio,
     ): GetNearbyPermissionUseCase {
-        val permissions = getNearbyPermissionsBasedOnSdkVersion(
-            accessWifiState,
-            changeWifiState,
-            bluetooth,
-            bluetoothAdmin,
-            accessCoarseLocation,
-            accessFineLocation,
-            bluetoothAdvertise,
-            bluetoothConnect,
-            bluetoothScan,
-            nearbyWifiDevices,
-            readExternalStorage,
-            readPhotos,
-            readVideos,
-            readAudio,
-        )
+        val permissions =
+            getNearbyPermissionsBasedOnSdkVersion(
+                accessWifiState,
+                changeWifiState,
+                bluetooth,
+                bluetoothAdmin,
+                accessCoarseLocation,
+                accessFineLocation,
+                bluetoothAdvertise,
+                bluetoothConnect,
+                bluetoothScan,
+                nearbyWifiDevices,
+                readExternalStorage,
+                readPhotos,
+                readVideos,
+                readAudio,
+            )
 
         return GetNearbyPermissionUseCase(permissions)
     }
@@ -209,10 +210,13 @@ object PermissionsModule {
     @Provides
     @Singleton
     fun provideHasPermissionsUseCase(repository: PermissionsRepository): HasPermissionsUseCase =
-        HasPermissionsUseCase(repository)
+        HasPermissionsUseCase(
+            repository,
+        )
 
     @Provides
     @Singleton
-    fun providePermissionsRepository(@ApplicationContext context: Context): PermissionsRepository =
-        PermissionsRepositoryImpl(context)
+    fun providePermissionsRepository(
+        @ApplicationContext context: Context,
+    ): PermissionsRepository = PermissionsRepositoryImpl(context)
 }

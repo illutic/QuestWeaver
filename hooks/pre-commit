@@ -19,7 +19,7 @@ fi
 # Get the input files for detekt ignoring removed files
 detektInput=$(echo "${fileArray[@]}" | tr ' ' '\n' | grep -vE "^\s*$" | tr '\n' ',' | sed 's/,$//')
 
-OUTPUT=$(detekt -c detekt.yml --input "$detektInput" 2>&1)
+OUTPUT=$(detekt -c detekt.yml --input "$detektInput" --plugins lint/detekt-compose-0.4.5-all.jar 2>&1)
 EXIT_CODE=$?
 if [ $EXIT_CODE -ne 0 ]; then
   echo $OUTPUT

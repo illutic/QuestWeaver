@@ -14,7 +14,7 @@ sealed interface AnnotationDto : Dto {
         val createdBy: String,
         val strokeSize: SizeDto,
         val colorDto: ColorDto,
-        val path: List<PointDto>
+        val path: List<PointDto>,
     ) : AnnotationDto
 
     @Serializable
@@ -24,7 +24,7 @@ sealed interface AnnotationDto : Dto {
         val text: String,
         val sizeDTO: SizeDto,
         val colorDTO: ColorDto,
-        val anchor: PointDto
+        val anchor: PointDto,
     ) : AnnotationDto
 
     @Serializable
@@ -33,6 +33,6 @@ sealed interface AnnotationDto : Dto {
         val createdBy: String,
         val size: SizeDto,
         val anchor: PointDto,
-        val fileDto: FileDto
+        val fileDto: FileDto,
     ) : AnnotationDto
 }

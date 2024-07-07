@@ -25,30 +25,29 @@ private const val LABEL_WIDTH_PERCENT = 0.2f
 fun HomeEditControls(
     state: GameHomeState,
     postIntent: (GameHomeIntent) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
         Row(
             modifier = Modifier.align(Alignment.End),
             horizontalArrangement = Arrangement.spacedBy(largeSize),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-
             ColorButton(
                 color = state.selectedColor,
-                onClick = { postIntent(GameHomeIntent.ShowColorPicker) }
+                onClick = { postIntent(GameHomeIntent.ShowColorPicker) },
             )
         }
 
         HomeSlider(
             label = stringResource(id = R.string.size),
             value = state.selectedSize.width,
-            onValueChanged = { postIntent(GameHomeIntent.SelectSize(it)) }
+            onValueChanged = { postIntent(GameHomeIntent.SelectSize(it)) },
         )
         HomeSlider(
             label = stringResource(id = R.string.opacity),
             value = state.opacity,
-            onValueChanged = { postIntent(GameHomeIntent.SelectOpacity(it)) }
+            onValueChanged = { postIntent(GameHomeIntent.SelectOpacity(it)) },
         )
     }
 }
@@ -57,21 +56,21 @@ fun HomeEditControls(
 private fun HomeSlider(
     label: String,
     value: Float,
-    onValueChanged: (Float) -> Unit
+    onValueChanged: (Float) -> Unit,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(
             modifier = Modifier.weight(LABEL_WIDTH_PERCENT),
             text = label,
-            style = MaterialTheme.typography.labelLarge
+            style = MaterialTheme.typography.labelLarge,
         )
         Slider(
             modifier = Modifier.weight(SLIDER_WIDTH_PERCENT),
             value = value,
-            onValueChange = onValueChanged
+            onValueChange = onValueChanged,
         )
     }
 }

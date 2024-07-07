@@ -14,12 +14,12 @@ sealed interface PayloadDataDto {
     @Serializable
     data class Unicast(
         override val data: Dto,
-        val destination: String
+        val destination: String,
     ) : PayloadDataDto
 }
 
 @Serializable
 data class IncomingPayloadDto(
     val origin: String,
-    val payloadData: PayloadDataDto
+    val payloadData: PayloadDataDto,
 )

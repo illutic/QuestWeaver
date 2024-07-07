@@ -18,21 +18,18 @@ object RemoteConfigModule {
     @Provides
     @Singleton
     fun provideRemoteConfigRepository(
-        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
-    ): RemoteConfigRepository {
-        return RemoteConfigRepositoryImpl().also {
+        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher,
+    ): RemoteConfigRepository =
+        RemoteConfigRepositoryImpl().also {
             CoroutineScope(defaultDispatcher).launch {
                 it.fetchRemoteConfig()
             }
         }
-    }
 
     @Provides
     @Singleton
     fun provideRemoteConfigValueUseCase(
         remoteConfigRepository: RemoteConfigRepository,
-        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
-    ): FetchRemoteConfigValueUseCase {
-        return FetchRemoteConfigValueUseCase(remoteConfigRepository, defaultDispatcher)
-    }
+        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher,
+    ): FetchRemoteConfigValueUseCase = FetchRemoteConfigValueUseCase(remoteConfigRepository, defaultDispatcher)
 }

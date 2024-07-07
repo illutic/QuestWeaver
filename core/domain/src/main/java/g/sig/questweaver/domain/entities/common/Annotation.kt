@@ -25,7 +25,7 @@ sealed interface Annotation : DomainEntity {
         val color: Color,
         val anchor: Point,
         override val createdBy: String,
-        override val id: String
+        override val id: String,
     ) : Annotation
 
     data class Image(
@@ -34,6 +34,6 @@ sealed interface Annotation : DomainEntity {
         val size: Size,
         val anchor: Point,
         override val createdBy: String,
-        override val id: String
+        override val id: String,
     ) : Annotation
 }

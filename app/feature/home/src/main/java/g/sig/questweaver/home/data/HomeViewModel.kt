@@ -72,28 +72,28 @@ class HomeViewModel
                     is HomeIntent.RemoveGame -> {
                         removeGameSessionUseCase(intent.gameId)
                         handleIntent(HomeIntent.FetchHome)
-                }
+                    }
 
-                HomeIntent.NavigateToHost -> {
-                    _events.send(HomeEvent.NavigateToHost)
-                }
+                    HomeIntent.NavigateToHost -> {
+                        _events.send(HomeEvent.NavigateToHost)
+                    }
 
-                HomeIntent.NavigateToJoin -> {
-                    _events.send(HomeEvent.NavigateToJoin)
-                }
+                    HomeIntent.NavigateToJoin -> {
+                        _events.send(HomeEvent.NavigateToJoin)
+                    }
 
-                HomeIntent.NavigateToPermissions -> {
-                    _events.send(HomeEvent.NavigateToPermissions)
-                }
+                    HomeIntent.NavigateToPermissions -> {
+                        _events.send(HomeEvent.NavigateToPermissions)
+                    }
 
-                HomeIntent.NavigateToProfile -> {
-                    _events.send(HomeEvent.NavigateToProfile)
-                }
+                    HomeIntent.NavigateToProfile -> {
+                        _events.send(HomeEvent.NavigateToProfile)
+                    }
 
-                HomeIntent.NavigateToSettings -> {
-                    _events.send(HomeEvent.NavigateToSettings)
+                    HomeIntent.NavigateToSettings -> {
+                        _events.send(HomeEvent.NavigateToSettings)
+                    }
                 }
             }
         }
     }
-}

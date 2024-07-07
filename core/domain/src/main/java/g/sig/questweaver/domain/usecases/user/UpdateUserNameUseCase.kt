@@ -6,7 +6,7 @@ import kotlinx.coroutines.withContext
 
 class UpdateUserNameUseCase(
     private val userRepository: UserRepository,
-    private val mainDispatcher: CoroutineDispatcher
+    private val mainDispatcher: CoroutineDispatcher,
 ) {
     suspend operator fun invoke(name: String) {
         withContext(mainDispatcher) {

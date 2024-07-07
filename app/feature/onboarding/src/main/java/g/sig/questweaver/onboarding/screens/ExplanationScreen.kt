@@ -23,55 +23,48 @@ import g.sig.questweaver.onboarding.R
 import g.sig.questweaver.ui.largeSize
 
 @Composable
-internal fun ExplanationScreen(
-    onNavigateToUserCreation: () -> Unit
-) {
+internal fun ExplanationScreen(onNavigateToUserCreation: () -> Unit) {
     ScreenScaffold(
         navigation = {
-            Button(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = largeSize),
-                onClick = { onNavigateToUserCreation() }
-            ) {
-                Text(text = stringResource(id = R.string.explanation_cta))
-            }
-        }
+            ExplanationButton(onNavigateToUserCreation)
+        },
     ) {
         val scrollState = rememberScrollState()
 
         ImageWithPlaceholder(
-            modifier = Modifier
-                .verticalScroll(scrollState)
-                .size(ExplanationSize.imageSize),
+            modifier =
+                Modifier
+                    .verticalScroll(scrollState)
+                    .size(ExplanationSize.imageSize),
             model = R.drawable.graphic_1,
             contentDescription = null,
         )
 
         Column(
-            modifier = Modifier
-                .verticalScroll(rememberScrollState())
-                .padding(largeSize),
+            modifier =
+                Modifier
+                    .verticalScroll(rememberScrollState())
+                    .padding(largeSize),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(largeSize)
+            verticalArrangement = Arrangement.spacedBy(largeSize),
         ) {
             Text(
                 text = stringResource(id = R.string.explanation_title),
                 style = MaterialTheme.typography.headlineLarge,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.primary,
             )
 
             Text(
                 text = stringResource(id = R.string.explanation_header_1),
                 style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onBackground
+                color = MaterialTheme.colorScheme.onBackground,
             )
 
             Text(
                 text = stringResource(id = R.string.explanation_body_1),
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onBackground
+                color = MaterialTheme.colorScheme.onBackground,
             )
 
             HorizontalDivider()
@@ -79,17 +72,30 @@ internal fun ExplanationScreen(
             Text(
                 text = stringResource(id = R.string.explanation_header_2),
                 style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onBackground
+                color = MaterialTheme.colorScheme.onBackground,
             )
 
             Text(
                 text = stringResource(id = R.string.explanation_body_2),
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onBackground
+                color = MaterialTheme.colorScheme.onBackground,
             )
 
             HorizontalDivider()
         }
+    }
+}
+
+@Composable
+private fun ExplanationButton(onNavigateToUserCreation: () -> Unit) {
+    Button(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = largeSize),
+        onClick = { onNavigateToUserCreation() },
+    ) {
+        Text(text = stringResource(id = R.string.explanation_cta))
     }
 }
 

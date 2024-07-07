@@ -4,4 +4,6 @@ import kotlinx.serialization.Serializable
 
 @JvmInline
 @Serializable
-value class ColorDto(val value: ULong) : Dto
+value class ColorDto(
+    val value: ULong,
+) : Dto

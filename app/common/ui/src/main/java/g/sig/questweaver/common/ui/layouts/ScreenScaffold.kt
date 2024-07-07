@@ -41,7 +41,7 @@ fun ScreenScaffold(
     containerColor: Color = MaterialTheme.colorScheme.background,
     contentColor: Color = contentColorFor(containerColor),
     contentWindowInsets: WindowInsets = ScaffoldDefaults.contentWindowInsets,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
 
@@ -66,35 +66,38 @@ fun ScreenScaffold(
         contentWindowInsets = contentWindowInsets,
     ) { padding ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(padding),
         ) {
-            val contentModifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
+            val contentModifier =
+                Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
 
             if (windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT) {
                 Column(
                     modifier = contentModifier,
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                    verticalArrangement = Arrangement.Center,
                 ) {
                     content()
                 }
             } else {
                 Row(
-                    modifier = contentModifier
-                        .displayCutoutPadding(),
+                    modifier =
+                        contentModifier
+                            .displayCutoutPadding(),
                     horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     content()
                 }
             }
 
             Row(
-                modifier = adaptiveModifier.align(Alignment.End)
+                modifier = adaptiveModifier.align(Alignment.End),
             ) { navigation() }
         }
     }
@@ -102,7 +105,7 @@ fun ScreenScaffold(
 
 @Composable
 @Preview(device = "spec:parent=pixel_5,orientation=landscape")
-fun AdaptiveScaffoldPreview() {
+private fun AdaptiveScaffoldPreview() {
     AppTheme {
         ScreenScaffold(
             navigation = {
@@ -114,7 +117,7 @@ fun AdaptiveScaffoldPreview() {
                         modifier = Modifier.weight(1f, false),
                     ) { Button(onClick = { }) { Text("Navigation") } }
                 }
-            }
+            },
         ) {
             Text("Hello")
         }

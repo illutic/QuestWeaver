@@ -5,4 +5,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class GameAiViewModel @Inject constructor() : ViewModel()
+class GameAiViewModel
+    @Inject
+    constructor() : ViewModel()

@@ -47,7 +47,7 @@ import g.sig.questweaver.ui.largeSize
 internal fun JoinGameScreen(
     state: JoinGameState,
     modifier: Modifier = Modifier,
-    onIntent: (JoinGameIntent) -> Unit
+    onIntent: (JoinGameIntent) -> Unit,
 ) {
     ScreenScaffold(
         modifier = Modifier.fillMaxSize(),
@@ -55,14 +55,14 @@ internal fun JoinGameScreen(
     ) {
         var showDeviceConfirmationDialog by remember {
             mutableStateOf<JoinGameState.ShowDeviceConfirmationDialog?>(
-                null
+                null,
             )
         }
         showDeviceConfirmationDialog?.let {
             ConnectionDialog(
                 deviceName = it.device.name,
                 onDismissRequest = { showDeviceConfirmationDialog = null },
-                onConfirm = { onIntent(JoinGameIntent.RequestConnection(it.device)) }
+                onConfirm = { onIntent(JoinGameIntent.RequestConnection(it.device)) },
             )
         }
 
@@ -72,7 +72,7 @@ internal fun JoinGameScreen(
             onDeviceClicked = { device ->
                 showDeviceConfirmationDialog = JoinGameState.ShowDeviceConfirmationDialog(device)
             },
-            onIntent = onIntent
+            onIntent = onIntent,
         )
     }
 }
@@ -82,24 +82,26 @@ private fun JoinGameScreenContent(
     modifier: Modifier = Modifier,
     state: JoinGameState,
     onDeviceClicked: (Device) -> Unit,
-    onIntent: (JoinGameIntent) -> Unit
+    onIntent: (JoinGameIntent) -> Unit,
 ) {
     val scrollState = rememberScrollState()
 
     ImageWithPlaceholder(
-        modifier = Modifier
-            .verticalScroll(scrollState)
-            .size(JoinGameSize.imageSize),
+        modifier =
+            Modifier
+                .verticalScroll(scrollState)
+                .size(JoinGameSize.imageSize),
         model = R.drawable.graphic_8,
-        contentDescription = ""
+        contentDescription = "",
     )
 
     Column(
-        modifier = modifier
-            .verticalScroll(scrollState)
-            .padding(horizontal = largeSize),
+        modifier =
+            modifier
+                .verticalScroll(scrollState)
+                .padding(horizontal = largeSize),
         verticalArrangement = spacedBy(largeSize),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         if (state.discovering && state.hasPermissions) {
             AdaptiveProgressBar(Modifier.width(IntrinsicSize.Max))
@@ -120,7 +122,7 @@ private fun JoinGameScreenContent(
         } else if (state.hasPermissions) {
             Text(
                 text = stringResource(R.string.join_game_empty),
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodyMedium,
             )
         }
     }
@@ -130,13 +132,13 @@ private fun JoinGameScreenContent(
 internal fun ConnectionDialog(
     deviceName: String,
     onDismissRequest: () -> Unit,
-    onConfirm: () -> Unit
+    onConfirm: () -> Unit,
 ) {
     AlertDialog(
         icon = {
             Icon(
                 painter = AppIcons.ConnectingDevice,
-                contentDescription = null
+                contentDescription = null,
             )
         },
         onDismissRequest = onDismissRequest,
@@ -144,7 +146,7 @@ internal fun ConnectionDialog(
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 style = MaterialTheme.typography.titleLarge,
-                text = stringResource(R.string.join_game_dialog_title, deviceName)
+                text = stringResource(R.string.join_game_dialog_title, deviceName),
             )
         },
         text = {
@@ -162,10 +164,9 @@ internal fun ConnectionDialog(
             }) {
                 Text(text = stringResource(R.string.join_game_dialog_yes))
             }
-        }
+        },
     )
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -180,7 +181,7 @@ private fun JoinGameTopBar(onBack: () -> Unit) {
             IconButton(onClick = onBack) {
                 Icon(AppIcons.Back, contentDescription = null)
             }
-        }
+        },
     )
 }
 
@@ -188,13 +189,15 @@ private fun JoinGameTopBar(onBack: () -> Unit) {
 @Composable
 private fun JoinGameScreenPreview() {
     JoinGameScreen(
-        state = JoinGameState().apply {
-            devices = mutableStateListOf(
-                Device("1", "Device 1", ConnectionState.Idle),
-                Device("2", "Device 2", ConnectionState.Connecting("2", "Device 2")),
-                Device("3", "Device 3", ConnectionState.Connected("2")),
-                Device("3", "Device 3", ConnectionState.Error.GenericError("123", null)),
-            )
-        }
+        state =
+            JoinGameState().apply {
+                devices =
+                    mutableStateListOf(
+                        Device("1", "Device 1", ConnectionState.Idle),
+                        Device("2", "Device 2", ConnectionState.Connecting("2", "Device 2")),
+                        Device("3", "Device 3", ConnectionState.Connected("2")),
+                        Device("3", "Device 3", ConnectionState.Error.GenericError("123", null)),
+                    )
+            },
     ) {}
 }

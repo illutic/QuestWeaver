@@ -12,11 +12,12 @@ object UriSerializer : KSerializer<Uri> {
     override val descriptor: SerialDescriptor =
         PrimitiveSerialDescriptor("Uri", PrimitiveKind.STRING)
 
-    override fun serialize(encoder: Encoder, value: Uri) {
+    override fun serialize(
+        encoder: Encoder,
+        value: Uri,
+    ) {
         encoder.encodeString(value.toString())
     }
 
-    override fun deserialize(decoder: Decoder): Uri {
-        return Uri.parse(decoder.decodeString())
-    }
+    override fun deserialize(decoder: Decoder): Uri = Uri.parse(decoder.decodeString())
 }

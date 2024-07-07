@@ -86,7 +86,7 @@ internal fun GameHomeRoute(onBackPressed: () -> Unit) {
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun GameHomeScreen(
     state: GameHomeState,
-    postIntent: (GameHomeIntent) -> Unit
+    postIntent: (GameHomeIntent) -> Unit,
 ) {
     val scaffoldState = rememberBottomSheetScaffoldState()
     val textMeasurer = rememberTextMeasurer()
@@ -97,7 +97,7 @@ internal fun GameHomeScreen(
         ColorPicker(
             initialColor = state.selectedColor,
             onDismiss = { state.showColorPicker = false },
-            onColorSelected = { postIntent(GameHomeIntent.SelectColor(it)) }
+            onColorSelected = { postIntent(GameHomeIntent.SelectColor(it)) },
         )
     }
 
@@ -109,10 +109,10 @@ internal fun GameHomeScreen(
             GameHomeTopBar(
                 title = stringResource(R.string.game_home_label),
                 icon = AppIcons.Close,
-                onBackPressed = { postIntent(GameHomeIntent.Back) }
+                onBackPressed = { postIntent(GameHomeIntent.Back) },
             )
         },
-        sheetContent = { GameHomeScreenSheetContent(state, postIntent) }
+        sheetContent = { GameHomeScreenSheetContent(state, postIntent) },
     ) {
         val applicationInfo = context.applicationInfo
         val isDebuggable = 0 != applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE
@@ -123,12 +123,13 @@ internal fun GameHomeScreen(
         }
 
         Canvas(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(it)
-                .selectAnnotations(state, canvasSize, postIntent)
-                .annotateDrawing(state, canvasSize, currentlyDrawnPoints, postIntent)
-                .annotateText(state, textMeasurer, textStyle, canvasSize, postIntent)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(it)
+                    .selectAnnotations(state, canvasSize, postIntent)
+                    .annotateDrawing(state, canvasSize, currentlyDrawnPoints, postIntent)
+                    .annotateText(state, textMeasurer, textStyle, canvasSize, postIntent),
         ) {
             canvasSize = size
             drawAnnotations(state, textMeasurer, textStyle, context)
@@ -151,19 +152,20 @@ internal fun GameHomeScreen(
 @Composable
 private fun GameHomeScreenSheetContent(
     state: GameHomeState,
-    postIntent: (GameHomeIntent) -> Unit
+    postIntent: (GameHomeIntent) -> Unit,
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(largeSize)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(largeSize),
     ) {
         AnnotationTools(
             modifier = Modifier.fillMaxWidth(),
             annotationMode = state.annotationMode,
             isDM = state.isDM,
             allowEditing = state.allowAnnotations,
-            onAnnotationModeChanged = { postIntent(GameHomeIntent.ChangeMode(it)) }
+            onAnnotationModeChanged = { postIntent(GameHomeIntent.ChangeMode(it)) },
         )
 
         when (state.annotationMode) {
@@ -171,7 +173,7 @@ private fun GameHomeScreenSheetContent(
                 HomeEditControls(
                     state = state,
                     postIntent = postIntent,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
 
@@ -179,9 +181,10 @@ private fun GameHomeScreenSheetContent(
                 AppOutlinedTextField(
                     value = state.selectedText,
                     onValueChanged = { state.selectedText = it },
-                    modifier = Modifier
-                        .padding(top = largeSize)
-                        .fillMaxWidth(),
+                    modifier =
+                        Modifier
+                            .padding(top = largeSize)
+                            .fillMaxWidth(),
                 )
 
                 HomeEditControls(
@@ -192,7 +195,8 @@ private fun GameHomeScreenSheetContent(
             }
 
             GameHomeState.AnnotationMode.Idle,
-            GameHomeState.AnnotationMode.RemoveMode -> Unit
+            GameHomeState.AnnotationMode.RemoveMode,
+            -> Unit
 
             GameHomeState.AnnotationMode.DMMode -> TODO()
         }
@@ -203,30 +207,33 @@ private fun DrawScope.drawAnnotations(
     state: GameHomeState,
     textMeasurer: TextMeasurer,
     textStyle: TextStyle,
-    context: Context
+    context: Context,
 ) {
     state.annotations.forEach { (_, annotation) ->
         when (annotation) {
-            is Annotation.Drawing -> drawPath(
-                path = annotation.path.toPath(size),
-                color = annotation.color.toComposeColor(),
-                alpha = annotation.color.toComposeColor().alpha,
-                style = annotation.strokeSize.getStrokeWidth(size),
-            )
+            is Annotation.Drawing ->
+                drawPath(
+                    path = annotation.path.toPath(size),
+                    color = annotation.color.toComposeColor(),
+                    alpha = annotation.color.toComposeColor().alpha,
+                    style = annotation.strokeSize.getStrokeWidth(size),
+                )
 
-            is Annotation.Image -> drawImage(
-                image = annotation.load(context),
-                topLeft = annotation.anchor.toOffset(size),
-            )
+            is Annotation.Image ->
+                drawImage(
+                    image = annotation.load(context),
+                    topLeft = annotation.anchor.toOffset(size),
+                )
 
             is Annotation.Text -> {
                 drawText(
                     textMeasurer = textMeasurer,
                     text = annotation.text,
-                    style = textStyle.merge(
-                        color = annotation.color.toComposeColor(),
-                        fontSize = annotation.size.toSp(size).toSp(),
-                    ),
+                    style =
+                        textStyle.merge(
+                            color = annotation.color.toComposeColor(),
+                            fontSize = annotation.size.toSp(size).toSp(),
+                        ),
                     topLeft = annotation.anchor.toOffset(size),
                 )
             }
@@ -239,27 +246,29 @@ private fun Modifier.annotateText(
     textMeasurer: TextMeasurer,
     localTextStyle: TextStyle,
     canvasSize: Size,
-    postIntent: (GameHomeIntent) -> Unit
+    postIntent: (GameHomeIntent) -> Unit,
 ) = composed {
     val view = LocalView.current
     pointerInput(state.annotationMode) {
         if (state.annotationMode != GameHomeState.AnnotationMode.TextMode) return@pointerInput
         detectTapGestures { offset ->
-            val result = textMeasurer.measure(
-                text = state.selectedText,
-                style = localTextStyle.merge(
-                    color = state.selectedColor,
-                    fontSize = state.selectedSize.toSp(canvasSize).toSp()
+            val result =
+                textMeasurer.measure(
+                    text = state.selectedText,
+                    style =
+                        localTextStyle.merge(
+                            color = state.selectedColor,
+                            fontSize = state.selectedSize.toSp(canvasSize).toSp(),
+                        ),
                 )
-            )
 
             view.performHapticFeedback(HapticFeedbackConstantsCompat.SEGMENT_FREQUENT_TICK)
             postIntent(
                 GameHomeIntent.AddText(
                     state.selectedText,
                     result.size.toSize(size),
-                    offset.toPoint(canvasSize)
-                )
+                    offset.toPoint(canvasSize),
+                ),
             )
         }
     }
@@ -269,7 +278,7 @@ private fun Modifier.annotateDrawing(
     state: GameHomeState,
     canvasSize: Size,
     drawnPoints: MutableList<Point>,
-    postIntent: (GameHomeIntent) -> Unit
+    postIntent: (GameHomeIntent) -> Unit,
 ) = composed {
     val view = LocalView.current
 
@@ -281,7 +290,7 @@ private fun Modifier.annotateDrawing(
                 drawnPoints.clear()
             },
             onDragStart = { drawnPoints.clear() },
-            onDragCancel = { drawnPoints.clear() }
+            onDragCancel = { drawnPoints.clear() },
         ) { change, _ ->
             view.performHapticFeedback(HapticFeedbackConstantsCompat.SEGMENT_FREQUENT_TICK)
             val point = change.position.toPoint(canvasSize)
@@ -293,7 +302,7 @@ private fun Modifier.annotateDrawing(
 private fun Modifier.selectAnnotations(
     state: GameHomeState,
     canvasSize: Size,
-    postIntent: (GameHomeIntent) -> Unit
+    postIntent: (GameHomeIntent) -> Unit,
 ) = composed {
     val view = LocalView.current
 
@@ -315,7 +324,7 @@ private fun DrawScope.drawAnnotationBounds(annotations: List<Annotation>) {
             color = Color.Red,
             topLeft = bounds.topLeft,
             size = bounds.size,
-            style = Stroke(2f)
+            style = Stroke(2f),
         )
     }
 }
@@ -324,7 +333,7 @@ private fun DrawScope.drawAnnotationBounds(annotations: List<Annotation>) {
 @Composable
 private fun GameHomeBottomSheetControls(
     bottomSheetScaffoldState: BottomSheetScaffoldState,
-    state: GameHomeState
+    state: GameHomeState,
 ) {
     val bottomSheetState = bottomSheetScaffoldState.bottomSheetState
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -332,7 +341,8 @@ private fun GameHomeBottomSheetControls(
     LaunchedEffect(state.annotationMode) {
         when (state.annotationMode) {
             GameHomeState.AnnotationMode.TextMode,
-            GameHomeState.AnnotationMode.DrawingMode -> bottomSheetState.expand()
+            GameHomeState.AnnotationMode.DrawingMode,
+            -> bottomSheetState.expand()
 
             else -> bottomSheetState.expand()
         }

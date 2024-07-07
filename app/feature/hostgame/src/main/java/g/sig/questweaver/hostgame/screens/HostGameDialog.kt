@@ -16,13 +16,13 @@ import g.sig.questweaver.ui.AppIcons
 internal fun ConnectionDialog(
     onDismissRequest: () -> Unit,
     onCancel: () -> Unit,
-    onConfirm: () -> Unit
+    onConfirm: () -> Unit,
 ) {
     AlertDialog(
         icon = {
             Icon(
                 painter = AppIcons.ConnectingDevice,
-                contentDescription = null
+                contentDescription = null,
             )
         },
         onDismissRequest = onDismissRequest,
@@ -30,7 +30,7 @@ internal fun ConnectionDialog(
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 style = MaterialTheme.typography.titleLarge,
-                text = stringResource(R.string.host_game_dialog_title)
+                text = stringResource(R.string.host_game_dialog_title),
             )
         },
         text = {
@@ -51,6 +51,6 @@ internal fun ConnectionDialog(
             }) {
                 Text(text = stringResource(R.string.host_game_dialog_yes))
             }
-        }
+        },
     )
 }

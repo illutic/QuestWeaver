@@ -20,7 +20,8 @@ fun Context.launchInBrowser(url: String) {
 }
 
 val NavIcon.painter
-    @Composable get() = when (this) {
-        is NavIcon.DrawableNavIcon -> painterResource(id = resId)
-        is NavIcon.VectorNavIcon -> rememberVectorPainter(image = vector)
-    }
+    @Composable get() =
+        when (this) {
+            is NavIcon.DrawableNavIcon -> painterResource(id = resId)
+            is NavIcon.VectorNavIcon -> rememberVectorPainter(image = vector)
+        }

@@ -14,20 +14,18 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 @Module
 object HomeModule {
-
     @Provides
     @Singleton
     fun provideGetHomeUseCase(
         getNearbyPermissionUseCase: GetNearbyPermissionUseCase,
         nearbyRepository: NearbyRepository,
         userRepository: UserRepository,
-        @DefaultDispatcher mainDispatcher: CoroutineDispatcher
-    ): GetHomeUseCase {
-        return GetHomeUseCase(
+        @DefaultDispatcher mainDispatcher: CoroutineDispatcher,
+    ): GetHomeUseCase =
+        GetHomeUseCase(
             getNearbyPermissionUseCase,
             nearbyRepository,
             userRepository,
-            mainDispatcher
+            mainDispatcher,
         )
-    }
 }

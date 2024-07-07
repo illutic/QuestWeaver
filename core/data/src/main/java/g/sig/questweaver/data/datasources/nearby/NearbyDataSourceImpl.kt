@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.flatMapMerge
 class NearbyDataSourceImpl(
     private val connectionsClient: ConnectionsClient,
     private val payloadCallback: PayloadCallback,
-    private val serviceId: String
+    private val serviceId: String,
 ) : NearbyDataSource {
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun discover(userDto: UserDto): Flow<ConnectionState> =
@@ -31,10 +31,9 @@ class NearbyDataSourceImpl(
                 startDiscovery(
                     connectionsClient,
                     serviceId,
-                    batteryLevel == BatteryLevel.Low
+                    batteryLevel == BatteryLevel.Low,
                 )
-            }
-            .logOnEach()
+            }.logOnEach()
 
     override fun cancelDiscovery() = stopDiscovery(connectionsClient)
 
@@ -47,14 +46,16 @@ class NearbyDataSourceImpl(
                     connectionsClient,
                     name,
                     serviceId,
-                    batteryLevel == BatteryLevel.Low
+                    batteryLevel == BatteryLevel.Low,
                 )
-            }
-            .logOnEach()
+            }.logOnEach()
 
     override fun cancelAdvertisement() = stopAdvertising(connectionsClient)
 
-    override fun requestConnection(userDto: UserDto, endpointId: String): Flow<ConnectionState> =
+    override fun requestConnection(
+        userDto: UserDto,
+        endpointId: String,
+    ): Flow<ConnectionState> =
         requestConnection(connectionsClient, userDto.name, endpointId)
             .acceptConnectionOnInitiated(connectionsClient, payloadCallback)
             .logOnEach()

@@ -8,7 +8,7 @@ import java.io.OutputStream
 
 suspend fun InputStream.copyStream(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
-    outputStream: OutputStream
+    outputStream: OutputStream,
 ) {
     val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
     var read: Int

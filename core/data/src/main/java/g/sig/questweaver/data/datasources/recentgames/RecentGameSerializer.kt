@@ -13,8 +13,12 @@ internal object RecentGameSerializer : Serializer<GamesDto> {
     override val defaultValue: GamesDto = GamesDto(emptyList())
 
     override suspend fun readFrom(input: InputStream): GamesDto =
-        withContext(Dispatchers.IO) { deserializeDto(input.readBytes()) }
+        withContext(Dispatchers.IO) {
+            deserializeDto(input.readBytes())
+        }
 
-    override suspend fun writeTo(t: GamesDto, output: OutputStream) =
-        withContext(Dispatchers.IO) { output.write(serializeDto(t)) }
+    override suspend fun writeTo(
+        t: GamesDto,
+        output: OutputStream,
+    ) = withContext(Dispatchers.IO) { output.write(serializeDto(t)) }
 }

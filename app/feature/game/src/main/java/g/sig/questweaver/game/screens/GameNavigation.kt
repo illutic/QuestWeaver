@@ -26,7 +26,7 @@ internal fun GameNavigation(
     routes: List<DecoratedRoute>,
     onItemClick: (DecoratedRoute) -> Unit,
     modifier: Modifier = Modifier,
-    content: @Composable () -> Unit = {}
+    content: @Composable () -> Unit = {},
 ) {
     NavigationSuiteScaffold(
         modifier = modifier,
@@ -40,27 +40,28 @@ internal fun GameNavigation(
                     icon = {
                         Icon(
                             painter = if (isSelected) route.selectedIcon.painter else route.unselectedIcon.painter,
-                            contentDescription = route.label + " icon"
+                            contentDescription = route.label + " icon",
                         )
                     },
-                    label = { Text(text = route.label) }
+                    label = { Text(text = route.label) },
                 )
             }
         },
-        content = content
+        content = content,
     )
 }
 
 @Preview
 @Composable
 private fun GameNavigationPreview() {
-    val routes = remember {
-        listOf(
-            GameHomeRoute("Home"),
-            GameChatRoute("Chat"),
-            GameAiRoute("AI")
-        )
-    }
+    val routes =
+        remember {
+            listOf(
+                GameHomeRoute("Home"),
+                GameChatRoute("Chat"),
+                GameAiRoute("AI"),
+            )
+        }
     var selectedRoute by remember { mutableStateOf(routes.first()) }
 
     AppTheme {
@@ -68,12 +69,13 @@ private fun GameNavigationPreview() {
             modifier = Modifier.fillMaxSize(),
             onItemClick = { selectedRoute = it },
             selectedRoute = selectedRoute,
-            routes = routes
+            routes = routes,
         ) {
             Box(
-                modifier = Modifier
-                    .safeContentPadding()
-                    .fillMaxSize()
+                modifier =
+                    Modifier
+                        .safeContentPadding()
+                        .fillMaxSize(),
             )
         }
     }

@@ -45,7 +45,7 @@ internal fun QueueScreen(
     state: QueueState,
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
-    onIntent: (QueueIntent) -> Unit
+    onIntent: (QueueIntent) -> Unit,
 ) {
     ScreenScaffold(
         modifier = modifier.fillMaxSize(),
@@ -53,18 +53,19 @@ internal fun QueueScreen(
         topBar = { QueueScreenTopBar { onIntent(QueueIntent.Back) } },
         navigation = {
             Button(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = largeSize),
-                onClick = { onIntent(QueueIntent.StartGame) }
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = largeSize),
+                onClick = { onIntent(QueueIntent.StartGame) },
             ) {
                 Text(text = stringResource(R.string.queue_game_button))
             }
-        }
+        },
     ) {
         JoinGameScreenContent(
             state = state,
-            onIntent = onIntent
+            onIntent = onIntent,
         )
     }
 }
@@ -73,24 +74,26 @@ internal fun QueueScreen(
 private fun JoinGameScreenContent(
     modifier: Modifier = Modifier,
     state: QueueState,
-    onIntent: (QueueIntent) -> Unit
+    onIntent: (QueueIntent) -> Unit,
 ) {
     val scrollState = rememberScrollState()
 
     ImageWithPlaceholder(
-        modifier = Modifier
-            .verticalScroll(scrollState)
-            .width(HostGameSize.imageSize),
+        modifier =
+            Modifier
+                .verticalScroll(scrollState)
+                .width(HostGameSize.imageSize),
         model = R.drawable.graphic_10,
-        contentDescription = ""
+        contentDescription = "",
     )
 
     Column(
-        modifier = modifier
-            .verticalScroll(scrollState)
-            .padding(largeSize),
+        modifier =
+            modifier
+                .verticalScroll(scrollState)
+                .padding(largeSize),
         verticalArrangement = Arrangement.spacedBy(largeSize),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         if (state.advertising) {
             LinearProgressIndicator(Modifier.width(IntrinsicSize.Max))
@@ -106,13 +109,13 @@ private fun JoinGameScreenContent(
                             onAccepted = { onIntent(QueueIntent.AcceptConnection(deviceState)) },
                             onDenied = { onIntent(QueueIntent.RejectConnection(deviceState)) },
                         )
-                    }
+                    },
                 )
             }
         } else {
             Text(
                 text = stringResource(R.string.queue_empty),
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodyMedium,
             )
         }
     }
@@ -121,28 +124,28 @@ private fun JoinGameScreenContent(
 @Composable
 private fun DeviceCardAcceptAndDenyControls(
     onAccepted: () -> Unit,
-    onDenied: () -> Unit
+    onDenied: () -> Unit,
 ) {
     Row(horizontalArrangement = Arrangement.spacedBy(mediumSize)) {
         IconButton(
             onClick = { onAccepted() },
-            modifier = Modifier.size(HostGameSize.iconSize)
+            modifier = Modifier.size(HostGameSize.iconSize),
         ) {
             Icon(
                 tint = MaterialTheme.colorScheme.primary,
                 painter = AppIcons.Check,
-                contentDescription = null
+                contentDescription = null,
             )
         }
 
         IconButton(
             onClick = { onDenied() },
-            modifier = Modifier.size(HostGameSize.iconSize)
+            modifier = Modifier.size(HostGameSize.iconSize),
         ) {
             Icon(
                 tint = MaterialTheme.colorScheme.error,
                 painter = AppIcons.Close,
-                contentDescription = null
+                contentDescription = null,
             )
         }
     }
@@ -161,7 +164,7 @@ private fun QueueScreenTopBar(onBack: () -> Unit) {
             IconButton(onClick = onBack) {
                 Icon(AppIcons.Back, contentDescription = null)
             }
-        }
+        },
     )
 }
 
@@ -169,17 +172,18 @@ private fun QueueScreenTopBar(onBack: () -> Unit) {
 @Composable
 fun PreviewQueueScreen() {
     QueueScreen(
-        state = QueueState().apply {
-            devicesToConnect.addAll(
-                listOf(
-                    Device("1", "Device 1", ConnectionState.Idle),
-                    Device("2", "Device 2", ConnectionState.Idle),
-                    Device("3", "Device 3", ConnectionState.Idle),
+        state =
+            QueueState().apply {
+                devicesToConnect.addAll(
+                    listOf(
+                        Device("1", "Device 1", ConnectionState.Idle),
+                        Device("2", "Device 2", ConnectionState.Idle),
+                        Device("3", "Device 3", ConnectionState.Idle),
+                    ),
                 )
-            )
-            advertising = false
-        },
+                advertising = false
+            },
         snackbarHostState = SnackbarHostState(),
-        onIntent = {}
+        onIntent = {},
     )
 }

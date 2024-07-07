@@ -13,15 +13,12 @@ private const val STROKE_WIDTH_FACTOR = 0.2f
 @Suppress("TopLevelPropertyNaming")
 private const val DEFAULT_TEXT_SIZE_PERCENT = .4f
 
-fun Size.getStrokeWidth(canvasSize: ComposeSize) =
-    Stroke(width * (canvasSize.width * STROKE_WIDTH_FACTOR))
+fun Size.getStrokeWidth(canvasSize: ComposeSize) = Stroke(width * (canvasSize.width * STROKE_WIDTH_FACTOR))
 
 fun Size.toSp(canvasSize: ComposeSize) = width * canvasSize.width * DEFAULT_TEXT_SIZE_PERCENT
 
-fun ComposeSize.toSize(canvasSize: ComposeSize) =
-    Size(width / canvasSize.width, height / canvasSize.height)
+fun ComposeSize.toSize(canvasSize: ComposeSize) = Size(width / canvasSize.width, height / canvasSize.height)
 
 fun IntSize.toSize(canvasSize: IntSize) = toSize().toSize(canvasSize.toSize())
 
-fun Size.toOffset(canvasSize: ComposeSize) =
-    Offset(width * canvasSize.width, height * canvasSize.height)
+fun Size.toOffset(canvasSize: ComposeSize) = Offset(width * canvasSize.width, height * canvasSize.height)

@@ -46,31 +46,32 @@ import g.sig.questweaver.user.state.getError
 @Composable
 private fun UserScreenTopBar(
     userState: UserState,
-    onBack: () -> Unit
+    onBack: () -> Unit,
 ) {
     TopAppBar(
         modifier = Modifier.fillMaxWidth(),
         scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(),
         title = {
             Text(
-                text = when (userState) {
-                    is UserState.Loaded.Success -> {
-                        if (userState.user.id.isNotBlank()) {
-                            stringResource(id = R.string.user_top_bar_update_title)
-                        } else {
-                            stringResource(id = R.string.user_top_bar_creation_title)
+                text =
+                    when (userState) {
+                        is UserState.Loaded.Success -> {
+                            if (userState.user.id.isNotBlank()) {
+                                stringResource(id = R.string.user_top_bar_update_title)
+                            } else {
+                                stringResource(id = R.string.user_top_bar_creation_title)
+                            }
                         }
-                    }
 
-                    else -> stringResource(id = R.string.user_top_bar_update_title)
-                },
+                        else -> stringResource(id = R.string.user_top_bar_update_title)
+                    },
             )
         },
         navigationIcon = {
             IconButton(onClick = onBack) {
                 Icon(AppIcons.Back, contentDescription = null)
             }
-        }
+        },
     )
 }
 
@@ -81,26 +82,29 @@ private fun UserScreenContent(
     modifier: Modifier = Modifier,
     isUserPresent: Boolean = false,
     onValueChanged: (String) -> Unit,
-    onDone: () -> Unit
+    onDone: () -> Unit,
 ) {
     val scrollState = rememberScrollState()
 
     ImageWithPlaceholder(
-        modifier = Modifier
-            .verticalScroll(scrollState)
-            .size(UserSize.imageSize),
-        model = if (isUserPresent) {
-            R.drawable.graphic_6
-        } else {
-            R.drawable.graphic_2
-        },
+        modifier =
+            Modifier
+                .verticalScroll(scrollState)
+                .size(UserSize.imageSize),
+        model =
+            if (isUserPresent) {
+                R.drawable.graphic_6
+            } else {
+                R.drawable.graphic_2
+            },
         contentDescription = null,
     )
 
     Column(
-        modifier = modifier
-            .verticalScroll(scrollState)
-            .padding(horizontal = largeSize),
+        modifier =
+            modifier
+                .verticalScroll(scrollState)
+                .padding(horizontal = largeSize),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         AppOutlinedTextField(
@@ -110,22 +114,23 @@ private fun UserScreenContent(
             label = stringResource(R.string.user_name_label),
             placeholder = stringResource(R.string.user_name_placeholder),
             keyboardActions = KeyboardActions(onDone = { onDone() }),
-            onValueChanged = onValueChanged
+            onValueChanged = onValueChanged,
         )
 
         Alert(
-            modifier = Modifier
-                .width(IntrinsicSize.Max)
-                .padding(vertical = mediumSize),
+            modifier =
+                Modifier
+                    .width(IntrinsicSize.Max)
+                    .padding(vertical = mediumSize),
             content = {
                 Text(
                     text = stringResource(id = R.string.user_alert_1),
-                    style = MaterialTheme.typography.labelLarge
+                    style = MaterialTheme.typography.labelLarge,
                 )
             },
             leadingContent = {
                 Icon(AppIcons.Info, contentDescription = null)
-            }
+            },
         )
     }
 }
@@ -134,7 +139,7 @@ private fun UserScreenContent(
 internal fun UserScreen(
     state: UserState,
     modifier: Modifier = Modifier,
-    onIntent: (intent: UserIntent) -> Unit
+    onIntent: (intent: UserIntent) -> Unit,
 ) {
     var name by remember { mutableStateOf("") }
     val isUserPresent = (state as? UserState.Loaded.Success)?.user?.id?.isNotBlank() ?: false
@@ -143,10 +148,11 @@ internal fun UserScreen(
         topBar = { UserScreenTopBar(state) { onIntent(UserIntent.Back) } },
         navigation = {
             Button(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(largeSize),
-                onClick = { onIntent(UserIntent.SaveUser(name)) }
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(largeSize),
+                onClick = { onIntent(UserIntent.SaveUser(name)) },
             ) {
                 Text(text = stringResource(id = R.string.user_name_button))
             }
@@ -163,7 +169,7 @@ internal fun UserScreen(
                     name = name,
                     error = state.getError(),
                     onDone = { onIntent(UserIntent.SaveUser(name)) },
-                    onValueChanged = { name = it }
+                    onValueChanged = { name = it },
                 )
             }
 
@@ -177,13 +183,14 @@ internal fun UserScreen(
 private fun UserScreenPreview() {
     AppTheme {
         UserScreen(
-            state = UserState.Loaded.Success(
-                User(
-                    id = "1",
-                    name = "Test"
-                )
-            ),
-            onIntent = {}
+            state =
+                UserState.Loaded.Success(
+                    User(
+                        id = "1",
+                        name = "Test",
+                    ),
+                ),
+            onIntent = {},
         )
     }
 }

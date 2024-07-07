@@ -13,5 +13,7 @@ class JoinGameState internal constructor() {
     internal var hasPermissions by mutableStateOf(false)
     internal var discovering by mutableStateOf(false)
 
-    internal data class ShowDeviceConfirmationDialog(val device: Device)
+    internal data class ShowDeviceConfirmationDialog(
+        val device: Device,
+    )
 }

@@ -9,7 +9,6 @@ import g.sig.questweaver.domain.entities.common.Device
 
 @Stable
 class QueueState {
-
     var advertising by mutableStateOf(false)
 
     val devicesToConnect = mutableStateListOf<Device>()

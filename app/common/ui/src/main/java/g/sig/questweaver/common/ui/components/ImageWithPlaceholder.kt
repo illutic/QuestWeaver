@@ -16,17 +16,18 @@ fun ImageWithPlaceholder(
     model: Any?,
     modifier: Modifier = Modifier,
     contentDescription: String? = null,
-    contentScale: ContentScale = ContentScale.Fit
+    contentScale: ContentScale = ContentScale.Fit,
 ) {
     var showShimmer by remember { mutableStateOf(true) }
     AsyncImage(
         model = model,
         contentDescription = contentDescription,
         contentScale = contentScale,
-        modifier = modifier
-            .background(shimmerBrush(showShimmer), shape = LargeRoundedShape),
+        modifier =
+            modifier
+                .background(shimmerBrush(showShimmer), shape = LargeRoundedShape),
         onSuccess = { showShimmer = false },
         onLoading = { showShimmer = true },
-        onError = { showShimmer = false }
+        onError = { showShimmer = false },
     )
 }

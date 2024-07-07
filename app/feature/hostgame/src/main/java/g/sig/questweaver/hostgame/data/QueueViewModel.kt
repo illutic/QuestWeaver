@@ -84,11 +84,11 @@ class QueueViewModel
 
         private fun startGame() {
             viewModelScope.launch {
-            val game = getGameUseCase()
-            checkNotNull(game) { "Game session is null" }
+                val game = getGameUseCase()
+                checkNotNull(game) { "Game session is null" }
 
-            broadcast(game)
-            sendEvent(QueueEvent.GameCreated(game.gameId))
+                broadcast(game)
+                sendEvent(QueueEvent.GameCreated(game.gameId))
+            }
         }
     }
-}

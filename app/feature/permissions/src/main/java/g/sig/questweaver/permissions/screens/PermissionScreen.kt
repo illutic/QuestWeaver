@@ -43,52 +43,54 @@ import g.sig.questweaver.ui.largeSize
 internal fun PermissionScreen(
     permissionsState: MultiplePermissionsState,
     userDeniedPermission: Boolean = false,
-    onBack: () -> Unit
+    onBack: () -> Unit,
 ) {
     ScreenScaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = { PermissionTopBar(onBack) },
         navigation = {
             RequestPermissionsButton(permissionsState, userDeniedPermission)
-        }
+        },
     ) {
         val scrollState = rememberScrollState()
 
         DecorationImage(scrollState, userDeniedPermission)
 
         Column(
-            modifier = Modifier
-                .verticalScroll(scrollState)
-                .padding(largeSize),
+            modifier =
+                Modifier
+                    .verticalScroll(scrollState)
+                    .padding(largeSize),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(largeSize)
+            verticalArrangement = Arrangement.spacedBy(largeSize),
         ) {
             Text(
-                text = if (userDeniedPermission) {
-                    stringResource(id = R.string.permission_title_denied)
-                } else {
-                    stringResource(id = R.string.permission_title)
-                },
+                text =
+                    if (userDeniedPermission) {
+                        stringResource(id = R.string.permission_title_denied)
+                    } else {
+                        stringResource(id = R.string.permission_title)
+                    },
                 style = MaterialTheme.typography.headlineLarge,
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.primary,
             )
 
             Text(
                 text = stringResource(id = R.string.permission_header_1),
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleLarge,
             )
             Text(
                 text = stringResource(id = R.string.permission_body_1),
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodyMedium,
             )
             HorizontalDivider()
             Text(
                 text = stringResource(id = R.string.permission_header_2),
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleLarge,
             )
             Text(
                 text = stringResource(id = R.string.permission_body_2),
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodyMedium,
             )
             HorizontalDivider()
         }
@@ -99,27 +101,29 @@ internal fun PermissionScreen(
 @Composable
 private fun RequestPermissionsButton(
     permissionsState: MultiplePermissionsState,
-    permissionsDenied: Boolean
+    permissionsDenied: Boolean,
 ) {
     val context = LocalContext.current
     Button(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = largeSize),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = largeSize),
         onClick = {
             if (permissionsDenied) {
                 context.launchSystemSettings()
             } else {
                 permissionsState.launchMultiplePermissionRequest()
             }
-        }
+        },
     ) {
         Text(
-            text = if (permissionsDenied) {
-                stringResource(id = R.string.permission_cta_denied)
-            } else {
-                stringResource(id = R.string.permission_cta)
-            }
+            text =
+                if (permissionsDenied) {
+                    stringResource(id = R.string.permission_cta_denied)
+                } else {
+                    stringResource(id = R.string.permission_cta)
+                },
         )
     }
 }
@@ -140,32 +144,35 @@ private fun Context.launchSystemSettings() {
 }
 
 @Composable
-private fun DecorationImage(scrollState: ScrollState, permissionsDenied: Boolean) {
+private fun DecorationImage(
+    scrollState: ScrollState,
+    permissionsDenied: Boolean,
+) {
     ImageWithPlaceholder(
-        modifier = Modifier
-            .verticalScroll(scrollState)
-            .size(PermissionSize.imageSize),
-        model = if (permissionsDenied) {
-            R.drawable.graphic_5
-        } else {
-            R.drawable.graphic_4
-        },
-        contentDescription = ""
+        modifier =
+            Modifier
+                .verticalScroll(scrollState)
+                .size(PermissionSize.imageSize),
+        model =
+            if (permissionsDenied) {
+                R.drawable.graphic_5
+            } else {
+                R.drawable.graphic_4
+            },
+        contentDescription = "",
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun PermissionTopBar(
-    onBack: () -> Unit
-) {
+private fun PermissionTopBar(onBack: () -> Unit) {
     TopAppBar(
         navigationIcon = {
             IconButton(onClick = { onBack() }) {
                 Icon(AppIcons.Back, contentDescription = null)
             }
         },
-        title = { Text(stringResource(id = R.string.permission_top_title)) }
+        title = { Text(stringResource(id = R.string.permission_top_title)) },
     )
 }
 
@@ -175,15 +182,17 @@ private fun PermissionTopBar(
 private fun PermissionScreenPreview() {
     val context = LocalContext.current
     PermissionScreen(
-        permissionsState = object : MultiplePermissionsState {
-            override val allPermissionsGranted: Boolean = false
-            override val permissions: List<PermissionState> = emptyList()
-            override val revokedPermissions: List<PermissionState> = emptyList()
-            override val shouldShowRationale: Boolean = true
-            override fun launchMultiplePermissionRequest() {
-                Toast.makeText(context, "permissions", LENGTH_LONG).show()
-            }
-        },
-        onBack = {}
+        permissionsState =
+            object : MultiplePermissionsState {
+                override val allPermissionsGranted: Boolean = false
+                override val permissions: List<PermissionState> = emptyList()
+                override val revokedPermissions: List<PermissionState> = emptyList()
+                override val shouldShowRationale: Boolean = true
+
+                override fun launchMultiplePermissionRequest() {
+                    Toast.makeText(context, "permissions", LENGTH_LONG).show()
+                }
+            },
+        onBack = {},
     )
 }

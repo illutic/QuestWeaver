@@ -17,18 +17,21 @@ class RemoteConfigRepositoryImpl : RemoteConfigRepository {
     private suspend fun fetchAndActivateRemoteConfig() =
         suspendCancellableCoroutine { continuation ->
             val remoteConfig: FirebaseRemoteConfig = Firebase.remoteConfig
-            val configSettings = remoteConfigSettings {
-                minimumFetchIntervalInSeconds =
-                    if (BuildConfig.DEBUG) 3600 else 12.hours.inWholeSeconds
-            }
+            val configSettings =
+                remoteConfigSettings {
+                    minimumFetchIntervalInSeconds =
+                        if (BuildConfig.DEBUG) 3600 else 12.hours.inWholeSeconds
+                }
             remoteConfig.setConfigSettingsAsync(configSettings)
             remoteConfig.fetchAndActivate().addOnCompleteListener { task ->
                 continuation.resume(task.isSuccessful)
             }
         }
 
-    private fun exponentialBackoff(attempt: Int, exponent: Double = 2.0): Long =
-        exponent.pow(attempt).roundToLong() * 1000
+    private fun exponentialBackoff(
+        attempt: Int,
+        exponent: Double = 2.0,
+    ): Long = exponent.pow(attempt).roundToLong() * 1000
 
     override suspend fun fetchRemoteConfig() {
         var retryCount = 0
@@ -39,6 +42,5 @@ class RemoteConfigRepositoryImpl : RemoteConfigRepository {
         } while (!activatedRemoteConfig)
     }
 
-    override suspend fun getRemoteConfigValue(key: String): String =
-        Firebase.remoteConfig.getString(key)
+    override suspend fun getRemoteConfigValue(key: String): String = Firebase.remoteConfig.getString(key)
 }

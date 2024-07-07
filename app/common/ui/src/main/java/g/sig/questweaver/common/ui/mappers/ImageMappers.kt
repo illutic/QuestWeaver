@@ -10,9 +10,9 @@ import kotlin.math.roundToInt
 
 fun Annotation.Image.load(context: Context): ImageBitmap =
     context.contentResolver.openInputStream(uri.value.toUri())?.use {
-        BitmapFactory.decodeStream(it)
+        BitmapFactory
+            .decodeStream(it)
             .apply {
                 reconfigure(size.width.roundToInt(), size.height.roundToInt(), config)
-            }
-            .asImageBitmap()
+            }.asImageBitmap()
     } ?: error("Failed to load image from uri: $uri")

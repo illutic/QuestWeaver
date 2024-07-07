@@ -34,7 +34,7 @@ fun AnnotationTools(
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(smallSize)
+            horizontalArrangement = Arrangement.spacedBy(smallSize),
         ) {
             RemoveButton(annotationMode, allowEditing, onAnnotationModeChanged)
 
@@ -49,7 +49,7 @@ fun AnnotationTools(
 private fun RemoveButton(
     annotationMode: GameHomeState.AnnotationMode,
     allowEditing: Boolean,
-    onAnnotationModeChanged: (GameHomeState.AnnotationMode) -> Unit
+    onAnnotationModeChanged: (GameHomeState.AnnotationMode) -> Unit,
 ) {
     HomeButton(
         onClick = {
@@ -61,7 +61,7 @@ private fun RemoveButton(
         },
         isSelected = annotationMode == GameHomeState.AnnotationMode.RemoveMode,
         isEnabled = allowEditing,
-        useTonal = true
+        useTonal = true,
     ) {
         Icon(painter = AppIcons.Bin, contentDescription = "")
     }
@@ -108,7 +108,7 @@ private fun TextButton(
         Text(
             "T",
             style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
         )
     }
 }

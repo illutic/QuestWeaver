@@ -10,7 +10,10 @@ import g.sig.questweaver.common.ui.R
 import g.sig.questweaver.ui.AppIcons
 
 @Composable
-fun PermissionsAlert(modifier: Modifier = Modifier, onClick: () -> Unit) {
+fun PermissionsAlert(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
     Alert(
         modifier = modifier,
         primaryColor = MaterialTheme.colorScheme.error,
@@ -23,6 +26,6 @@ fun PermissionsAlert(modifier: Modifier = Modifier, onClick: () -> Unit) {
         },
         content = {
             Text(text = stringResource(id = R.string.permission_alert))
-        }
+        },
     )
 }

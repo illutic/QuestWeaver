@@ -27,7 +27,7 @@ inline fun AppOutlinedTextField(
     placeholder: String? = null,
     error: String? = null,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
 ) {
     val windowClassSize = currentWindowAdaptiveInfo().windowSizeClass
     val adaptiveModifier =
@@ -50,26 +50,26 @@ inline fun AppOutlinedTextField(
                 Text(
                     text = error,
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.error
+                    color = MaterialTheme.colorScheme.error,
                 )
             }
         },
         keyboardActions = keyboardActions,
         keyboardOptions = keyboardOptions,
         singleLine = true,
-        shape = MediumRoundedShape
+        shape = MediumRoundedShape,
     )
 }
 
 @Composable
 @Preview
-fun AppOutlinedTextFieldPreview() {
+private fun AppOutlinedTextFieldPreview() {
     AppTheme {
         AppOutlinedTextField(
             value = "Hello",
             onValueChanged = {},
             label = "Label",
-            placeholder = "Placeholder"
+            placeholder = "Placeholder",
         )
     }
 }

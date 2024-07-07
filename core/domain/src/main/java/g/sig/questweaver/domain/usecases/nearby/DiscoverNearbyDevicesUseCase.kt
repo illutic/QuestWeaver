@@ -11,7 +11,7 @@ class DiscoverNearbyDevicesUseCase(
     private val nearbyRepository: NearbyRepository,
     private val deviceRepository: DeviceRepository,
     private val getUser: GetUserUseCase,
-    private val mainDispatcher: CoroutineDispatcher
+    private val mainDispatcher: CoroutineDispatcher,
 ) {
     suspend operator fun invoke() =
         withContext(mainDispatcher) {
@@ -19,14 +19,16 @@ class DiscoverNearbyDevicesUseCase(
                 .discoverNearbyDevices(getUser())
                 .collect { state ->
                     when (state) {
-                        is ConnectionState.Found -> deviceRepository.addDevice(
-                            state.endpointId,
-                            state.name
-                        )
+                        is ConnectionState.Found ->
+                            deviceRepository.addDevice(
+                                state.endpointId,
+                                state.name,
+                            )
 
-                        is ConnectionState.Error.DisconnectionError -> deviceRepository.removeDevice(
-                            state.endpointId
-                        )
+                        is ConnectionState.Error.DisconnectionError ->
+                            deviceRepository.removeDevice(
+                                state.endpointId,
+                            )
 
                         is ConnectionState.Error.LostError -> deviceRepository.removeDevice(state.endpointId)
 

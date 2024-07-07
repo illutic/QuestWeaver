@@ -9,7 +9,7 @@ import kotlinx.coroutines.withContext
 class RejectConnectionUseCase(
     private val deviceRepository: DeviceRepository,
     private val nearbyRepository: NearbyRepository,
-    private val defaultDispatcher: CoroutineDispatcher
+    private val defaultDispatcher: CoroutineDispatcher,
 ) {
     suspend operator fun invoke(device: Device) =
         withContext(defaultDispatcher) {

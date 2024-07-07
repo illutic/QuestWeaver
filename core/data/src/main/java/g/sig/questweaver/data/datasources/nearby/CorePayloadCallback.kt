@@ -20,8 +20,9 @@ import g.sig.questweaver.data.datasources.nearby.PayloadCallback as NearbyPayloa
 
 class CorePayloadCallback(
     private val context: Context,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : NearbyPayloadCallback(), CoroutineScope by CoroutineScope(dispatcher) {
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+) : NearbyPayloadCallback(),
+    CoroutineScope by CoroutineScope(dispatcher) {
     private val incomingPayloads = mutableMapOf<Long, Payload>()
     private val completedFilePayloads = mutableMapOf<Long, Payload>()
     private val filePayloadMetadata = mutableMapOf<Long, IncomingPayloadDto>()
@@ -57,7 +58,10 @@ class CorePayloadCallback(
         }
     }
 
-    private fun handleBytesPayload(origin: String, payload: Payload) {
+    private fun handleBytesPayload(
+        origin: String,
+        payload: Payload,
+    ) {
         val payloadDataDto = deserializePayloadData(payload.asBytes() ?: return)
 
         if (payloadDataDto.data is FileMetadataDto) {
@@ -69,14 +73,16 @@ class CorePayloadCallback(
     }
 
     private fun handleStreamPayload(payload: Payload) {
-        val inputStream = payload.asStream()?.asInputStream() ?: return
-        // TODO: Handle stream payload
+        payload.asStream()?.asInputStream() ?: return
+        TODO()
     }
 
     private fun handleFilePayload(payloadId: Long) {
         val payload = completedFilePayloads.remove(payloadId) ?: return
         val payloadData = filePayloadMetadata.remove(payloadId) ?: return
-        val metadata = payloadData.payloadData.data as? FileMetadataDto ?: return
+        val metadata = payloadData.payloadData.data as? FileMetadataDto
+
+        checkNotNull(metadata) { "File metadata not found for payload $payloadId" }
 
         launch {
             payload.asFile()?.asUri()?.copyToCacheAndDelete(dispatcher, context, metadata.name)
@@ -85,16 +91,18 @@ class CorePayloadCallback(
                 IncomingPayloadDto(
                     payloadData.origin,
                     when (payloadData.payloadData) {
-                        is PayloadDataDto.Broadcast -> PayloadDataDto.Broadcast(
-                            FileDto(uri, metadata)
-                        )
+                        is PayloadDataDto.Broadcast ->
+                            PayloadDataDto.Broadcast(
+                                FileDto(uri, metadata),
+                            )
 
-                        is PayloadDataDto.Unicast -> PayloadDataDto.Unicast(
-                            FileDto(uri, metadata),
-                            payloadData.payloadData.destination
-                        )
-                    }
-                )
+                        is PayloadDataDto.Unicast ->
+                            PayloadDataDto.Unicast(
+                                FileDto(uri, metadata),
+                                payloadData.payloadData.destination,
+                            )
+                    },
+                ),
             )
         }
     }

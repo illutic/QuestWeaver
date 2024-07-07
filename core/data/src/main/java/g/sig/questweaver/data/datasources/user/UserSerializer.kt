@@ -13,8 +13,12 @@ object UserSerializer : Serializer<UserDto> {
     override val defaultValue: UserDto = UserDto.Empty
 
     override suspend fun readFrom(input: InputStream): UserDto =
-        withContext(Dispatchers.IO) { deserializeDto(input.readBytes()) }
+        withContext(Dispatchers.IO) {
+            deserializeDto(input.readBytes())
+        }
 
-    override suspend fun writeTo(t: UserDto, output: OutputStream) =
-        withContext(Dispatchers.IO) { output.write(serializeDto(t)) }
+    override suspend fun writeTo(
+        t: UserDto,
+        output: OutputStream,
+    ) = withContext(Dispatchers.IO) { output.write(serializeDto(t)) }
 }

@@ -7,9 +7,12 @@ import kotlinx.coroutines.withContext
 
 class CreateUserUseCase(
     private val userRepository: UserRepository,
-    private val mainDispatcher: CoroutineDispatcher
+    private val mainDispatcher: CoroutineDispatcher,
 ) {
-    suspend operator fun invoke(id: String, name: String) {
+    suspend operator fun invoke(
+        id: String,
+        name: String,
+    ) {
         withContext(mainDispatcher) {
             userRepository.saveUser(User(id = id, name = name))
         }

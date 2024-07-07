@@ -10,13 +10,14 @@ import androidx.window.core.layout.WindowWidthSizeClass
 @Composable
 fun AdaptiveNavigationButton(
     modifier: Modifier = Modifier,
-    content: @Composable (() -> Unit)
+    content: @Composable (() -> Unit),
 ) {
     val windowClass = currentWindowAdaptiveInfo().windowSizeClass
-    val adaptiveModifier = when (windowClass.windowWidthSizeClass) {
-        WindowWidthSizeClass.COMPACT -> modifier.fillMaxWidth()
-        else -> modifier
-    }
+    val adaptiveModifier =
+        when (windowClass.windowWidthSizeClass) {
+            WindowWidthSizeClass.COMPACT -> modifier.fillMaxWidth()
+            else -> modifier
+        }
 
     Box(adaptiveModifier, propagateMinConstraints = true) { content() }
 }

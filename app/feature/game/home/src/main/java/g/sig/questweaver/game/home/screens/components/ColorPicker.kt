@@ -53,20 +53,22 @@ import g.sig.questweaver.ui.xLargeSize
 import kotlin.math.roundToInt
 
 @Suppress("MagicNumber")
-private val LinearGradientColors = listOf(
-    0.0f to Color.Red,
-    0.2f to Color.Yellow,
-    0.35f to Color.Green,
-    0.5f to Color.Cyan,
-    0.65f to Color.Blue,
-    0.8f to Color.Magenta,
-    1.0f to Color.Red
-)
+private val LinearGradientColors =
+    listOf(
+        0.0f to Color.Red,
+        0.2f to Color.Yellow,
+        0.35f to Color.Green,
+        0.5f to Color.Cyan,
+        0.65f to Color.Blue,
+        0.8f to Color.Magenta,
+        1.0f to Color.Red,
+    )
 
-private val GrayscaleColors = listOf(
-    0.0f to Color.Black,
-    1.0f to Color.White
-)
+private val GrayscaleColors =
+    listOf(
+        0.0f to Color.Black,
+        1.0f to Color.White,
+    )
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -76,13 +78,13 @@ fun ColorButton(
     modifier: Modifier = Modifier,
 ) {
     CompositionLocalProvider(
-        LocalRippleConfiguration provides RippleConfiguration(color = color)
+        LocalRippleConfiguration provides RippleConfiguration(color = color),
     ) {
         OutlinedIconButton(onClick = onClick, modifier = modifier) {
             Icon(
                 painter = AppIcons.Color,
                 tint = color,
-                contentDescription = null
+                contentDescription = null,
             )
         }
     }
@@ -111,13 +113,14 @@ fun ColorPicker(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(text = stringResource(R.string.select_color))
                 Box(
-                    modifier = Modifier
-                        .size(largeSize)
-                        .background(selectedColor, shape = CircleShape)
+                    modifier =
+                        Modifier
+                            .size(largeSize)
+                            .background(selectedColor, shape = CircleShape),
                 )
             }
         },
@@ -126,9 +129,10 @@ fun ColorPicker(
                 ColorGradient(
                     colors = LinearGradientColors,
                     onColorSelected = { selectedColor = it },
-                    modifier = Modifier
-                        .height(56.dp)
-                        .fillMaxWidth()
+                    modifier =
+                        Modifier
+                            .height(56.dp)
+                            .fillMaxWidth(),
                 )
 
                 Spacer(modifier = Modifier.height(largeSize))
@@ -136,12 +140,13 @@ fun ColorPicker(
                 ColorGradient(
                     colors = GrayscaleColors,
                     onColorSelected = { selectedColor = it },
-                    modifier = Modifier
-                        .height(56.dp)
-                        .fillMaxWidth()
+                    modifier =
+                        Modifier
+                            .height(56.dp)
+                            .fillMaxWidth(),
                 )
             }
-        }
+        },
     )
 }
 
@@ -163,55 +168,60 @@ fun ColorGradient(
             val relativeX = x / (maxWidth - largeSizePx)
             val (nearestStartColor, nearestEndColor) = findColorRange(relativeX, colors)
 
-            val normalizedX = (relativeX - nearestStartColor.first) /
+            val normalizedX =
+                (relativeX - nearestStartColor.first) /
                     (nearestEndColor.first - nearestStartColor.first)
 
-            val actualColor = lerp(
-                nearestStartColor.second,
-                nearestEndColor.second,
-                normalizedX
-            )
+            val actualColor =
+                lerp(
+                    nearestStartColor.second,
+                    nearestEndColor.second,
+                    normalizedX,
+                )
 
             onColorSelected(actualColor)
         }
 
         Canvas(
-            modifier = Modifier
-                .matchParentSize()
-                .pointerInput(dragging) {
-                    if (!dragging) {
-                        detectTapGestures {
-                            handleOffsetX = it.x.coerceIn(0f, maxWidth - largeSizePx)
-                            selectColor(handleOffsetX)
+            modifier =
+                Modifier
+                    .matchParentSize()
+                    .pointerInput(dragging) {
+                        if (!dragging) {
+                            detectTapGestures {
+                                handleOffsetX = it.x.coerceIn(0f, maxWidth - largeSizePx)
+                                selectColor(handleOffsetX)
+                            }
                         }
-                    }
-                }
+                    },
         ) {
             val gradient = colors.toTypedArray()
             val width = size.width
 
             drawRoundRect(
-                brush = Brush.linearGradient(
-                    colorStops = gradient,
-                    start = Offset(0f, 0f),
-                    end = Offset(width, 0f)
-                ),
+                brush =
+                    Brush.linearGradient(
+                        colorStops = gradient,
+                        start = Offset(0f, 0f),
+                        end = Offset(width, 0f),
+                    ),
                 cornerRadius = CornerRadius(xLargeSize.value),
             )
         }
 
         ColorPickerHandle(
-            modifier = Modifier
-                .height(maxHeight)
-                .width(largeSize)
-                .offset { IntOffset(handleOffsetX.roundToInt(), 0) },
+            modifier =
+                Modifier
+                    .height(maxHeight)
+                    .width(largeSize)
+                    .offset { IntOffset(handleOffsetX.roundToInt(), 0) },
             onHandleDragged = { x ->
                 val offset = (handleOffsetX + x).coerceIn(0f, maxWidth - largeSizePx)
                 handleOffsetX = offset
                 selectColor(handleOffsetX)
             },
             onHandleDragStarted = { dragging = true },
-            onHandleDragEnded = { dragging = false }
+            onHandleDragEnded = { dragging = false },
         )
     }
 }
@@ -224,19 +234,20 @@ fun ColorPickerHandle(
     modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier
-            .clip(CircleShape)
-            .border(2.dp, Color.White, CircleShape)
-            .pointerInput(Unit) {
-                detectDragGestures(
-                    onDragStart = onHandleDragStarted,
-                    onDragCancel = onHandleDragEnded,
-                    onDragEnd = onHandleDragEnded
-                ) { change, dragAmount ->
-                    change.consume()
-                    onHandleDragged(dragAmount.x)
-                }
-            }
+        modifier =
+            modifier
+                .clip(CircleShape)
+                .border(2.dp, Color.White, CircleShape)
+                .pointerInput(Unit) {
+                    detectDragGestures(
+                        onDragStart = onHandleDragStarted,
+                        onDragCancel = onHandleDragEnded,
+                        onDragEnd = onHandleDragEnded,
+                    ) { change, dragAmount ->
+                        change.consume()
+                        onHandleDragged(dragAmount.x)
+                    }
+                },
     )
 }
 
@@ -244,7 +255,7 @@ private typealias ColorStop = Pair<Float, Color>
 
 private fun findColorRange(
     x: Float,
-    colorStops: List<ColorStop> = LinearGradientColors
+    colorStops: List<ColorStop> = LinearGradientColors,
 ): Pair<ColorStop, ColorStop> {
     for (i in 0 until colorStops.size - 1) {
         val startColorStop = colorStops[i]
@@ -263,9 +274,10 @@ fun ColorPickerPreview() {
     var selectedColor by remember { mutableStateOf(Color.Red) }
 
     Box(
-        modifier = Modifier
-            .background(selectedColor)
-            .size(50.dp)
+        modifier =
+            Modifier
+                .background(selectedColor)
+                .size(50.dp),
     )
 
     ColorPicker(

@@ -30,6 +30,6 @@ class GameHomeState {
         RemoveMode,
         DrawingMode,
         TextMode,
-        DMMode
+        DMMode,
     }
 }

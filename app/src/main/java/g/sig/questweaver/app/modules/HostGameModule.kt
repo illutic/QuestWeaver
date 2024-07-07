@@ -12,22 +12,15 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object HostGameModule {
+    @Provides
+    @Singleton
+    fun provideVerifyDescriptionUseCase(): VerifyDescriptionUseCase = VerifyDescriptionUseCase()
 
     @Provides
     @Singleton
-    fun provideVerifyDescriptionUseCase(): VerifyDescriptionUseCase {
-        return VerifyDescriptionUseCase()
-    }
+    fun provideVerifyGameNameUseCase(): VerifyGameNameUseCase = VerifyGameNameUseCase()
 
     @Provides
     @Singleton
-    fun provideVerifyGameNameUseCase(): VerifyGameNameUseCase {
-        return VerifyGameNameUseCase()
-    }
-
-    @Provides
-    @Singleton
-    fun provideVerifyPlayerCountUseCase(): VerifyPlayerCountUseCase {
-        return VerifyPlayerCountUseCase()
-    }
+    fun provideVerifyPlayerCountUseCase(): VerifyPlayerCountUseCase = VerifyPlayerCountUseCase()
 }

@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 fun NavGraphBuilder.userGraph(
     onBack: () -> Unit,
-    onUserSaved: () -> Unit
+    onUserSaved: () -> Unit,
 ) {
     composable(UserRoute.path) {
         val viewModel = hiltViewModel<UserViewModel>()
@@ -35,12 +35,13 @@ fun NavGraphBuilder.userGraph(
         }
 
         UserScreen(
-            modifier = Modifier.sharedBounds(
-                key = SharedElementKeys.PROFILE_KEY,
-                animationScope = this
-            ),
+            modifier =
+                Modifier.sharedBounds(
+                    key = SharedElementKeys.PROFILE_KEY,
+                    animationScope = this,
+                ),
             state = state,
-            onIntent = viewModel::handleIntent
+            onIntent = viewModel::handleIntent,
         )
     }
 }

@@ -176,25 +176,25 @@ class GameHomeViewModel
         }
 
         private fun addAnnotation(annotation: Annotation) {
-        val updatedAnnotations = state.annotations.toMutableMap()
+            val updatedAnnotations = state.annotations.toMutableMap()
             updatedAnnotations[annotation.id] = annotation
             state.annotations = updatedAnnotations
-        viewModelScope.launch {
-            updateGameStateUseCase(annotations = updatedAnnotations.values.toList())
-        }
+            viewModelScope.launch {
+                updateGameStateUseCase(annotations = updatedAnnotations.values.toList())
+            }
         }
 
-    private fun removeAnnotation(annotationId: String) {
-        val updatedAnnotations = state.annotations.toMutableMap()
-        updatedAnnotations.remove(annotationId)
-        state.annotations = updatedAnnotations
-        viewModelScope.launch {
-            updateGameStateUseCase(annotations = updatedAnnotations.values.toList())
+        private fun removeAnnotation(annotationId: String) {
+            val updatedAnnotations = state.annotations.toMutableMap()
+            updatedAnnotations.remove(annotationId)
+            state.annotations = updatedAnnotations
+            viewModelScope.launch {
+                updateGameStateUseCase(annotations = updatedAnnotations.values.toList())
+            }
+        }
+
+        companion object {
+            private const val ALPHA_MIN = 0.1f
+            private const val POINT_TOLERANCE = 0.01f
         }
     }
-
-    companion object {
-        private const val ALPHA_MIN = 0.1f
-        private const val POINT_TOLERANCE = 0.01f
-    }
-}

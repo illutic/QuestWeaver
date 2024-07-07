@@ -41,7 +41,10 @@ object NearbyModule {
 
     @Provides
     @Singleton
-    fun provideCancelDiscoveryUseCase(nearbyRepository: NearbyRepository): CancelDiscoveryUseCase = CancelDiscoveryUseCase(nearbyRepository)
+    fun provideCancelDiscoveryUseCase(nearbyRepository: NearbyRepository): CancelDiscoveryUseCase =
+        CancelDiscoveryUseCase(
+            nearbyRepository,
+        )
 
     @Provides
     @Singleton

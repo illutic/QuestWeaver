@@ -62,7 +62,7 @@ internal fun HostGameScreen(
     state: HostGameState,
     animationScope: AnimatedContentScope,
     modifier: Modifier = Modifier,
-    onIntent: (HostGameIntent) -> Unit
+    onIntent: (HostGameIntent) -> Unit,
 ) {
     ScreenScaffold(
         modifier = Modifier.fillMaxSize(),
@@ -70,28 +70,29 @@ internal fun HostGameScreen(
         topBar = { HostGameTopBar { onIntent(HostGameIntent.Back) } },
         navigation = {
             Button(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = largeSize)
-                    .sharedBounds(SharedElementKeys.HOST_QUEUE_KEY, animationScope),
-                onClick = { onIntent(HostGameIntent.StartHosting) }
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = largeSize)
+                        .sharedBounds(SharedElementKeys.HOST_QUEUE_KEY, animationScope),
+                onClick = { onIntent(HostGameIntent.StartHosting) },
             ) {
                 Text(text = stringResource(R.string.create_game_button))
             }
-        }
+        },
     ) {
         if (state.showConnectionDialog) {
             ConnectionDialog(
                 onDismissRequest = { state.showConnectionDialog = false },
                 onCancel = { onIntent(HostGameIntent.CancelHostGame) },
-                onConfirm = { onIntent(HostGameIntent.NavigateToQueue) }
+                onConfirm = { onIntent(HostGameIntent.NavigateToQueue) },
             )
         }
 
         HostGameContent(
             modifier = modifier,
             state = state,
-            onIntent = onIntent
+            onIntent = onIntent,
         )
     }
 }
@@ -100,26 +101,28 @@ internal fun HostGameScreen(
 private fun HostGameContent(
     state: HostGameState,
     modifier: Modifier = Modifier,
-    onIntent: (HostGameIntent) -> Unit
+    onIntent: (HostGameIntent) -> Unit,
 ) {
     val verticalScrollState = rememberScrollState()
 
     ImageWithPlaceholder(
-        modifier = Modifier
-            .padding(horizontal = largeSize)
-            .verticalScroll(verticalScrollState)
-            .size(HostGameSize.imageSize),
+        modifier =
+            Modifier
+                .padding(horizontal = largeSize)
+                .verticalScroll(verticalScrollState)
+                .size(HostGameSize.imageSize),
         model = R.drawable.graphic_9,
-        contentDescription = ""
+        contentDescription = "",
     )
 
     Column(
-        modifier = modifier
-            .verticalScroll(verticalScrollState)
-            .padding(horizontal = largeSize)
-            .width(IntrinsicSize.Max),
+        modifier =
+            modifier
+                .verticalScroll(verticalScrollState)
+                .padding(horizontal = largeSize)
+                .width(IntrinsicSize.Max),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(smallSize)
+        verticalArrangement = Arrangement.spacedBy(smallSize),
     ) {
         NameAndDescriptionFields(state, onIntent)
 
@@ -137,10 +140,13 @@ private fun HostGameContent(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun NameAndDescriptionFields(state: HostGameState, onIntent: (HostGameIntent) -> Unit) {
+private fun NameAndDescriptionFields(
+    state: HostGameState,
+    onIntent: (HostGameIntent) -> Unit,
+) {
     FlowRow(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(smallSize)
+        horizontalArrangement = Arrangement.spacedBy(smallSize),
     ) {
         AppOutlinedTextField(
             value = state.gameName,
@@ -148,7 +154,7 @@ private fun NameAndDescriptionFields(state: HostGameState, onIntent: (HostGameIn
             label = stringResource(R.string.game_title_label),
             placeholder = stringResource(R.string.game_title_placeholder),
             error = state.gameNameError?.let { stringResource(it) },
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
         )
 
         AppOutlinedTextField(
@@ -163,16 +169,20 @@ private fun NameAndDescriptionFields(state: HostGameState, onIntent: (HostGameIn
 }
 
 @Composable
-private fun MaxPlayersInputField(state: HostGameState, onIntent: (HostGameIntent) -> Unit) {
+private fun MaxPlayersInputField(
+    state: HostGameState,
+    onIntent: (HostGameIntent) -> Unit,
+) {
     Row(
-        modifier = Modifier
-            .defaultMinSize(minWidth = HostGameSize.minTextSize),
+        modifier =
+            Modifier
+                .defaultMinSize(minWidth = HostGameSize.minTextSize),
         horizontalArrangement = Arrangement.spacedBy(mediumSize),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             text = stringResource(R.string.max_players_label),
-            style = MaterialTheme.typography.labelLarge
+            style = MaterialTheme.typography.labelLarge,
         )
         Spacer(modifier = Modifier.weight(1f))
 
@@ -188,11 +198,12 @@ private fun MaxPlayersInputField(state: HostGameState, onIntent: (HostGameIntent
             },
             placeholder = stringResource(R.string.max_players_placeholder),
             error = state.playerCountError?.let { stringResource(it) },
-            keyboardActions = KeyboardActions(onDone = {
-                localFocusManager.clearFocus(true)
-                keyboardController?.hide()
-                onIntent(HostGameIntent.StartHosting)
-            })
+            keyboardActions =
+                KeyboardActions(onDone = {
+                    localFocusManager.clearFocus(true)
+                    keyboardController?.hide()
+                    onIntent(HostGameIntent.StartHosting)
+                }),
         )
     }
 }
@@ -204,20 +215,18 @@ private fun InformationAlert() {
         content = {
             Text(
                 text = stringResource(R.string.host_game_alert),
-                style = MaterialTheme.typography.labelLarge
+                style = MaterialTheme.typography.labelLarge,
             )
         },
         leadingContent = {
             Icon(AppIcons.Info, contentDescription = null)
-        }
+        },
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun HostGameTopBar(
-    onBack: () -> Unit
-) {
+private fun HostGameTopBar(onBack: () -> Unit) {
     AppTheme {
         TopAppBar(
             modifier = Modifier.fillMaxWidth(),
@@ -229,7 +238,7 @@ private fun HostGameTopBar(
                 IconButton(onClick = onBack) {
                     Icon(AppIcons.Back, contentDescription = null)
                 }
-            }
+            },
         )
     }
 }
@@ -244,7 +253,7 @@ private fun HostGameScreenPreview() {
                 snackbarHostState = SnackbarHostState(),
                 state = HostGameState(),
                 animationScope = this,
-                onIntent = {}
+                onIntent = {},
             )
         }
     }

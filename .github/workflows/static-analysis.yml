@@ -25,7 +25,7 @@ jobs:
       - name: Unzip detekt
         run: unzip detekt-cli-$DETEKT_VERSION.zip
       - name: Run detekt 
-        run: ./detekt-cli-$DETEKT_VERSION/bin/detekt-cli --report html:reports/detekt.html -c ./detekt.yml
+        run: ./detekt-cli-$DETEKT_VERSION/bin/detekt-cli --report html:reports/detekt.html -c ./detekt.yml --plugins lint/detekt-compose-0.4.5-all.jar
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:

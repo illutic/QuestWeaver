@@ -28,21 +28,21 @@ fun Alert(
     shape: Shape = MediumRoundedShape,
     innerPadding: Dp = 16.dp,
     contentPadding: Dp = 10.dp,
-    content: @Composable (() -> Unit)? = null,
     leadingContent: @Composable (() -> Unit)? = null,
-    trailingContent: @Composable (() -> Unit)? = null
+    trailingContent: @Composable (() -> Unit)? = null,
+    content: @Composable (() -> Unit)? = null,
 ) {
     Surface(
         modifier = modifier,
         onClick = onClick,
         color = Color.Transparent,
         border = BorderStroke(borderWidth, primaryColor),
-        shape = shape
+        shape = shape,
     ) {
         Row(
             modifier = Modifier.padding(innerPadding),
             horizontalArrangement = Arrangement.spacedBy(contentPadding),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             CompositionLocalProvider(LocalContentColor provides primaryColor) {
                 leadingContent?.invoke()
@@ -51,7 +51,7 @@ fun Alert(
             CompositionLocalProvider(LocalContentColor provides contentColor) {
                 Box(
                     modifier = Modifier.weight(1f, false),
-                    propagateMinConstraints = true
+                    propagateMinConstraints = true,
                 ) {
                     content?.invoke()
                 }

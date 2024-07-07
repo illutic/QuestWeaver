@@ -12,7 +12,7 @@ inline fun Uri.openCatching(
     context: Context,
     block: (InputStream) -> Unit,
     onIOException: (IOException) -> Unit = {},
-    finally: () -> Unit = {}
+    finally: () -> Unit = {},
 ) {
     try {
         context.contentResolver.openInputStream(this)?.use(block)
@@ -27,7 +27,7 @@ suspend inline fun Uri.copyToCacheAndDelete(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
     context: Context,
     filename: String,
-    onIOException: (IOException) -> Unit = {}
+    onIOException: (IOException) -> Unit = {},
 ) {
     openCatching(
         context = context,
@@ -35,6 +35,6 @@ suspend inline fun Uri.copyToCacheAndDelete(
             inputStream.copyStream(dispatcher, FileOutputStream(context.cacheDir.resolve(filename)))
         },
         onIOException = onIOException,
-        finally = { context.contentResolver.delete(this, null, null) }
+        finally = { context.contentResolver.delete(this, null, null) },
     )
 }

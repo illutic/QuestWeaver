@@ -10,7 +10,6 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 
-
 @OptIn(ExperimentalSharedTransitionApi::class)
 val LocalSharedTransitionScope =
     staticCompositionLocalOf<SharedTransitionScope> {
@@ -18,33 +17,37 @@ val LocalSharedTransitionScope =
     }
 
 @OptIn(ExperimentalSharedTransitionApi::class)
-fun Modifier.sharedElement(key: String, animationScope: AnimatedContentScope) = composed {
+fun Modifier.sharedElement(
+    key: String,
+    animationScope: AnimatedContentScope,
+) = composed {
     with(LocalSharedTransitionScope.current) {
         sharedElement(
             rememberSharedContentState(key),
-            animationScope
+            animationScope,
         )
     }
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)
-fun Modifier.sharedBounds(key: String, animationScope: AnimatedContentScope) = composed {
+fun Modifier.sharedBounds(
+    key: String,
+    animationScope: AnimatedContentScope,
+) = composed {
     with(LocalSharedTransitionScope.current) {
         sharedBounds(
             rememberSharedContentState(key),
             animationScope,
             boundsTransform = { _, _ -> defaultAnimationSpec() },
             enter = defaultNavigationEnterTransition,
-            exit = defaultNavigationExitTransition
+            exit = defaultNavigationExitTransition,
         )
     }
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-inline fun SharedTransitionsLayout(
-    crossinline content: @Composable () -> Unit
-) {
+inline fun SharedTransitionsLayout(crossinline content: @Composable () -> Unit) {
     SharedTransitionLayout {
         CompositionLocalProvider(LocalSharedTransitionScope provides this) {
             content()

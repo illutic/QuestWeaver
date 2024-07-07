@@ -14,9 +14,7 @@ import g.sig.questweaver.settings.state.SettingsEvent
 import g.sig.questweaver.ui.sharedBounds
 import kotlinx.coroutines.flow.collectLatest
 
-fun NavGraphBuilder.settingsGraph(
-    onBack: () -> Unit,
-) {
+fun NavGraphBuilder.settingsGraph(onBack: () -> Unit) {
     composable(SettingsRoute.path) {
         val viewModel = hiltViewModel<SettingsViewModel>()
         val state by viewModel.state.collectAsState()
@@ -32,12 +30,13 @@ fun NavGraphBuilder.settingsGraph(
         }
 
         SettingsScreen(
-            modifier = Modifier.sharedBounds(
-                key = SharedElementKeys.SETTINGS_KEY,
-                animationScope = this
-            ),
+            modifier =
+                Modifier.sharedBounds(
+                    key = SharedElementKeys.SETTINGS_KEY,
+                    animationScope = this,
+                ),
             state = state,
-            onIntent = viewModel::handleIntent
+            onIntent = viewModel::handleIntent,
         )
     }
 }

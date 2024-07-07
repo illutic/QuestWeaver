@@ -28,9 +28,7 @@ import g.sig.questweaver.ui.largeSize
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SettingsTopBar(
-    onBack: () -> Unit
-) {
+private fun SettingsTopBar(onBack: () -> Unit) {
     TopAppBar(
         modifier = Modifier.fillMaxWidth(),
         scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(),
@@ -43,28 +41,28 @@ private fun SettingsTopBar(
             IconButton(onClick = onBack) {
                 Icon(AppIcons.Back, contentDescription = null)
             }
-        }
+        },
     )
 }
 
 @Composable
-private fun SettingsScreenContent(
-    modifier: Modifier = Modifier
-) {
+private fun SettingsScreenContent(modifier: Modifier = Modifier) {
     val scrollState = rememberScrollState()
 
     ImageWithPlaceholder(
-        modifier = Modifier
-            .verticalScroll(scrollState)
-            .padding(top = largeSize)
-            .size(SettingsSize.imageSize),
+        modifier =
+            Modifier
+                .verticalScroll(scrollState)
+                .padding(top = largeSize)
+                .size(SettingsSize.imageSize),
         model = R.drawable.graphic_7,
         contentDescription = null,
     )
 
     Column(
-        modifier = modifier
-            .verticalScroll(scrollState),
+        modifier =
+            modifier
+                .verticalScroll(scrollState),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
@@ -76,7 +74,7 @@ private fun SettingsScreenContent(
         Text(
             text = stringResource(id = R.string.app_notice),
             style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(vertical = largeSize)
+            modifier = Modifier.padding(vertical = largeSize),
         )
     }
 }
@@ -85,26 +83,28 @@ private fun SettingsScreenContent(
 internal fun SettingsScreen(
     state: SettingsState,
     modifier: Modifier = Modifier,
-    onIntent: (intent: SettingsIntent) -> Unit
+    onIntent: (intent: SettingsIntent) -> Unit,
 ) {
     ScreenScaffold(
         topBar = { SettingsTopBar { onIntent(SettingsIntent.Back) } },
         navigation = {
             TextButton(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = largeSize),
-                onClick = { onIntent(SettingsIntent.OpenPrivacyPolicy) }
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = largeSize),
+                onClick = { onIntent(SettingsIntent.OpenPrivacyPolicy) },
             ) {
                 Text(text = stringResource(id = R.string.privacy_policy))
             }
-        }
+        },
     ) {
         when (state) {
             SettingsState.Loading -> CenteredProgressBar()
 
             SettingsState.Idle,
-            is SettingsState.Loaded -> {
+            is SettingsState.Loaded,
+            -> {
                 SettingsScreenContent(
                     modifier = modifier.padding(largeSize),
                 )

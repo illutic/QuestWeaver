@@ -9,7 +9,7 @@ class GameAiRoute(
     override val unselectedIcon: NavIcon =
         NavIcon.DrawableNavIcon(g.sig.questweaver.ui.R.drawable.ai_sparkles_outlined),
     override val selectedIcon: NavIcon =
-        NavIcon.DrawableNavIcon(g.sig.questweaver.ui.R.drawable.ai_sparkles_filled)
+        NavIcon.DrawableNavIcon(g.sig.questweaver.ui.R.drawable.ai_sparkles_filled),
 ) : DecoratedRoute {
     override val path: String = Companion.path
 

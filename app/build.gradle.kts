@@ -11,9 +11,10 @@ plugins {
     alias(libs.plugins.composeCompiler)
 }
 
-val properties: Properties = Properties().apply {
-    load(project.rootProject.file("local.properties").inputStream())
-}
+val properties: Properties =
+    Properties().apply {
+        load(project.rootProject.file("local.properties").inputStream())
+    }
 
 android {
     namespace = "g.sig.questweaver.app"
@@ -50,7 +51,7 @@ android {
             isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
             signingConfig = signingConfigs.getByName("release")
         }

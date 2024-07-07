@@ -12,32 +12,39 @@ import androidx.compose.ui.graphics.Color
 import g.sig.questweaver.ui.DEFAULT_ANIMATION_TIME
 
 @Composable
-fun shimmerBrush(showShimmer: Boolean = true, targetValue: Float = 1000f): Brush {
-    return if (showShimmer) {
-        val shimmerColors = listOf(
-            Color.LightGray.copy(alpha = 0.6f),
-            Color.LightGray.copy(alpha = 0.2f),
-            Color.LightGray.copy(alpha = 0.6f),
-        )
+fun shimmerBrush(
+    showShimmer: Boolean = true,
+    targetValue: Float = 1000f,
+): Brush =
+    if (showShimmer) {
+        val shimmerColors =
+            listOf(
+                Color.LightGray.copy(alpha = 0.6f),
+                Color.LightGray.copy(alpha = 0.2f),
+                Color.LightGray.copy(alpha = 0.6f),
+            )
 
         val transition = rememberInfiniteTransition(label = "shimmer")
-        val translateAnimation = transition.animateFloat(
-            initialValue = 0f,
-            targetValue = targetValue,
-            animationSpec = infiniteRepeatable(
-                animation = tween(DEFAULT_ANIMATION_TIME), repeatMode = RepeatMode.Reverse
-            ), label = "shimmer_color"
-        )
+        val translateAnimation =
+            transition.animateFloat(
+                initialValue = 0f,
+                targetValue = targetValue,
+                animationSpec =
+                    infiniteRepeatable(
+                        animation = tween(DEFAULT_ANIMATION_TIME),
+                        repeatMode = RepeatMode.Reverse,
+                    ),
+                label = "shimmer_color",
+            )
         Brush.linearGradient(
             colors = shimmerColors,
             start = Offset.Zero,
-            end = Offset(x = translateAnimation.value, y = translateAnimation.value)
+            end = Offset(x = translateAnimation.value, y = translateAnimation.value),
         )
     } else {
         Brush.linearGradient(
             colors = listOf(Color.Transparent, Color.Transparent),
             start = Offset.Zero,
-            end = Offset.Zero
+            end = Offset.Zero,
         )
     }
-}

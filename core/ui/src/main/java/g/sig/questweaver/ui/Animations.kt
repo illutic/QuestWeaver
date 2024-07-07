@@ -11,15 +11,17 @@ import androidx.compose.animation.togetherWith
 @Suppress("TopLevelPropertyNaming")
 const val DEFAULT_ANIMATION_TIME = 1000
 
-fun <T> defaultAnimationSpec() = spring<T>(
-    dampingRatio = Spring.DampingRatioLowBouncy,
-    stiffness = Spring.StiffnessMediumLow
-)
+fun <T> defaultAnimationSpec() =
+    spring<T>(
+        dampingRatio = Spring.DampingRatioLowBouncy,
+        stiffness = Spring.StiffnessMediumLow,
+    )
 
-fun <T> defaultQuickAnimationSpec() = spring<T>(
-    dampingRatio = Spring.DampingRatioNoBouncy,
-    stiffness = Spring.StiffnessMedium
-)
+fun <T> defaultQuickAnimationSpec() =
+    spring<T>(
+        dampingRatio = Spring.DampingRatioNoBouncy,
+        stiffness = Spring.StiffnessMedium,
+    )
 
 val defaultEnterTransition = fadeIn(defaultAnimationSpec()) + scaleIn(defaultAnimationSpec())
 

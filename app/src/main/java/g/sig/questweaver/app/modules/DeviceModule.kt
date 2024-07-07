@@ -17,13 +17,15 @@ object DeviceModule {
     @Provides
     @Singleton
     fun provideDeviceRepository(
-        @IODispatcher ioDispatcher: CoroutineDispatcher
+        @IODispatcher ioDispatcher: CoroutineDispatcher,
     ): DeviceRepository = DeviceRepositoryImpl(ioDispatcher)
 
     @Provides
     @Singleton
     fun provideGetDevicesUseCase(deviceRepository: DeviceRepository): GetDevicesUseCase =
-        GetDevicesUseCase(deviceRepository)
+        GetDevicesUseCase(
+            deviceRepository,
+        )
 
     @Provides
     @Singleton

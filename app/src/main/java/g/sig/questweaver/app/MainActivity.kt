@@ -29,10 +29,11 @@ class MainActivity : ComponentActivity() {
             navController = rememberNavController()
             AppTheme {
                 AppNavHost(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.background),
-                    navController
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.background),
+                    navController,
                 )
             }
         }

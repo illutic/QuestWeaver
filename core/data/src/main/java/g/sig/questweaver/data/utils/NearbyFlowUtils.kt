@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.onEach
 
 fun Flow<ConnectionState>.acceptConnectionOnInitiated(
     connectionsClient: ConnectionsClient,
-    payloadCallback: PayloadCallback
+    payloadCallback: PayloadCallback,
 ) = logOnEach()
     .onEach {
         if (it is ConnectionState.Connecting) {
@@ -16,6 +16,7 @@ fun Flow<ConnectionState>.acceptConnectionOnInitiated(
         }
     }
 
-fun <T> Flow<T>.logOnEach() = onEach {
-    println(it)
-}
+fun <T> Flow<T>.logOnEach() =
+    onEach {
+        println(it)
+    }

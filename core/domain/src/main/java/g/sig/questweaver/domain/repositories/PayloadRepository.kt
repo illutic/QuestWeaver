@@ -7,5 +7,8 @@ import kotlinx.coroutines.flow.Flow
 interface PayloadRepository {
     val data: Flow<IncomingPayload>
 
-    fun send(endpointId: String, data: PayloadData)
+    fun send(
+        endpointId: String,
+        data: PayloadData,
+    )
 }
