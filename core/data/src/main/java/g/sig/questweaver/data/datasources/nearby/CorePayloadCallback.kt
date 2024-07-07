@@ -5,10 +5,11 @@ import android.net.Uri
 import com.google.android.gms.nearby.connection.Payload
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate
 import g.sig.questweaver.common.data.copyToCacheAndDelete
-import g.sig.questweaver.data.dto.Dto
 import g.sig.questweaver.data.dto.FileDto
 import g.sig.questweaver.data.dto.FileMetadataDto
-import g.sig.questweaver.data.serializers.deserializeDto
+import g.sig.questweaver.data.dto.IncomingPayloadDto
+import g.sig.questweaver.data.dto.PayloadDataDto
+import g.sig.questweaver.data.serializers.deserializePayloadData
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -23,8 +24,8 @@ class CorePayloadCallback(
 ) : NearbyPayloadCallback(), CoroutineScope by CoroutineScope(dispatcher) {
     private val incomingPayloads = mutableMapOf<Long, Payload>()
     private val completedFilePayloads = mutableMapOf<Long, Payload>()
-    private val filePayloadMetadata = mutableMapOf<Long, FileMetadataDto>()
-    private val _data = MutableSharedFlow<Dto>()
+    private val filePayloadMetadata = mutableMapOf<Long, IncomingPayloadDto>()
+    private val _data = MutableSharedFlow<IncomingPayloadDto>()
     override val data = _data.asSharedFlow()
 
     override fun onPayloadReceived(
@@ -32,7 +33,7 @@ class CorePayloadCallback(
         payload: Payload,
     ) {
         when (payload.type) {
-            Payload.Type.BYTES -> handleBytesPayload(payload)
+            Payload.Type.BYTES -> handleBytesPayload(endpointId, payload)
 
             Payload.Type.FILE -> incomingPayloads[payload.id] = payload
 
@@ -56,14 +57,14 @@ class CorePayloadCallback(
         }
     }
 
-    private fun handleBytesPayload(payload: Payload) {
-        val message = deserializeDto<Dto>(payload.asBytes() ?: return)
+    private fun handleBytesPayload(origin: String, payload: Payload) {
+        val payloadDataDto = deserializePayloadData(payload.asBytes() ?: return)
 
-        if (message is FileMetadataDto) {
-            filePayloadMetadata[payload.id] = message
+        if (payloadDataDto.data is FileMetadataDto) {
+            filePayloadMetadata[payload.id] = IncomingPayloadDto(origin, payloadDataDto)
             return
         } else {
-            launch { _data.emit(message) }
+            launch { _data.emit(IncomingPayloadDto(origin, payloadDataDto)) }
         }
     }
 
@@ -74,12 +75,27 @@ class CorePayloadCallback(
 
     private fun handleFilePayload(payloadId: Long) {
         val payload = completedFilePayloads.remove(payloadId) ?: return
-        val metadata = filePayloadMetadata.remove(payloadId) ?: return
+        val payloadData = filePayloadMetadata.remove(payloadId) ?: return
+        val metadata = payloadData.payloadData.data as? FileMetadataDto ?: return
 
         launch {
             payload.asFile()?.asUri()?.copyToCacheAndDelete(dispatcher, context, metadata.name)
             val uri = Uri.fromFile(context.cacheDir.resolve(metadata.name))
-            _data.emit(FileDto(uri, metadata))
+            _data.emit(
+                IncomingPayloadDto(
+                    payloadData.origin,
+                    when (payloadData.payloadData) {
+                        is PayloadDataDto.Broadcast -> PayloadDataDto.Broadcast(
+                            FileDto(uri, metadata)
+                        )
+
+                        is PayloadDataDto.Unicast -> PayloadDataDto.Unicast(
+                            FileDto(uri, metadata),
+                            payloadData.payloadData.destination
+                        )
+                    }
+                )
+            )
         }
     }
 }

@@ -20,6 +20,7 @@ import g.sig.questweaver.domain.usecases.nearby.CancelAdvertisementUseCase
 import g.sig.questweaver.domain.usecases.nearby.CancelDiscoveryUseCase
 import g.sig.questweaver.domain.usecases.nearby.DiscoverNearbyDevicesUseCase
 import g.sig.questweaver.domain.usecases.nearby.OnPayloadReceivedUseCase
+import g.sig.questweaver.domain.usecases.nearby.SendPayloadUseCase
 import g.sig.questweaver.domain.usecases.user.GetUserUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Singleton
@@ -101,6 +102,7 @@ object NearbyModule {
         getUserUseCase: GetUserUseCase,
         getGameStateUseCase: GetGameStateUseCase,
         broadcastPayloadUseCase: BroadcastPayloadUseCase,
+        sendPayloadUseCase: SendPayloadUseCase,
         payloadRepository: PayloadRepository,
         @DefaultDispatcher defaultDispatcher: CoroutineDispatcher
     ): OnPayloadReceivedUseCase {
@@ -108,6 +110,7 @@ object NearbyModule {
             getUserUseCase,
             getGameStateUseCase,
             broadcastPayloadUseCase,
+            sendPayloadUseCase,
             payloadRepository,
             defaultDispatcher
         )

@@ -1,12 +1,12 @@
 package g.sig.questweaver.domain.usecases.nearby
 
-import g.sig.questweaver.domain.entities.DomainEntity
+import g.sig.questweaver.domain.entities.PayloadData
 import g.sig.questweaver.domain.repositories.PayloadRepository
 
 class SendPayloadUseCase(
     private val payloadRepository: PayloadRepository
 ) {
-    operator fun invoke(endpointId: String, payload: DomainEntity) {
-        payloadRepository.send(endpointId, payload)
+    operator fun invoke(payload: PayloadData.Unicast) {
+        payloadRepository.send(payload.destination, payload)
     }
 }

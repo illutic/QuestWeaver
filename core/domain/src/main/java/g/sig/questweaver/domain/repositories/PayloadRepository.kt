@@ -1,10 +1,11 @@
 package g.sig.questweaver.domain.repositories
 
-import g.sig.questweaver.domain.entities.DomainEntity
+import g.sig.questweaver.domain.entities.IncomingPayload
+import g.sig.questweaver.domain.entities.PayloadData
 import kotlinx.coroutines.flow.Flow
 
 interface PayloadRepository {
-    val data: Flow<DomainEntity>
+    val data: Flow<IncomingPayload>
 
-    fun send(endpointId: String, data: DomainEntity)
+    fun send(endpointId: String, data: PayloadData)
 }
