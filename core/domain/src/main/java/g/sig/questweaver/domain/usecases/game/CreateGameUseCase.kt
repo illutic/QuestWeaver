@@ -15,11 +15,15 @@ class CreateGameUseCase(
     private val gameRepository: GameRepository,
     private val defaultDispatcher: CoroutineDispatcher,
 ) {
-    suspend operator fun invoke(game: Game) =
-        withContext(defaultDispatcher) {
-            gameRepository.createGame(game.copy(dmId = game.dmId ?: getUserUseCase().id))
-            if (getGameStateUseCase(game.gameId) == null) {
-                createGameStateUseCase(game.gameId)
-            }
+    suspend operator fun invoke(
+        game: Game,
+        overrideDm: Boolean = true,
+    ) = withContext(defaultDispatcher) {
+        gameRepository.createGame(
+            game.copy(dmId = if (overrideDm) getUserUseCase().id else game.dmId),
+        )
+        if (getGameStateUseCase(game.gameId) == null) {
+            createGameStateUseCase(game.gameId)
         }
+    }
 }

@@ -85,7 +85,10 @@ class JoinGameViewModel
                 onPayloadReceived { incomingPayload ->
                     when (val payload = incomingPayload.payloadData.data) {
                         is Game -> {
-                            createGameUseCase(payload.copy(hostDeviceId = incomingPayload.origin))
+                            createGameUseCase(
+                                game = payload.copy(hostDeviceId = incomingPayload.origin),
+                                overrideDm = false,
+                            )
                             handleIntent(JoinGameIntent.JoinGame(payload))
                         }
 
