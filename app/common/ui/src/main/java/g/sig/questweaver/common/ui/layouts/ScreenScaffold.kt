@@ -1,8 +1,10 @@
 package g.sig.questweaver.common.ui.layouts
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
@@ -21,9 +23,16 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.window.core.layout.WindowWidthSizeClass
 import g.sig.questweaver.common.ui.components.AdaptiveNavigationButton
@@ -41,15 +50,26 @@ fun ScreenScaffold(
     containerColor: Color = MaterialTheme.colorScheme.background,
     contentColor: Color = contentColorFor(containerColor),
     contentWindowInsets: WindowInsets = ScaffoldDefaults.contentWindowInsets,
-    content: @Composable () -> Unit,
+    content: @Composable (navigationHeight: PaddingValues) -> Unit,
 ) {
+    val density = LocalDensity.current
+    var navigationHeightPx by remember { mutableIntStateOf(0) }
+    val navigationHeightDp by remember {
+        with(density) {
+            derivedStateOf {
+                navigationHeightPx.toDp()
+            }
+        }
+    }
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
-
-    val adaptiveModifier =
+    val navigationModifier =
         if (windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT) {
-            Modifier.fillMaxWidth()
+            Modifier
+                .onSizeChanged { navigationHeightPx = it.height }
+                .fillMaxWidth()
         } else {
             Modifier
+                .onSizeChanged { navigationHeightPx = it.height }
                 .width(IntrinsicSize.Max)
                 .displayCutoutPadding()
         }
@@ -65,16 +85,17 @@ fun ScreenScaffold(
         contentColor = contentColor,
         contentWindowInsets = contentWindowInsets,
     ) { padding ->
-        Column(
+        Box(
             modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(padding),
+            Modifier
+                .fillMaxSize()
+                .padding(padding),
+            contentAlignment = Alignment.Center,
         ) {
             val contentModifier =
                 Modifier
                     .fillMaxWidth()
-                    .weight(1f)
+                    .matchParentSize()
 
             if (windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT) {
                 Column(
@@ -82,22 +103,24 @@ fun ScreenScaffold(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                 ) {
-                    content()
+                    content(PaddingValues(bottom = navigationHeightDp))
                 }
             } else {
-                Row(
-                    modifier =
-                        contentModifier
-                            .displayCutoutPadding(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    content()
+                Column {
+                    Row(
+                        modifier =
+                            contentModifier
+                                .displayCutoutPadding(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        content(PaddingValues(bottom = navigationHeightDp))
+                    }
                 }
             }
 
             Row(
-                modifier = adaptiveModifier.align(Alignment.End),
+                modifier = navigationModifier.align(Alignment.BottomEnd),
             ) { navigation() }
         }
     }

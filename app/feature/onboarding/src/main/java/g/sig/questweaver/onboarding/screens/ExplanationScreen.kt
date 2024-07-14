@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -32,18 +31,17 @@ internal fun ExplanationScreen(onNavigateToUserCreation: () -> Unit) {
         val scrollState = rememberScrollState()
 
         ImageWithPlaceholder(
-            modifier =
-                Modifier
-                    .verticalScroll(scrollState)
-                    .size(ExplanationSize.imageSize),
+            modifier = Modifier.verticalScroll(scrollState),
+            size = ExplanationSize.imageSize,
             model = R.drawable.graphic_1,
             contentDescription = null,
         )
 
         Column(
             modifier =
-                Modifier
-                    .verticalScroll(rememberScrollState())
+            Modifier
+                .verticalScroll(rememberScrollState())
+                    .padding(it)
                     .padding(largeSize),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(largeSize),
@@ -90,9 +88,9 @@ internal fun ExplanationScreen(onNavigateToUserCreation: () -> Unit) {
 private fun ExplanationButton(onNavigateToUserCreation: () -> Unit) {
     Button(
         modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = largeSize),
+        Modifier
+            .fillMaxWidth()
+            .padding(horizontal = largeSize),
         onClick = { onNavigateToUserCreation() },
     ) {
         Text(text = stringResource(id = R.string.explanation_cta))

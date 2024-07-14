@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
@@ -81,16 +80,14 @@ private fun UserScreenContent(
     error: Int?,
     modifier: Modifier = Modifier,
     isUserPresent: Boolean = false,
-    onValueChanged: (String) -> Unit,
-    onDone: () -> Unit,
+    onValueChange: (String) -> Unit,
+    onSubmit: () -> Unit,
 ) {
     val scrollState = rememberScrollState()
 
     ImageWithPlaceholder(
-        modifier =
-            Modifier
-                .verticalScroll(scrollState)
-                .size(UserSize.imageSize),
+        modifier = Modifier.verticalScroll(scrollState),
+        size = UserSize.imageSize,
         model =
             if (isUserPresent) {
                 R.drawable.graphic_6
@@ -102,9 +99,9 @@ private fun UserScreenContent(
 
     Column(
         modifier =
-            modifier
-                .verticalScroll(scrollState)
-                .padding(horizontal = largeSize),
+        modifier
+            .verticalScroll(scrollState)
+            .padding(horizontal = largeSize),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         AppOutlinedTextField(
@@ -113,15 +110,15 @@ private fun UserScreenContent(
             error = error?.let { stringResource(it) },
             label = stringResource(R.string.user_name_label),
             placeholder = stringResource(R.string.user_name_placeholder),
-            keyboardActions = KeyboardActions(onDone = { onDone() }),
-            onValueChanged = onValueChanged,
+            keyboardActions = KeyboardActions(onDone = { onSubmit() }),
+            onValueChanged = onValueChange,
         )
 
         Alert(
             modifier =
-                Modifier
-                    .width(IntrinsicSize.Max)
-                    .padding(vertical = mediumSize),
+            Modifier
+                .width(IntrinsicSize.Max)
+                .padding(vertical = mediumSize),
             content = {
                 Text(
                     text = stringResource(id = R.string.user_alert_1),
@@ -145,31 +142,32 @@ internal fun UserScreen(
     val isUserPresent = (state as? UserState.Loaded.Success)?.user?.id?.isNotBlank() ?: false
 
     ScreenScaffold(
+        modifier = modifier,
         topBar = { UserScreenTopBar(state) { onIntent(UserIntent.Back) } },
         navigation = {
             Button(
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(largeSize),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(largeSize),
                 onClick = { onIntent(UserIntent.SaveUser(name)) },
             ) {
                 Text(text = stringResource(id = R.string.user_name_button))
             }
         },
-    ) {
+    ) { navigationPadding ->
         when (state) {
             is UserState.Loaded.Success -> {
                 LaunchedEffect(state) {
                     name = state.user.name
                 }
                 UserScreenContent(
-                    modifier = modifier,
+                    modifier = Modifier.padding(navigationPadding),
                     isUserPresent = isUserPresent,
                     name = name,
                     error = state.getError(),
-                    onDone = { onIntent(UserIntent.SaveUser(name)) },
-                    onValueChanged = { name = it },
+                    onSubmit = { onIntent(UserIntent.SaveUser(name)) },
+                    onValueChange = { name = it },
                 )
             }
 

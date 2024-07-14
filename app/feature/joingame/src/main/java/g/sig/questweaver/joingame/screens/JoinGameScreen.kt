@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -50,7 +49,7 @@ internal fun JoinGameScreen(
     onIntent: (JoinGameIntent) -> Unit,
 ) {
     ScreenScaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         topBar = { JoinGameTopBar { onIntent(JoinGameIntent.Back) } },
     ) {
         var showDeviceConfirmationDialog by remember {
@@ -67,7 +66,7 @@ internal fun JoinGameScreen(
         }
 
         JoinGameScreenContent(
-            modifier = modifier,
+            modifier = Modifier.padding(it),
             state = state,
             onDeviceClicked = { device ->
                 showDeviceConfirmationDialog = JoinGameState.ShowDeviceConfirmationDialog(device)
@@ -87,19 +86,17 @@ private fun JoinGameScreenContent(
     val scrollState = rememberScrollState()
 
     ImageWithPlaceholder(
-        modifier =
-            Modifier
-                .verticalScroll(scrollState)
-                .size(JoinGameSize.imageSize),
+        modifier = Modifier.verticalScroll(scrollState),
+        size = JoinGameSize.imageSize,
         model = R.drawable.graphic_8,
         contentDescription = "",
     )
 
     Column(
         modifier =
-            modifier
-                .verticalScroll(scrollState)
-                .padding(horizontal = largeSize),
+        modifier
+            .verticalScroll(scrollState)
+            .padding(horizontal = largeSize),
         verticalArrangement = spacedBy(largeSize),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {

@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -58,8 +57,9 @@ internal fun PermissionScreen(
 
         Column(
             modifier =
-                Modifier
-                    .verticalScroll(scrollState)
+            Modifier
+                .verticalScroll(scrollState)
+                .padding(it)
                     .padding(largeSize),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(largeSize),
@@ -106,9 +106,9 @@ private fun RequestPermissionsButton(
     val context = LocalContext.current
     Button(
         modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = largeSize),
+        Modifier
+            .fillMaxWidth()
+            .padding(horizontal = largeSize),
         onClick = {
             if (permissionsDenied) {
                 context.launchSystemSettings()
@@ -149,10 +149,8 @@ private fun DecorationImage(
     permissionsDenied: Boolean,
 ) {
     ImageWithPlaceholder(
-        modifier =
-            Modifier
-                .verticalScroll(scrollState)
-                .size(PermissionSize.imageSize),
+        modifier = Modifier.verticalScroll(scrollState),
+        size = PermissionSize.imageSize,
         model =
             if (permissionsDenied) {
                 R.drawable.graphic_5

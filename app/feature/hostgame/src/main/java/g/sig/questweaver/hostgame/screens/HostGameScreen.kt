@@ -5,8 +5,6 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,7 +12,6 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
@@ -31,6 +28,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,6 +38,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.window.core.layout.WindowWidthSizeClass
 import g.sig.questweaver.common.ui.components.Alert
 import g.sig.questweaver.common.ui.components.AppOutlinedTextField
 import g.sig.questweaver.common.ui.components.ImageWithPlaceholder
@@ -65,16 +64,16 @@ internal fun HostGameScreen(
     onIntent: (HostGameIntent) -> Unit,
 ) {
     ScreenScaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = { HostGameTopBar { onIntent(HostGameIntent.Back) } },
         navigation = {
             Button(
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = largeSize)
-                        .sharedBounds(SharedElementKeys.HOST_QUEUE_KEY, animationScope),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = largeSize)
+                    .sharedBounds(SharedElementKeys.HOST_QUEUE_KEY, animationScope),
                 onClick = { onIntent(HostGameIntent.StartHosting) },
             ) {
                 Text(text = stringResource(R.string.create_game_button))
@@ -90,7 +89,7 @@ internal fun HostGameScreen(
         }
 
         HostGameContent(
-            modifier = modifier,
+            modifier = Modifier.padding(it),
             state = state,
             onIntent = onIntent,
         )
@@ -107,20 +106,20 @@ private fun HostGameContent(
 
     ImageWithPlaceholder(
         modifier =
-            Modifier
-                .padding(horizontal = largeSize)
-                .verticalScroll(verticalScrollState)
-                .size(HostGameSize.imageSize),
+        Modifier
+            .padding(horizontal = largeSize)
+                .verticalScroll(verticalScrollState),
+        size = HostGameSize.imageSize,
         model = R.drawable.graphic_9,
         contentDescription = "",
     )
 
     Column(
         modifier =
-            modifier
-                .verticalScroll(verticalScrollState)
-                .padding(horizontal = largeSize)
-                .width(IntrinsicSize.Max),
+        modifier
+            .verticalScroll(verticalScrollState)
+            .padding(horizontal = largeSize)
+            .width(IntrinsicSize.Max),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(smallSize),
     ) {
@@ -138,17 +137,31 @@ private fun HostGameContent(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun NameAndDescriptionFields(
     state: HostGameState,
     onIntent: (HostGameIntent) -> Unit,
 ) {
-    FlowRow(
+    val windowWidthClass = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
+
+    if (windowWidthClass == WindowWidthSizeClass.COMPACT) {
+        VerticalNameAndDescriptionFields(state, onIntent)
+    } else {
+        HorizontalNameAndDescriptionFields(state, onIntent)
+    }
+}
+
+@Composable
+private fun VerticalNameAndDescriptionFields(
+    state: HostGameState,
+    onIntent: (HostGameIntent) -> Unit,
+) {
+    Column(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(smallSize),
+        verticalArrangement = Arrangement.spacedBy(smallSize),
     ) {
         AppOutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
             value = state.gameName,
             onValueChanged = { onIntent(HostGameIntent.SetGameName(it)) },
             label = stringResource(R.string.game_title_label),
@@ -158,6 +171,38 @@ private fun NameAndDescriptionFields(
         )
 
         AppOutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = state.description,
+            onValueChanged = { onIntent(HostGameIntent.SetDescription(it)) },
+            label = stringResource(R.string.game_description_label),
+            placeholder = stringResource(R.string.game_description_placeholder),
+            error = state.descriptionError?.let { stringResource(it) },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+        )
+    }
+}
+
+@Composable
+private fun HorizontalNameAndDescriptionFields(
+    state: HostGameState,
+    onIntent: (HostGameIntent) -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(smallSize),
+    ) {
+        AppOutlinedTextField(
+            modifier = Modifier.weight(1f),
+            value = state.gameName,
+            onValueChanged = { onIntent(HostGameIntent.SetGameName(it)) },
+            label = stringResource(R.string.game_title_label),
+            placeholder = stringResource(R.string.game_title_placeholder),
+            error = state.gameNameError?.let { stringResource(it) },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+        )
+
+        AppOutlinedTextField(
+            modifier = Modifier.weight(1f),
             value = state.description,
             onValueChanged = { onIntent(HostGameIntent.SetDescription(it)) },
             label = stringResource(R.string.game_description_label),
@@ -196,7 +241,6 @@ private fun MaxPlayersInputField(
             onValueChanged = {
                 onIntent(HostGameIntent.SetPlayerCount(it.toIntOrNull()))
             },
-            placeholder = stringResource(R.string.max_players_placeholder),
             error = state.playerCountError?.let { stringResource(it) },
             keyboardActions =
                 KeyboardActions(onDone = {

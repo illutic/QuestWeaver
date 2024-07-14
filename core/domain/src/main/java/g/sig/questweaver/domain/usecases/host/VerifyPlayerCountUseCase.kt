@@ -5,6 +5,6 @@ class VerifyPlayerCountUseCase {
 
     companion object {
         const val MAX_PLAYERS = 8
-        const val MIN_PLAYERS = 2
+        const val MIN_PLAYERS = 4
     }
 }

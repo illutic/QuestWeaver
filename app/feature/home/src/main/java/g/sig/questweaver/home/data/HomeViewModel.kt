@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import g.sig.questweaver.domain.usecases.game.DeleteGameUseCase
 import g.sig.questweaver.domain.usecases.game.ReconnectToGameUseCase
+import g.sig.questweaver.domain.usecases.game.state.GetGameStateUseCase
 import g.sig.questweaver.domain.usecases.home.GetHomeUseCase
 import g.sig.questweaver.domain.usecases.user.HasUserUseCase
 import g.sig.questweaver.home.state.HomeEvent
@@ -24,6 +25,7 @@ class HomeViewModel
         private val reconnectToGameUseCase: ReconnectToGameUseCase,
         private val removeGameSessionUseCase: DeleteGameUseCase,
         private val getHomeUseCase: GetHomeUseCase,
+        private val getGameStateUseCase: GetGameStateUseCase,
         private val hasUser: HasUserUseCase,
     ) : ViewModel() {
         private val _events = Channel<HomeEvent>()
@@ -46,7 +48,10 @@ class HomeViewModel
                                 HomeState.Loaded(
                                     userName = home.user.name,
                                     permissions = home.permissions.map { it.permission },
-                                    recentGames = home.recentGames,
+                                    recentGames =
+                                        home.recentGames.associateWith { game ->
+                                            getGameStateUseCase(game.gameId)
+                                        },
                                 )
                         }
                     }

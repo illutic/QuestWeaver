@@ -3,7 +3,6 @@ package g.sig.questweaver.settings
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -51,10 +50,10 @@ private fun SettingsScreenContent(modifier: Modifier = Modifier) {
 
     ImageWithPlaceholder(
         modifier =
-            Modifier
-                .verticalScroll(scrollState)
-                .padding(top = largeSize)
-                .size(SettingsSize.imageSize),
+        Modifier
+            .verticalScroll(scrollState)
+            .padding(top = largeSize),
+        size = SettingsSize.imageSize,
         model = R.drawable.graphic_7,
         contentDescription = null,
     )
@@ -86,13 +85,14 @@ internal fun SettingsScreen(
     onIntent: (intent: SettingsIntent) -> Unit,
 ) {
     ScreenScaffold(
+        modifier = modifier,
         topBar = { SettingsTopBar { onIntent(SettingsIntent.Back) } },
         navigation = {
             TextButton(
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = largeSize),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = largeSize),
                 onClick = { onIntent(SettingsIntent.OpenPrivacyPolicy) },
             ) {
                 Text(text = stringResource(id = R.string.privacy_policy))
@@ -106,7 +106,10 @@ internal fun SettingsScreen(
             is SettingsState.Loaded,
             -> {
                 SettingsScreenContent(
-                    modifier = modifier.padding(largeSize),
+                    modifier =
+                        Modifier
+                            .padding(it)
+                            .padding(largeSize),
                 )
             }
         }

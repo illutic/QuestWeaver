@@ -1,6 +1,5 @@
 package g.sig.questweaver.game.home.screens
 
-import android.content.Context
 import android.content.pm.ApplicationInfo
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -35,18 +34,15 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.HapticFeedbackConstantsCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import g.sig.questweaver.common.ui.components.AppOutlinedTextField
+import g.sig.questweaver.common.ui.components.drawAnnotations
 import g.sig.questweaver.common.ui.mappers.getBounds
 import g.sig.questweaver.common.ui.mappers.getClickedAnnotation
 import g.sig.questweaver.common.ui.mappers.getStrokeWidth
-import g.sig.questweaver.common.ui.mappers.load
-import g.sig.questweaver.common.ui.mappers.toComposeColor
-import g.sig.questweaver.common.ui.mappers.toOffset
 import g.sig.questweaver.common.ui.mappers.toPath
 import g.sig.questweaver.common.ui.mappers.toPoint
 import g.sig.questweaver.common.ui.mappers.toSize
@@ -132,7 +128,7 @@ internal fun GameHomeScreen(
                     .annotateText(state, textMeasurer, textStyle, canvasSize, postIntent),
         ) {
             canvasSize = size
-            drawAnnotations(state, textMeasurer, textStyle, context)
+            drawAnnotations(state.annotations.values, textMeasurer, textStyle, context)
             if (isDebuggable) {
                 drawAnnotationBounds(state.annotations.values.toList())
             }
@@ -203,44 +199,6 @@ private fun GameHomeScreenSheetContent(
     }
 }
 
-private fun DrawScope.drawAnnotations(
-    state: GameHomeState,
-    textMeasurer: TextMeasurer,
-    textStyle: TextStyle,
-    context: Context,
-) {
-    state.annotations.forEach { (_, annotation) ->
-        when (annotation) {
-            is Annotation.Drawing ->
-                drawPath(
-                    path = annotation.path.toPath(size),
-                    color = annotation.color.toComposeColor(),
-                    alpha = annotation.color.toComposeColor().alpha,
-                    style = annotation.strokeSize.getStrokeWidth(size),
-                )
-
-            is Annotation.Image ->
-                drawImage(
-                    image = annotation.load(context),
-                    topLeft = annotation.anchor.toOffset(size),
-                )
-
-            is Annotation.Text -> {
-                drawText(
-                    textMeasurer = textMeasurer,
-                    text = annotation.text,
-                    style =
-                        textStyle.merge(
-                            color = annotation.color.toComposeColor(),
-                            fontSize = annotation.size.toSp(size).toSp(),
-                        ),
-                    topLeft = annotation.anchor.toOffset(size),
-                )
-            }
-        }
-    }
-}
-
 private fun Modifier.annotateText(
     state: GameHomeState,
     textMeasurer: TextMeasurer,
@@ -259,7 +217,7 @@ private fun Modifier.annotateText(
                         localTextStyle.merge(
                             color = state.selectedColor,
                             fontSize = state.selectedSize.toSp(canvasSize).toSp(),
-                        ),
+                    ),
                 )
 
             view.performHapticFeedback(HapticFeedbackConstantsCompat.SEGMENT_FREQUENT_TICK)
