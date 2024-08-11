@@ -52,7 +52,6 @@ fun NavGraphBuilder.hostGameGraph(
         }
 
         HostGameScreen(
-            modifier = Modifier.sharedBounds(SharedElementKeys.HOST_KEY, this),
             snackbarHostState = snackbarHostState,
             state = viewModel.state,
             animationScope = this,

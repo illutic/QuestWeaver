@@ -73,6 +73,7 @@ internal fun HostGameScreen(
                     Modifier
                         .fillMaxWidth()
                         .padding(horizontal = largeSize)
+                        .sharedBounds(SharedElementKeys.HOST_KEY, animationScope)
                         .sharedBounds(SharedElementKeys.HOST_QUEUE_KEY, animationScope),
                 onClick = { onIntent(HostGameIntent.StartHosting) },
             ) {

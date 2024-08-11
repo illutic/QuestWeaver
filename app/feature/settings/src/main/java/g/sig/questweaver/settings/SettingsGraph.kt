@@ -3,15 +3,12 @@ package g.sig.questweaver.settings
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import g.sig.questweaver.navigation.SharedElementKeys
 import g.sig.questweaver.navigation.launchInBrowser
 import g.sig.questweaver.settings.state.SettingsEvent
-import g.sig.questweaver.ui.sharedBounds
 import kotlinx.coroutines.flow.collectLatest
 
 fun NavGraphBuilder.settingsGraph(onBack: () -> Unit) {
@@ -30,12 +27,8 @@ fun NavGraphBuilder.settingsGraph(onBack: () -> Unit) {
         }
 
         SettingsScreen(
-            modifier =
-                Modifier.sharedBounds(
-                    key = SharedElementKeys.SETTINGS_KEY,
-                    animationScope = this,
-                ),
             state = state,
+            animationScope = this,
             onIntent = viewModel::handleIntent,
         )
     }

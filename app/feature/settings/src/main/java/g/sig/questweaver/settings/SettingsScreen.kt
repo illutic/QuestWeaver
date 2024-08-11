@@ -1,5 +1,6 @@
 package g.sig.questweaver.settings
 
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,10 +21,12 @@ import androidx.compose.ui.res.stringResource
 import g.sig.questweaver.common.ui.components.CenteredProgressBar
 import g.sig.questweaver.common.ui.components.ImageWithPlaceholder
 import g.sig.questweaver.common.ui.layouts.ScreenScaffold
+import g.sig.questweaver.navigation.SharedElementKeys
 import g.sig.questweaver.settings.state.SettingsIntent
 import g.sig.questweaver.settings.state.SettingsState
 import g.sig.questweaver.ui.AppIcons
 import g.sig.questweaver.ui.largeSize
+import g.sig.questweaver.ui.sharedBounds
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -81,6 +84,7 @@ private fun SettingsScreenContent(modifier: Modifier = Modifier) {
 @Composable
 internal fun SettingsScreen(
     state: SettingsState,
+    animationScope: AnimatedContentScope,
     modifier: Modifier = Modifier,
     onIntent: (intent: SettingsIntent) -> Unit,
 ) {
@@ -92,7 +96,10 @@ internal fun SettingsScreen(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = largeSize),
+                        .sharedBounds(
+                            key = SharedElementKeys.SETTINGS_KEY,
+                            animationScope = animationScope,
+                        ).padding(horizontal = largeSize),
                 onClick = { onIntent(SettingsIntent.OpenPrivacyPolicy) },
             ) {
                 Text(text = stringResource(id = R.string.privacy_policy))

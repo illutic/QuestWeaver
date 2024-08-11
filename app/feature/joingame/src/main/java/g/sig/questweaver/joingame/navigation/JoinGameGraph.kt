@@ -1,7 +1,6 @@
 package g.sig.questweaver.joingame.navigation
 
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -9,8 +8,6 @@ import g.sig.questweaver.joingame.data.JoinGameViewModel
 import g.sig.questweaver.joingame.screens.JoinGameScreen
 import g.sig.questweaver.joingame.state.JoinGameEvent
 import g.sig.questweaver.joingame.state.JoinGameIntent
-import g.sig.questweaver.navigation.SharedElementKeys
-import g.sig.questweaver.ui.sharedBounds
 import kotlinx.coroutines.flow.collectLatest
 
 fun NavGraphBuilder.joinGameGraph(
@@ -33,8 +30,8 @@ fun NavGraphBuilder.joinGameGraph(
         }
 
         JoinGameScreen(
-            modifier = Modifier.sharedBounds(SharedElementKeys.JOIN_KEY, this),
             state = viewModel.state,
+            animationScope = this,
             onIntent = viewModel::handleIntent,
         )
     }

@@ -1,5 +1,7 @@
 package g.sig.questweaver.joingame.screens
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -39,12 +41,16 @@ import g.sig.questweaver.domain.entities.states.ConnectionState
 import g.sig.questweaver.joingame.R
 import g.sig.questweaver.joingame.state.JoinGameIntent
 import g.sig.questweaver.joingame.state.JoinGameState
+import g.sig.questweaver.navigation.SharedElementKeys
 import g.sig.questweaver.ui.AppIcons
+import g.sig.questweaver.ui.AppTheme
 import g.sig.questweaver.ui.largeSize
+import g.sig.questweaver.ui.sharedBounds
 
 @Composable
 internal fun JoinGameScreen(
     state: JoinGameState,
+    animationScope: AnimatedContentScope,
     modifier: Modifier = Modifier,
     onIntent: (JoinGameIntent) -> Unit,
 ) {
@@ -66,7 +72,10 @@ internal fun JoinGameScreen(
         }
 
         JoinGameScreenContent(
-            modifier = Modifier.padding(it),
+            modifier =
+                Modifier
+                    .sharedBounds(SharedElementKeys.JOIN_KEY, animationScope)
+                    .padding(it),
             state = state,
             onDeviceClicked = { device ->
                 showDeviceConfirmationDialog = JoinGameState.ShowDeviceConfirmationDialog(device)
@@ -185,16 +194,23 @@ private fun JoinGameTopBar(onBack: () -> Unit) {
 @Preview
 @Composable
 private fun JoinGameScreenPreview() {
-    JoinGameScreen(
-        state =
-            JoinGameState().apply {
-                devices =
-                    mutableStateListOf(
-                        Device("1", "Device 1", ConnectionState.Idle),
-                        Device("2", "Device 2", ConnectionState.Connecting("2", "Device 2")),
-                        Device("3", "Device 3", ConnectionState.Connected("2")),
-                        Device("3", "Device 3", ConnectionState.Error.GenericError("123", null)),
-                    )
-            },
-    ) {}
+    AppTheme {
+        AnimatedContent(targetState = true, label = "preview") {
+            if (it) {
+                JoinGameScreen(
+                    state =
+                        JoinGameState().apply {
+                            devices =
+                                mutableStateListOf(
+                                    Device("1", "Device 1", ConnectionState.Idle),
+                                    Device("2", "Device 2", ConnectionState.Connecting("2", "Device 2")),
+                                    Device("3", "Device 3", ConnectionState.Connected("2")),
+                                    Device("3", "Device 3", ConnectionState.Error.GenericError("123", null)),
+                                )
+                        },
+                    animationScope = this,
+                ) {}
+            }
+        }
+    }
 }

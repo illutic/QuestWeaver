@@ -56,10 +56,10 @@ internal fun ExplanationScreen(
 
         Column(
             modifier =
-            Modifier
-                .verticalScroll(rememberScrollState())
-                .padding(it)
-                .padding(largeSize),
+                Modifier
+                    .verticalScroll(rememberScrollState())
+                    .padding(it)
+                    .padding(largeSize),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(largeSize),
         ) {
@@ -68,7 +68,7 @@ internal fun ExplanationScreen(
                     Modifier.sharedElement(
                         SharedElementKeys.WELCOME_APP_NAME_KEY,
                         animationScope,
-                ),
+                    ),
                 text = stringResource(id = R.string.explanation_title),
                 style = MaterialTheme.typography.headlineLarge,
                 fontWeight = FontWeight.Bold,
@@ -113,7 +113,7 @@ private fun ExplanationButton(
 ) {
     Button(
         modifier =
-        modifier
+            modifier
                 .fillMaxWidth()
                 .padding(horizontal = largeSize),
         onClick = { onNavigateToUserCreation() },

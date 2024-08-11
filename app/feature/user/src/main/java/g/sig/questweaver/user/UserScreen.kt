@@ -1,5 +1,7 @@
 package g.sig.questweaver.user
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.defaultMinSize
@@ -33,10 +35,12 @@ import g.sig.questweaver.common.ui.components.CenteredProgressBar
 import g.sig.questweaver.common.ui.components.ImageWithPlaceholder
 import g.sig.questweaver.common.ui.layouts.ScreenScaffold
 import g.sig.questweaver.domain.entities.common.User
+import g.sig.questweaver.navigation.SharedElementKeys
 import g.sig.questweaver.ui.AppIcons
 import g.sig.questweaver.ui.AppTheme
 import g.sig.questweaver.ui.largeSize
 import g.sig.questweaver.ui.mediumSize
+import g.sig.questweaver.ui.sharedBounds
 import g.sig.questweaver.user.state.UserIntent
 import g.sig.questweaver.user.state.UserState
 import g.sig.questweaver.user.state.getError
@@ -135,6 +139,7 @@ private fun UserScreenContent(
 @Composable
 internal fun UserScreen(
     state: UserState,
+    animationScope: AnimatedContentScope,
     modifier: Modifier = Modifier,
     onIntent: (intent: UserIntent) -> Unit,
 ) {
@@ -149,7 +154,10 @@ internal fun UserScreen(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .padding(largeSize),
+                        .sharedBounds(
+                            key = SharedElementKeys.PROFILE_KEY,
+                            animationScope = animationScope,
+                        ).padding(largeSize),
                 onClick = { onIntent(UserIntent.SaveUser(name)) },
             ) {
                 Text(text = stringResource(id = R.string.user_name_button))
@@ -180,15 +188,20 @@ internal fun UserScreen(
 @Preview
 private fun UserScreenPreview() {
     AppTheme {
-        UserScreen(
-            state =
-                UserState.Loaded.Success(
-                    User(
-                        id = "1",
-                        name = "Test",
-                    ),
-                ),
-            onIntent = {},
-        )
+        AnimatedContent(targetState = true, label = "preview") {
+            if (it) {
+                UserScreen(
+                    animationScope = this,
+                    state =
+                        UserState.Loaded.Success(
+                            User(
+                                id = "1",
+                                name = "Test",
+                            ),
+                        ),
+                    onIntent = {},
+                )
+            }
+        }
     }
 }
