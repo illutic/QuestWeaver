@@ -1,5 +1,7 @@
 package g.sig.questweaver.onboarding.screens
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,20 +20,35 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import g.sig.questweaver.common.ui.components.ImageWithPlaceholder
 import g.sig.questweaver.common.ui.layouts.ScreenScaffold
+import g.sig.questweaver.navigation.SharedElementKeys
 import g.sig.questweaver.onboarding.R
 import g.sig.questweaver.ui.largeSize
+import g.sig.questweaver.ui.sharedElement
 
 @Composable
-internal fun ExplanationScreen(onNavigateToUserCreation: () -> Unit) {
+internal fun ExplanationScreen(
+    animationScope: AnimatedContentScope,
+    onNavigateToUserCreation: () -> Unit,
+) {
     ScreenScaffold(
         navigation = {
-            ExplanationButton(onNavigateToUserCreation)
+            ExplanationButton(
+                modifier =
+                    Modifier.sharedElement(
+                        SharedElementKeys.WELCOME_CTA_KEY,
+                        animationScope,
+                    ),
+                onNavigateToUserCreation = onNavigateToUserCreation,
+            )
         },
     ) {
         val scrollState = rememberScrollState()
 
         ImageWithPlaceholder(
-            modifier = Modifier.verticalScroll(scrollState),
+            modifier =
+                Modifier
+                    .sharedElement(SharedElementKeys.WELCOME_LOGO_KEY, animationScope)
+                    .verticalScroll(scrollState),
             size = ExplanationSize.imageSize,
             model = R.drawable.graphic_1,
             contentDescription = null,
@@ -39,14 +56,19 @@ internal fun ExplanationScreen(onNavigateToUserCreation: () -> Unit) {
 
         Column(
             modifier =
-                Modifier
-                    .verticalScroll(rememberScrollState())
-                    .padding(it)
-                    .padding(largeSize),
+            Modifier
+                .verticalScroll(rememberScrollState())
+                .padding(it)
+                .padding(largeSize),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(largeSize),
         ) {
             Text(
+                modifier =
+                    Modifier.sharedElement(
+                        SharedElementKeys.WELCOME_APP_NAME_KEY,
+                        animationScope,
+                ),
                 text = stringResource(id = R.string.explanation_title),
                 style = MaterialTheme.typography.headlineLarge,
                 fontWeight = FontWeight.Bold,
@@ -85,10 +107,13 @@ internal fun ExplanationScreen(onNavigateToUserCreation: () -> Unit) {
 }
 
 @Composable
-private fun ExplanationButton(onNavigateToUserCreation: () -> Unit) {
+private fun ExplanationButton(
+    onNavigateToUserCreation: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Button(
         modifier =
-            Modifier
+        modifier
                 .fillMaxWidth()
                 .padding(horizontal = largeSize),
         onClick = { onNavigateToUserCreation() },
@@ -100,5 +125,9 @@ private fun ExplanationButton(onNavigateToUserCreation: () -> Unit) {
 @Composable
 @Preview
 private fun ExplanationScreenPreview() {
-    ExplanationScreen {}
+    AnimatedContent(targetState = true, label = "preview") {
+        if (it) {
+            ExplanationScreen(this, onNavigateToUserCreation = {})
+        }
+    }
 }

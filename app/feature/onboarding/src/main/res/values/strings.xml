@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name" translatable="false">QuestWeaver</string>
     <string name="explanation_title">Welcome to QuestWeaver</string>
     <string name="explanation_header_1">DM or Player</string>
     <string name="explanation_header_2">Interacting in-game</string>

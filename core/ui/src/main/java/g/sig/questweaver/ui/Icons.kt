@@ -24,6 +24,7 @@ val Int.painter @Composable get() = painterResource(this)
 val ImageVector.painter @Composable get() = rememberVectorPainter(this)
 
 object AppIcons {
+    val Logo @Composable get() = R.drawable.ic_logo.painter
     val Back @Composable get() = MaterialIcons.AutoMirrored.Filled.ArrowBack.painter
     val Info @Composable get() = MaterialIcons.Filled.Info.painter
     val ChevronRight @Composable get() = MaterialIcons.AutoMirrored.Filled.KeyboardArrowRight.painter

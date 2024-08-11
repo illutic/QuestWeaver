@@ -46,6 +46,12 @@ fun AppNavHost(
 @Suppress("LongMethod")
 private fun NavGraphBuilder.appGraph(navController: NavHostController) {
     onboardingGraph(
+        onNavigateToOnboarding = {
+            navController.navigate(OnboardingRoute.path) {
+                launchSingleTop = true
+                popUpTo(navController.graph.id) { inclusive = true }
+            }
+        },
         onNavigateToUserCreation = {
             navController.navigate(UserRoute.path)
         },
@@ -63,7 +69,7 @@ private fun NavGraphBuilder.appGraph(navController: NavHostController) {
 
     homeGraph(
         onNavigateToOnboarding = {
-            navController.navigate(OnboardingRoute.path) {
+            navController.navigate(OnboardingRoute.WELCOME) {
                 popUpTo(HomeRoute.path) { inclusive = true }
             }
         },
