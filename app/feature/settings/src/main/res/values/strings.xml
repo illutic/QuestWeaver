@@ -3,6 +3,6 @@
     <string name="app_name" translatable="false">QuestWeaver</string>
     <string name="settings_title">Settings</string>
     <string name="privacy_policy">Privacy Policy</string>
-    <string name="app_notice">The graphics in the app where created using AI.\nNo internet connection required and thus no data are handled by QuestWeaver.\n\n
+    <string name="app_notice">The graphics in the app were created using AI.\nNo internet connection required and thus no data are handled by QuestWeaver.\n\n
         As with any other data sharing platform, there are risks you need to be aware of.\nIf you share data to another device you are handing them over permission to see and use that data.\nPlease don’t send sensitive information such as your bank details, passwords or your spellbook.</string>
 </resources>
