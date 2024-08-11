@@ -87,9 +87,9 @@ fun ScreenScaffold(
     ) { padding ->
         Box(
             modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(padding),
+                Modifier
+                    .fillMaxSize()
+                    .padding(padding),
             contentAlignment = Alignment.Center,
         ) {
             val contentModifier =

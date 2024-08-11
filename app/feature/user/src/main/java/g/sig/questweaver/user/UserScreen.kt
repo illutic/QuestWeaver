@@ -99,9 +99,9 @@ private fun UserScreenContent(
 
     Column(
         modifier =
-        modifier
-            .verticalScroll(scrollState)
-            .padding(horizontal = largeSize),
+            modifier
+                .verticalScroll(scrollState)
+                .padding(horizontal = largeSize),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         AppOutlinedTextField(
@@ -116,9 +116,9 @@ private fun UserScreenContent(
 
         Alert(
             modifier =
-            Modifier
-                .width(IntrinsicSize.Max)
-                .padding(vertical = mediumSize),
+                Modifier
+                    .width(IntrinsicSize.Max)
+                    .padding(vertical = mediumSize),
             content = {
                 Text(
                     text = stringResource(id = R.string.user_alert_1),
@@ -147,9 +147,9 @@ internal fun UserScreen(
         navigation = {
             Button(
                 modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(largeSize),
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(largeSize),
                 onClick = { onIntent(UserIntent.SaveUser(name)) },
             ) {
                 Text(text = stringResource(id = R.string.user_name_button))

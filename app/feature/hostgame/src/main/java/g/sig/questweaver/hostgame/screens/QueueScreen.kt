@@ -54,9 +54,9 @@ internal fun QueueScreen(
         navigation = {
             Button(
                 modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = largeSize),
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = largeSize),
                 onClick = { onIntent(QueueIntent.StartGame) },
             ) {
                 Text(text = stringResource(R.string.queue_game_button))
@@ -88,9 +88,9 @@ private fun JoinGameScreenContent(
 
     Column(
         modifier =
-        modifier
-            .verticalScroll(scrollState)
-            .padding(largeSize),
+            modifier
+                .verticalScroll(scrollState)
+                .padding(largeSize),
         verticalArrangement = Arrangement.spacedBy(largeSize),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {

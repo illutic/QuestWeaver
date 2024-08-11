@@ -94,9 +94,9 @@ private fun JoinGameScreenContent(
 
     Column(
         modifier =
-        modifier
-            .verticalScroll(scrollState)
-            .padding(horizontal = largeSize),
+            modifier
+                .verticalScroll(scrollState)
+                .padding(horizontal = largeSize),
         verticalArrangement = spacedBy(largeSize),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {

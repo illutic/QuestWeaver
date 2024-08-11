@@ -50,9 +50,9 @@ private fun SettingsScreenContent(modifier: Modifier = Modifier) {
 
     ImageWithPlaceholder(
         modifier =
-        Modifier
-            .verticalScroll(scrollState)
-            .padding(top = largeSize),
+            Modifier
+                .verticalScroll(scrollState)
+                .padding(top = largeSize),
         size = SettingsSize.imageSize,
         model = R.drawable.graphic_7,
         contentDescription = null,
@@ -90,9 +90,9 @@ internal fun SettingsScreen(
         navigation = {
             TextButton(
                 modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = largeSize),
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = largeSize),
                 onClick = { onIntent(SettingsIntent.OpenPrivacyPolicy) },
             ) {
                 Text(text = stringResource(id = R.string.privacy_policy))

@@ -156,12 +156,12 @@ private fun RecentGameCard(
 
             Row(
                 modifier =
-                Modifier
+                    Modifier
                         .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.95f))
                         .fillMaxWidth()
                         .height(IntrinsicSize.Min)
                         .padding(horizontal = largeSize, vertical = mediumSize)
-                    .align(Alignment.BottomStart),
+                        .align(Alignment.BottomStart),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
@@ -270,9 +270,9 @@ private fun HomeScreenBottomContent(
         ) {
             OutlinedButton(
                 modifier =
-                Modifier
-                    .weight(1f)
-                    .sharedBounds(SharedElementKeys.PROFILE_KEY, animationScope),
+                    Modifier
+                        .weight(1f)
+                        .sharedBounds(SharedElementKeys.PROFILE_KEY, animationScope),
                 onClick = onNavigateToProfile,
             ) {
                 Icon(painter = AppIcons.PersonOutline, contentDescription = "")
@@ -281,9 +281,9 @@ private fun HomeScreenBottomContent(
 
             OutlinedButton(
                 modifier =
-                Modifier
-                    .weight(1f)
-                    .sharedBounds(SharedElementKeys.SETTINGS_KEY, animationScope),
+                    Modifier
+                        .weight(1f)
+                        .sharedBounds(SharedElementKeys.SETTINGS_KEY, animationScope),
                 onClick = onNavigateToSettings,
             ) {
                 Icon(painter = AppIcons.SettingsOutline, contentDescription = "")

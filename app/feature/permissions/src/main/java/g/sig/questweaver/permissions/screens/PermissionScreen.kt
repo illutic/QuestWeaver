@@ -57,9 +57,9 @@ internal fun PermissionScreen(
 
         Column(
             modifier =
-            Modifier
-                .verticalScroll(scrollState)
-                .padding(it)
+                Modifier
+                    .verticalScroll(scrollState)
+                    .padding(it)
                     .padding(largeSize),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(largeSize),
@@ -106,9 +106,9 @@ private fun RequestPermissionsButton(
     val context = LocalContext.current
     Button(
         modifier =
-        Modifier
-            .fillMaxWidth()
-            .padding(horizontal = largeSize),
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = largeSize),
         onClick = {
             if (permissionsDenied) {
                 context.launchSystemSettings()

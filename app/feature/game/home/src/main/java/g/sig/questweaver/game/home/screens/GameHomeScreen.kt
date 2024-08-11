@@ -217,7 +217,7 @@ private fun Modifier.annotateText(
                         localTextStyle.merge(
                             color = state.selectedColor,
                             fontSize = state.selectedSize.toSp(canvasSize).toSp(),
-                    ),
+                        ),
                 )
 
             view.performHapticFeedback(HapticFeedbackConstantsCompat.SEGMENT_FREQUENT_TICK)

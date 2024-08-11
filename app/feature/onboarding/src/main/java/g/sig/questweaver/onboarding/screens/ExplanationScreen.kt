@@ -39,8 +39,8 @@ internal fun ExplanationScreen(onNavigateToUserCreation: () -> Unit) {
 
         Column(
             modifier =
-            Modifier
-                .verticalScroll(rememberScrollState())
+                Modifier
+                    .verticalScroll(rememberScrollState())
                     .padding(it)
                     .padding(largeSize),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -88,9 +88,9 @@ internal fun ExplanationScreen(onNavigateToUserCreation: () -> Unit) {
 private fun ExplanationButton(onNavigateToUserCreation: () -> Unit) {
     Button(
         modifier =
-        Modifier
-            .fillMaxWidth()
-            .padding(horizontal = largeSize),
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = largeSize),
         onClick = { onNavigateToUserCreation() },
     ) {
         Text(text = stringResource(id = R.string.explanation_cta))

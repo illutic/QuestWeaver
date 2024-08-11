@@ -70,10 +70,10 @@ internal fun HostGameScreen(
         navigation = {
             Button(
                 modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = largeSize)
-                    .sharedBounds(SharedElementKeys.HOST_QUEUE_KEY, animationScope),
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = largeSize)
+                        .sharedBounds(SharedElementKeys.HOST_QUEUE_KEY, animationScope),
                 onClick = { onIntent(HostGameIntent.StartHosting) },
             ) {
                 Text(text = stringResource(R.string.create_game_button))
@@ -106,8 +106,8 @@ private fun HostGameContent(
 
     ImageWithPlaceholder(
         modifier =
-        Modifier
-            .padding(horizontal = largeSize)
+            Modifier
+                .padding(horizontal = largeSize)
                 .verticalScroll(verticalScrollState),
         size = HostGameSize.imageSize,
         model = R.drawable.graphic_9,
@@ -116,10 +116,10 @@ private fun HostGameContent(
 
     Column(
         modifier =
-        modifier
-            .verticalScroll(verticalScrollState)
-            .padding(horizontal = largeSize)
-            .width(IntrinsicSize.Max),
+            modifier
+                .verticalScroll(verticalScrollState)
+                .padding(horizontal = largeSize)
+                .width(IntrinsicSize.Max),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(smallSize),
     ) {
