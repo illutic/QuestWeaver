@@ -4,6 +4,7 @@ import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontLoadingStrategy
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
@@ -12,8 +13,8 @@ private val AlegryaFontFamily =
     FontFamily(
         Font(R.font.alegreya, FontWeight.Normal),
         Font(R.font.alegreya_italic, style = FontStyle.Italic),
-        Font(R.font.alegreya_black, FontWeight.Bold),
-        Font(R.font.alegreya_bold, FontWeight.Medium),
+        Font(R.font.alegreya_black, FontWeight.Bold, loadingStrategy = FontLoadingStrategy.Async),
+        Font(R.font.alegreya_bold, FontWeight.Medium, loadingStrategy = FontLoadingStrategy.Async),
     )
 
 private val displayLarge =
