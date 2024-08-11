@@ -44,14 +44,16 @@ class HomeViewModel
                             _events.send(HomeEvent.NavigateToOnboarding)
                         } else {
                             val home = getHomeUseCase()
+                            val recentGames =
+                                home.recentGames.associateWith { game ->
+                                    getGameStateUseCase(game.gameId)
+                                }
+
                             _state.value =
                                 HomeState.Loaded(
                                     userName = home.user.name,
                                     permissions = home.permissions.map { it.permission },
-                                    recentGames =
-                                        home.recentGames.associateWith { game ->
-                                            getGameStateUseCase(game.gameId)
-                                        },
+                                    recentGames = recentGames,
                                 )
                         }
                     }
