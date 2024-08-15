@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.OutlinedIconButton
@@ -94,7 +95,7 @@ fun ColorButton(
 fun ColorPicker(
     initialColor: Color,
     onDismiss: () -> Unit,
-    onColorSelected: (Color) -> Unit,
+    onColorSelect: (Color) -> Unit,
 ) {
     var selectedColor by remember { mutableStateOf(initialColor) }
 
@@ -102,7 +103,7 @@ fun ColorPicker(
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(onClick = {
-                onColorSelected(selectedColor)
+                onColorSelect(selectedColor)
                 onDismiss()
             }) { Text(text = stringResource(R.string.ok)) }
         },
@@ -125,26 +126,43 @@ fun ColorPicker(
             }
         },
         text = {
+            var showGrayscale by remember { mutableStateOf(false) }
+
             Column {
-                ColorGradient(
-                    colors = LinearGradientColors,
-                    onColorSelected = { selectedColor = it },
-                    modifier =
-                        Modifier
-                            .height(56.dp)
-                            .fillMaxWidth(),
-                )
+                if (showGrayscale) {
+                    ColorGradient(
+                        colors = GrayscaleColors,
+                        onColorSelect = { selectedColor = it },
+                        modifier =
+                            Modifier
+                                .height(56.dp)
+                                .fillMaxWidth(),
+                    )
+                } else {
+                    ColorGradient(
+                        colors = LinearGradientColors,
+                        onColorSelect = { selectedColor = it },
+                        modifier =
+                            Modifier
+                                .height(56.dp)
+                                .fillMaxWidth(),
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(largeSize))
 
-                ColorGradient(
-                    colors = GrayscaleColors,
-                    onColorSelected = { selectedColor = it },
-                    modifier =
-                        Modifier
-                            .height(56.dp)
-                            .fillMaxWidth(),
-                )
+                FilledTonalButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = { showGrayscale = !showGrayscale },
+                ) {
+                    val text =
+                        if (showGrayscale) {
+                            stringResource(R.string.show_colors)
+                        } else {
+                            stringResource(R.string.show_grayscale)
+                        }
+                    Text(text = text)
+                }
             }
         },
     )
@@ -153,7 +171,7 @@ fun ColorPicker(
 @Composable
 fun ColorGradient(
     colors: List<ColorStop>,
-    onColorSelected: (Color) -> Unit,
+    onColorSelect: (Color) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var handleOffsetX by remember { mutableFloatStateOf(0f) }
@@ -179,7 +197,7 @@ fun ColorGradient(
                     normalizedX,
                 )
 
-            onColorSelected(actualColor)
+            onColorSelect(actualColor)
         }
 
         Canvas(
@@ -192,6 +210,21 @@ fun ColorGradient(
                                 handleOffsetX = it.x.coerceIn(0f, maxWidth - largeSizePx)
                                 selectColor(handleOffsetX)
                             }
+                        }
+                    }.pointerInput(Unit) {
+                        detectDragGestures(
+                            onDragStart = {
+                                dragging = true
+                                handleOffsetX = it.x.coerceIn(0f, maxWidth - largeSizePx)
+                            },
+                            onDragEnd = {
+                                dragging = false
+                            },
+                        ) { change, dragAmount ->
+                            change.consume()
+                            handleOffsetX += dragAmount.x
+                            handleOffsetX = handleOffsetX.coerceIn(0f, maxWidth - largeSizePx)
+                            selectColor(handleOffsetX)
                         }
                     },
         ) {
@@ -215,39 +248,17 @@ fun ColorGradient(
                     .height(maxHeight)
                     .width(largeSize)
                     .offset { IntOffset(handleOffsetX.roundToInt(), 0) },
-            onHandleDragged = { x ->
-                val offset = (handleOffsetX + x).coerceIn(0f, maxWidth - largeSizePx)
-                handleOffsetX = offset
-                selectColor(handleOffsetX)
-            },
-            onHandleDragStarted = { dragging = true },
-            onHandleDragEnded = { dragging = false },
         )
     }
 }
 
 @Composable
-fun ColorPickerHandle(
-    onHandleDragStarted: (offset: Offset) -> Unit,
-    onHandleDragEnded: () -> Unit,
-    onHandleDragged: (Float) -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun ColorPickerHandle(modifier: Modifier = Modifier) {
     Box(
         modifier =
             modifier
                 .clip(CircleShape)
-                .border(2.dp, Color.White, CircleShape)
-                .pointerInput(Unit) {
-                    detectDragGestures(
-                        onDragStart = onHandleDragStarted,
-                        onDragCancel = onHandleDragEnded,
-                        onDragEnd = onHandleDragEnded,
-                    ) { change, dragAmount ->
-                        change.consume()
-                        onHandleDragged(dragAmount.x)
-                    }
-                },
+                .border(2.dp, Color.White, CircleShape),
     )
 }
 
@@ -270,7 +281,7 @@ private fun findColorRange(
 
 @Composable
 @Preview
-fun ColorPickerPreview() {
+private fun ColorPickerPreview() {
     var selectedColor by remember { mutableStateOf(Color.Red) }
 
     Box(
@@ -283,7 +294,7 @@ fun ColorPickerPreview() {
     ColorPicker(
         initialColor = Color.Red,
         onDismiss = {},
-        onColorSelected = {
+        onColorSelect = {
             selectedColor = it
         },
     )

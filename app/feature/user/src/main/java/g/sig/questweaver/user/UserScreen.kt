@@ -115,7 +115,7 @@ private fun UserScreenContent(
             label = stringResource(R.string.user_name_label),
             placeholder = stringResource(R.string.user_name_placeholder),
             keyboardActions = KeyboardActions(onDone = { onSubmit() }),
-            onValueChanged = onValueChange,
+            onValueChange = onValueChange,
         )
 
         Alert(

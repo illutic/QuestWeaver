@@ -1,5 +1,6 @@
 package g.sig.questweaver.common.ui.components
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.text.KeyboardActions
@@ -9,6 +10,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -20,9 +22,10 @@ import g.sig.questweaver.ui.MediumRoundedShape
 @Composable
 inline fun AppOutlinedTextField(
     value: String,
-    crossinline onValueChanged: (String) -> Unit,
+    crossinline onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     style: TextStyle = MaterialTheme.typography.labelMedium,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     label: String? = null,
     placeholder: String? = null,
     error: String? = null,
@@ -41,7 +44,7 @@ inline fun AppOutlinedTextField(
         modifier = modifier.then(adaptiveModifier),
         value = value,
         isError = error != null,
-        onValueChange = { onValueChanged(it) },
+        onValueChange = { onValueChange(it) },
         textStyle = style,
         label = label?.let { { Text(text = label) } },
         placeholder = placeholder?.let { { Text(text = placeholder, maxLines = 1) } },
@@ -58,6 +61,7 @@ inline fun AppOutlinedTextField(
         keyboardOptions = keyboardOptions,
         singleLine = true,
         shape = MediumRoundedShape,
+        interactionSource = interactionSource,
     )
 }
 
@@ -67,7 +71,7 @@ private fun AppOutlinedTextFieldPreview() {
     AppTheme {
         AppOutlinedTextField(
             value = "Hello",
-            onValueChanged = {},
+            onValueChange = {},
             label = "Label",
             placeholder = "Placeholder",
         )

@@ -40,13 +40,13 @@ dependencies {
     api(libs.coil)
     api(libs.androidx.ui)
     api(libs.androidx.ui.graphics)
-    api(libs.androidx.ui.tooling.preview)
     api(libs.androidx.material3)
     api(libs.androidx.activity.compose)
     api(libs.androidx.adaptive.android)
     api(platform(libs.androidx.compose.bom))
 
     debugApi(libs.androidx.ui.tooling)
+    debugApi(libs.androidx.ui.tooling.preview)
     debugApi(libs.androidx.ui.test.manifest)
 }
 

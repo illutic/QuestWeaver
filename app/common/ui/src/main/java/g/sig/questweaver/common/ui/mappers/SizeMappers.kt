@@ -22,3 +22,5 @@ fun ComposeSize.toSize(canvasSize: ComposeSize) = Size(width / canvasSize.width,
 fun IntSize.toSize(canvasSize: IntSize) = toSize().toSize(canvasSize.toSize())
 
 fun Size.toOffset(canvasSize: ComposeSize) = Offset(width * canvasSize.width, height * canvasSize.height)
+
+fun Size.toComposeSize(canvasSize: ComposeSize) = ComposeSize(width * canvasSize.width, height * canvasSize.height)

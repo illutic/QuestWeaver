@@ -15,6 +15,7 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -65,6 +66,7 @@ import g.sig.questweaver.ui.largeSize
 @Composable
 internal fun GameHomeRoute(onBackPressed: () -> Unit) {
     val viewModel = hiltViewModel<GameHomeViewModel>()
+    val state by viewModel.state.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.handleIntent(GameHomeIntent.Load)
@@ -75,7 +77,7 @@ internal fun GameHomeRoute(onBackPressed: () -> Unit) {
         }
     }
 
-    GameHomeScreen(viewModel.state, viewModel::handleIntent)
+    GameHomeScreen(state, viewModel::handleIntent)
 }
 
 @Composable
@@ -92,8 +94,8 @@ internal fun GameHomeScreen(
     if (state.showColorPicker) {
         ColorPicker(
             initialColor = state.selectedColor,
-            onDismiss = { state.showColorPicker = false },
-            onColorSelected = { postIntent(GameHomeIntent.SelectColor(it)) },
+            onDismiss = { postIntent(GameHomeIntent.HideColorPicker) },
+            onColorSelect = { postIntent(GameHomeIntent.SelectColor(it)) },
         )
     }
 
@@ -120,12 +122,12 @@ internal fun GameHomeScreen(
 
         Canvas(
             modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(it)
-                    .selectAnnotations(state, canvasSize, postIntent)
-                    .annotateDrawing(state, canvasSize, currentlyDrawnPoints, postIntent)
-                    .annotateText(state, textMeasurer, textStyle, canvasSize, postIntent),
+            Modifier
+                .fillMaxSize()
+                .padding(it)
+                .selectAnnotations(state, canvasSize, postIntent)
+                .annotateDrawing(state, canvasSize, currentlyDrawnPoints, postIntent)
+                .annotateText(state, textMeasurer, textStyle, canvasSize, postIntent),
         ) {
             canvasSize = size
             drawAnnotations(state.annotations.values, textMeasurer, textStyle, context)
@@ -152,9 +154,9 @@ private fun GameHomeScreenSheetContent(
 ) {
     Column(
         modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(largeSize),
+        Modifier
+            .fillMaxWidth()
+            .padding(largeSize),
     ) {
         AnnotationTools(
             modifier = Modifier.fillMaxWidth(),
@@ -176,11 +178,11 @@ private fun GameHomeScreenSheetContent(
             GameHomeState.AnnotationMode.TextMode -> {
                 AppOutlinedTextField(
                     value = state.selectedText,
-                    onValueChanged = { state.selectedText = it },
+                    onValueChange = { postIntent(GameHomeIntent.ChangeText("", "")) },
                     modifier =
-                        Modifier
-                            .padding(top = largeSize)
-                            .fillMaxWidth(),
+                    Modifier
+                        .padding(top = largeSize)
+                        .fillMaxWidth(),
                 )
 
                 HomeEditControls(
@@ -191,8 +193,7 @@ private fun GameHomeScreenSheetContent(
             }
 
             GameHomeState.AnnotationMode.Idle,
-            GameHomeState.AnnotationMode.RemoveMode,
-            -> Unit
+            GameHomeState.AnnotationMode.RemoveMode -> Unit
 
             GameHomeState.AnnotationMode.DMMode -> TODO()
         }
@@ -214,10 +215,10 @@ private fun Modifier.annotateText(
                 textMeasurer.measure(
                     text = state.selectedText,
                     style =
-                        localTextStyle.merge(
-                            color = state.selectedColor,
-                            fontSize = state.selectedSize.toSp(canvasSize).toSp(),
-                        ),
+                    localTextStyle.merge(
+                        color = state.selectedColor,
+                        fontSize = state.selectedSize.toSp(canvasSize).toSp(),
+                    ),
                 )
 
             view.performHapticFeedback(HapticFeedbackConstantsCompat.SEGMENT_FREQUENT_TICK)

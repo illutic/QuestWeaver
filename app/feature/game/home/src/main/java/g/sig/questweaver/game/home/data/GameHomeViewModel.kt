@@ -24,7 +24,10 @@ import g.sig.questweaver.game.home.state.GameHomeIntent
 import g.sig.questweaver.game.home.state.GameHomeState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
@@ -43,9 +46,10 @@ class GameHomeViewModel
         private val getGame: GetGameUseCase,
         private val getUser: GetUserUseCase,
     ) : ViewModel() {
+        private val _state = MutableStateFlow(GameHomeState())
         private val _events = Channel<GameHomeEvent>()
         val events = _events.receiveAsFlow()
-        val state = GameHomeState()
+        val state = _state.asStateFlow()
 
         fun handleIntent(intent: GameHomeIntent) {
             when (intent) {
@@ -54,14 +58,26 @@ class GameHomeViewModel
                 is GameHomeIntent.AddDrawing -> addDrawing(intent)
                 is GameHomeIntent.AddText -> addText(intent)
                 is GameHomeIntent.SelectAnnotation -> selectAnnotation(intent)
-                is GameHomeIntent.SelectColor -> state.selectedColor = intent.color
-                is GameHomeIntent.SelectSize -> state.selectedSize = Size(intent.size, intent.size)
-                is GameHomeIntent.ChangeMode -> state.annotationMode = intent.mode
-                is GameHomeIntent.SelectPlayer -> state.selectedPlayer = intent.player
-                GameHomeIntent.ShowColorPicker -> state.showColorPicker = true
+                is GameHomeIntent.SelectColor -> setState { copy(selectedColor = intent.color) }
+                is GameHomeIntent.SelectSize ->
+                    setState {
+                        copy(
+                            selectedSize =
+                                Size(
+                                    intent.size,
+                                    intent.size,
+                                ),
+                        )
+                    }
+
+                is GameHomeIntent.ChangeMode -> setState { copy(annotationMode = intent.mode) }
+                is GameHomeIntent.SelectPlayer -> setState { copy(selectedPlayer = intent.player) }
+                is GameHomeIntent.ChangeText -> setState { copy(selectedText = intent.text) }
+                GameHomeIntent.ShowColorPicker -> setState { copy(showColorPicker = true) }
+                GameHomeIntent.HideColorPicker -> setState { copy(showColorPicker = false) }
 
                 is GameHomeIntent.SelectOpacity -> {
-                    state.selectedColor = state.selectedColor.copy(alpha = intent.opacity)
+                    setState { copy(selectedColor = selectedColor.copy(alpha = intent.opacity)) }
                 }
 
                 is GameHomeIntent.AddImage -> {
@@ -72,7 +88,7 @@ class GameHomeViewModel
 
         private fun addDrawing(intent: GameHomeIntent.AddDrawing) =
             viewModelScope.launch {
-                if (state.opacity < ALPHA_MIN) return@launch
+                if (state.value.opacity < ALPHA_MIN) return@launch
 
                 val points =
                     intent.path.runningReduce { acc, point ->
@@ -83,7 +99,7 @@ class GameHomeViewModel
                     Annotation.Drawing(
                         path = points,
                         strokeSize = intent.strokeSize,
-                        color = state.selectedColor.toColor(),
+                        color = state.value.selectedColor.toColor(),
                         createdBy = getUser().id,
                         id = UUID.randomUUID().toString(),
                     )
@@ -97,7 +113,7 @@ class GameHomeViewModel
                     Annotation.Text(
                         text = intent.text,
                         size = intent.size,
-                        color = state.selectedColor.toColor(),
+                        color = state.value.selectedColor.toColor(),
                         anchor = intent.anchor,
                         createdBy = getUser().id,
                         id = UUID.randomUUID().toString(),
@@ -136,18 +152,18 @@ class GameHomeViewModel
 
         private fun selectAnnotation(intent: GameHomeIntent.SelectAnnotation) =
             viewModelScope.launch {
-                when (state.annotationMode) {
+                when (state.value.annotationMode) {
                     GameHomeState.AnnotationMode.RemoveMode -> attemptRemoveAnnotation(intent.annotation?.id)
 
-                    else -> state.selectedAnnotation = intent.annotation
+                    else -> setState { copy(selectedAnnotation = intent.annotation) }
                 }
             }
 
         private fun attemptRemoveAnnotation(annotationId: String?) =
             viewModelScope.launch {
-                val annotation = state.annotations[annotationId] ?: return@launch
+                val annotation = state.value.annotations[annotationId] ?: return@launch
                 val user = getUser()
-                val canRemoveAnnotation = state.isDM || annotation.createdBy == user.id
+                val canRemoveAnnotation = state.value.isDM || annotation.createdBy == user.id
                 if (canRemoveAnnotation) {
                     val payload = RemoveAnnotation(annotation.id)
                     broadcastPayload(payload)
@@ -169,29 +185,38 @@ class GameHomeViewModel
                     }
                 }
 
-            state.isDM = isDM
-            state.users = gameState.connectedUsers
-            state.annotations = gameState.annotations.associateBy { it.id }
-            state.allowAnnotations = gameState.allowEditing || isDM
+            setState {
+                copy(
+                    isDM = isDM,
+                    users = gameState.connectedUsers,
+                    annotations = gameState.annotations.associateBy { it.id },
+                    allowAnnotations = gameState.allowEditing || isDM,
+                )
+            }
         }
 
         private fun addAnnotation(annotation: Annotation) {
-            val updatedAnnotations = state.annotations.toMutableMap()
+            val updatedAnnotations = state.value.annotations.toMutableMap()
             updatedAnnotations[annotation.id] = annotation
-            state.annotations = updatedAnnotations
+            setState { copy(annotations = updatedAnnotations) }
             viewModelScope.launch {
                 updateGameStateUseCase(annotations = updatedAnnotations.values.toList())
             }
         }
 
         private fun removeAnnotation(annotationId: String) {
-            val updatedAnnotations = state.annotations.toMutableMap()
+            val updatedAnnotations = state.value.annotations.toMutableMap()
             updatedAnnotations.remove(annotationId)
-            state.annotations = updatedAnnotations
+            setState { copy(annotations = updatedAnnotations) }
             viewModelScope.launch {
                 updateGameStateUseCase(annotations = updatedAnnotations.values.toList())
             }
         }
+
+        private inline fun setState(block: GameHomeState.() -> GameHomeState) =
+            _state.update {
+                block(it)
+            }
 
         companion object {
             private const val ALPHA_MIN = 0.1f

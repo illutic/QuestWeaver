@@ -51,4 +51,11 @@ sealed interface GameHomeIntent {
     ) : GameHomeIntent
 
     data object ShowColorPicker : GameHomeIntent
+
+    data object HideColorPicker : GameHomeIntent
+
+    data class ChangeText(
+        val id: String,
+        val text: String,
+    ) : GameHomeIntent
 }

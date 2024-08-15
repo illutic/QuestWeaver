@@ -9,4 +9,6 @@
     <string name="ok">Επιλογή</string>
     <string name="cancel">Ακύρωση</string>
     <string name="select_color">Επιλογή χρώματος</string>
+    <string name="show_colors">Επιλογή χρωμάτων</string>
+    <string name="show_grayscale">Επιλογή απρόμαυρου χρώματος</string>
 </resources>

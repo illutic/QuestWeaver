@@ -9,4 +9,6 @@
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="select_color">Select color</string>
+    <string name="show_colors">Switch to colors</string>
+    <string name="show_grayscale">Switch to grayscale</string>
 </resources>

@@ -164,7 +164,7 @@ private fun VerticalNameAndDescriptionFields(
         AppOutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = state.gameName,
-            onValueChanged = { onIntent(HostGameIntent.SetGameName(it)) },
+            onValueChange = { onIntent(HostGameIntent.SetGameName(it)) },
             label = stringResource(R.string.game_title_label),
             placeholder = stringResource(R.string.game_title_placeholder),
             error = state.gameNameError?.let { stringResource(it) },
@@ -174,7 +174,7 @@ private fun VerticalNameAndDescriptionFields(
         AppOutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = state.description,
-            onValueChanged = { onIntent(HostGameIntent.SetDescription(it)) },
+            onValueChange = { onIntent(HostGameIntent.SetDescription(it)) },
             label = stringResource(R.string.game_description_label),
             placeholder = stringResource(R.string.game_description_placeholder),
             error = state.descriptionError?.let { stringResource(it) },
@@ -195,7 +195,7 @@ private fun HorizontalNameAndDescriptionFields(
         AppOutlinedTextField(
             modifier = Modifier.weight(1f),
             value = state.gameName,
-            onValueChanged = { onIntent(HostGameIntent.SetGameName(it)) },
+            onValueChange = { onIntent(HostGameIntent.SetGameName(it)) },
             label = stringResource(R.string.game_title_label),
             placeholder = stringResource(R.string.game_title_placeholder),
             error = state.gameNameError?.let { stringResource(it) },
@@ -205,7 +205,7 @@ private fun HorizontalNameAndDescriptionFields(
         AppOutlinedTextField(
             modifier = Modifier.weight(1f),
             value = state.description,
-            onValueChanged = { onIntent(HostGameIntent.SetDescription(it)) },
+            onValueChange = { onIntent(HostGameIntent.SetDescription(it)) },
             label = stringResource(R.string.game_description_label),
             placeholder = stringResource(R.string.game_description_placeholder),
             error = state.descriptionError?.let { stringResource(it) },
@@ -239,7 +239,7 @@ private fun MaxPlayersInputField(
             modifier = Modifier.widthIn(min = HostGameSize.numberTextSize),
             style = MaterialTheme.typography.labelMedium.copy(textAlign = TextAlign.Center),
             value = state.playerCount?.toString().orEmpty(),
-            onValueChanged = {
+            onValueChange = {
                 onIntent(HostGameIntent.SetPlayerCount(it.toIntOrNull()))
             },
             error = state.playerCountError?.let { stringResource(it) },
