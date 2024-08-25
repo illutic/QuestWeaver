@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.Color
 import g.sig.questweaver.domain.entities.blocks.Point
 import g.sig.questweaver.domain.entities.blocks.Size
 import g.sig.questweaver.domain.entities.common.Annotation
+import g.sig.questweaver.domain.entities.common.TransformationData
 import g.sig.questweaver.domain.entities.common.User
 
 sealed interface GameHomeIntent {
@@ -16,9 +17,7 @@ sealed interface GameHomeIntent {
     ) : GameHomeIntent
 
     data class AddText(
-        val text: String,
-        val size: Size,
-        val anchor: Point,
+        val transformationData: TransformationData,
     ) : GameHomeIntent
 
     data class AddDrawing(
@@ -28,6 +27,9 @@ sealed interface GameHomeIntent {
 
     data class AddImage(
         val uri: String,
+        val width: Float,
+        val height: Float,
+        val transformationData: TransformationData,
     ) : GameHomeIntent
 
     data class SelectColor(
@@ -57,5 +59,12 @@ sealed interface GameHomeIntent {
     data class ChangeText(
         val id: String,
         val text: String,
+    ) : GameHomeIntent
+
+    data class CommitTransformation(
+        val id: String,
+        val scale: Float,
+        val rotation: Float,
+        val anchor: Point,
     ) : GameHomeIntent
 }

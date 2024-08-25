@@ -15,6 +15,7 @@ sealed interface AnnotationDto : Dto {
         val strokeSize: SizeDto,
         val colorDto: ColorDto,
         val path: List<PointDto>,
+        val transformationDataDto: TransformationDataDto,
     ) : AnnotationDto
 
     @Serializable
@@ -22,17 +23,17 @@ sealed interface AnnotationDto : Dto {
         val id: String,
         val createdBy: String,
         val text: String,
-        val sizeDTO: SizeDto,
         val colorDTO: ColorDto,
-        val anchor: PointDto,
+        val transformationDataDto: TransformationDataDto,
     ) : AnnotationDto
 
     @Serializable
     data class ImageDto(
         val id: String,
         val createdBy: String,
-        val size: SizeDto,
-        val anchor: PointDto,
+        val width: Float,
+        val height: Float,
         val fileDto: FileDto,
+        val transformationDataDto: TransformationDataDto,
     ) : AnnotationDto
 }

@@ -1,7 +1,6 @@
 package g.sig.questweaver.common.ui.mappers
 
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Path
 import g.sig.questweaver.domain.entities.blocks.Point
@@ -23,26 +22,24 @@ fun List<Point>.toPath(canvasSize: Size) =
         }
     }
 
-fun List<Point>.getBounds(canvasSize: Size) =
+fun List<Point>.topLeft() =
     if (isEmpty()) {
-        Rect.Zero
+        Point.Zero
     } else {
-        var left = 1f
-        var top = 1f
-        var right = 0f
-        var bottom = 0f
-
-        for (point in this) {
-            left = minOf(left, point.x)
-            top = minOf(top, point.y)
-            right = maxOf(right, point.x)
-            bottom = maxOf(bottom, point.y)
-        }
-
-        Rect(
-            left = left * canvasSize.width,
-            top = top * canvasSize.height,
-            right = right * canvasSize.width,
-            bottom = bottom * canvasSize.height,
+        Point(
+            x = minOf { it.x },
+            y = minOf { it.y },
         )
+    }
+
+fun List<Offset>.toPath() =
+    Path().apply {
+        if (isEmpty()) return@apply
+        val topLeftX = minOf { it.x }
+        val topLeftY = minOf { it.y }
+
+        moveTo(first().x - topLeftX, first().y - topLeftY)
+        for (point in drop(1)) {
+            lineTo(point.x - topLeftX, point.y - topLeftY)
+        }
     }

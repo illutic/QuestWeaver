@@ -23,7 +23,7 @@ private const val LABEL_WIDTH_PERCENT = 0.2f
 
 @Composable
 fun HomeEditControls(
-    state: GameHomeState,
+    state: GameHomeState.Loaded,
     postIntent: (GameHomeIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -42,12 +42,12 @@ fun HomeEditControls(
         HomeSlider(
             label = stringResource(id = R.string.size),
             value = state.selectedSize.width,
-            onValueChanged = { postIntent(GameHomeIntent.SelectSize(it)) },
+            onValueChange = { postIntent(GameHomeIntent.SelectSize(it)) },
         )
         HomeSlider(
             label = stringResource(id = R.string.opacity),
             value = state.opacity,
-            onValueChanged = { postIntent(GameHomeIntent.SelectOpacity(it)) },
+            onValueChange = { postIntent(GameHomeIntent.SelectOpacity(it)) },
         )
     }
 }
@@ -56,7 +56,7 @@ fun HomeEditControls(
 private fun HomeSlider(
     label: String,
     value: Float,
-    onValueChanged: (Float) -> Unit,
+    onValueChange: (Float) -> Unit,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -70,7 +70,7 @@ private fun HomeSlider(
         Slider(
             modifier = Modifier.weight(SLIDER_WIDTH_PERCENT),
             value = value,
-            onValueChange = onValueChanged,
+            onValueChange = onValueChange,
         )
     }
 }

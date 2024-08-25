@@ -23,24 +23,24 @@ fun AnnotationTools(
     isDM: Boolean,
     modifier: Modifier = Modifier,
     allowEditing: Boolean = true,
-    onAnnotationModeChanged: (GameHomeState.AnnotationMode) -> Unit,
+    onAnnotationModeChange: (GameHomeState.AnnotationMode) -> Unit,
 ) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = if (isDM) Arrangement.SpaceBetween else Arrangement.End,
     ) {
-        DMToolsButton(annotationMode, isDM, onAnnotationModeChanged)
+        DMToolsButton(annotationMode, isDM, onAnnotationModeChange)
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(smallSize),
         ) {
-            RemoveButton(annotationMode, allowEditing, onAnnotationModeChanged)
+            RemoveButton(annotationMode, allowEditing, onAnnotationModeChange)
 
-            AnnotationButton(annotationMode, allowEditing, onAnnotationModeChanged)
+            AnnotationButton(annotationMode, allowEditing, onAnnotationModeChange)
 
-            TextButton(annotationMode, allowEditing, onAnnotationModeChanged)
+            TextButton(annotationMode, allowEditing, onAnnotationModeChange)
         }
     }
 }
@@ -49,14 +49,14 @@ fun AnnotationTools(
 private fun RemoveButton(
     annotationMode: GameHomeState.AnnotationMode,
     allowEditing: Boolean,
-    onAnnotationModeChanged: (GameHomeState.AnnotationMode) -> Unit,
+    onAnnotationModeChange: (GameHomeState.AnnotationMode) -> Unit,
 ) {
     HomeButton(
         onClick = {
             if (annotationMode == GameHomeState.AnnotationMode.RemoveMode) {
-                onAnnotationModeChanged(GameHomeState.AnnotationMode.Idle)
+                onAnnotationModeChange(GameHomeState.AnnotationMode.Idle)
             } else {
-                onAnnotationModeChanged(GameHomeState.AnnotationMode.RemoveMode)
+                onAnnotationModeChange(GameHomeState.AnnotationMode.RemoveMode)
             }
         },
         isSelected = annotationMode == GameHomeState.AnnotationMode.RemoveMode,
@@ -71,14 +71,14 @@ private fun RemoveButton(
 private fun AnnotationButton(
     annotationMode: GameHomeState.AnnotationMode,
     allowEditing: Boolean,
-    onAnnotationModeChanged: (GameHomeState.AnnotationMode) -> Unit,
+    onAnnotationModeChange: (GameHomeState.AnnotationMode) -> Unit,
 ) {
     HomeButton(
         onClick = {
             if (annotationMode == GameHomeState.AnnotationMode.DrawingMode) {
-                onAnnotationModeChanged(GameHomeState.AnnotationMode.Idle)
+                onAnnotationModeChange(GameHomeState.AnnotationMode.Idle)
             } else {
-                onAnnotationModeChanged(GameHomeState.AnnotationMode.DrawingMode)
+                onAnnotationModeChange(GameHomeState.AnnotationMode.DrawingMode)
             }
         },
         isSelected = annotationMode == GameHomeState.AnnotationMode.DrawingMode,
@@ -92,14 +92,14 @@ private fun AnnotationButton(
 private fun TextButton(
     annotationMode: GameHomeState.AnnotationMode,
     allowEditing: Boolean,
-    onAnnotationModeChanged: (GameHomeState.AnnotationMode) -> Unit,
+    onAnnotationModeChange: (GameHomeState.AnnotationMode) -> Unit,
 ) {
     HomeButton(
         onClick = {
             if (annotationMode == GameHomeState.AnnotationMode.TextMode) {
-                onAnnotationModeChanged(GameHomeState.AnnotationMode.Idle)
+                onAnnotationModeChange(GameHomeState.AnnotationMode.Idle)
             } else {
-                onAnnotationModeChanged(GameHomeState.AnnotationMode.TextMode)
+                onAnnotationModeChange(GameHomeState.AnnotationMode.TextMode)
             }
         },
         isSelected = annotationMode == GameHomeState.AnnotationMode.TextMode,
@@ -117,16 +117,16 @@ private fun TextButton(
 private fun DMToolsButton(
     annotationMode: GameHomeState.AnnotationMode,
     isDM: Boolean,
-    onAnnotationModeChanged: (GameHomeState.AnnotationMode) -> Unit,
+    onAnnotationModeChange: (GameHomeState.AnnotationMode) -> Unit,
 ) {
     if (!isDM) return
 
     HomeButton(
         onClick = {
             if (annotationMode == GameHomeState.AnnotationMode.DMMode) {
-                onAnnotationModeChanged(GameHomeState.AnnotationMode.Idle)
+                onAnnotationModeChange(GameHomeState.AnnotationMode.Idle)
             } else {
-                onAnnotationModeChanged(GameHomeState.AnnotationMode.DMMode)
+                onAnnotationModeChange(GameHomeState.AnnotationMode.DMMode)
             }
         },
         isSelected = annotationMode == GameHomeState.AnnotationMode.DMMode,
@@ -143,7 +143,7 @@ fun AnnotationToolsPreview() {
         AnnotationTools(
             annotationMode = GameHomeState.AnnotationMode.Idle,
             isDM = false,
-            onAnnotationModeChanged = {},
+            onAnnotationModeChange = {},
         )
     }
 }
@@ -155,7 +155,7 @@ fun AnnotationToolsDMPreview() {
         AnnotationTools(
             annotationMode = GameHomeState.AnnotationMode.Idle,
             isDM = true,
-            onAnnotationModeChanged = {},
+            onAnnotationModeChange = {},
         )
     }
 }

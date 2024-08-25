@@ -1,6 +1,8 @@
 package g.sig.questweaver.game.home.screens.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.layout.Box
@@ -19,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
@@ -28,18 +29,25 @@ import g.sig.questweaver.ui.AppTheme
 @Composable
 inline fun Transformable(
     modifier: Modifier = Modifier,
+    allowTransformations: Boolean = true,
+    enableClick: Boolean = true,
+    initialOffset: Offset = Offset.Zero,
+    initialAngle: Float = 0f,
+    initialZoom: Float = 1f,
     crossinline onRotationChange: (Float) -> Unit = {},
     crossinline onScaleChange: (Float) -> Unit = {},
     crossinline onPositionChange: (Offset) -> Unit = {},
+    crossinline onClick: () -> Unit = {},
+    border: BorderStroke? = null,
     content: @Composable () -> Unit = {},
 ) {
-    var offset by remember { mutableStateOf(Offset.Zero) }
-    var angle by remember { mutableFloatStateOf(0f) }
-    var zoom by remember { mutableFloatStateOf(1f) }
+    var offset by remember(initialOffset) { mutableStateOf(initialOffset) }
+    var angle by remember(initialAngle) { mutableFloatStateOf(initialAngle) }
+    var zoom by remember(initialZoom) { mutableFloatStateOf(initialZoom) }
 
     val state =
         rememberTransformableState { zoomChange, offsetChange, rotationChange ->
-            zoom = (zoom * zoomChange).coerceIn(0.2f, 4f)
+            zoom *= zoomChange
             angle += rotationChange
             offset += offsetChange
 
@@ -52,9 +60,20 @@ inline fun Transformable(
         modifier
             .offset { offset.round() }
             .scale(zoom)
-            .transformable(state)
+            .transformable(state, enabled = allowTransformations)
             .rotate(angle)
-            .border(1.dp, Color.Red),
+            .clickable(
+                interactionSource = null,
+                indication = null,
+                enabled = enableClick,
+                onClick = { onClick() },
+            ).then(
+                if (border != null) {
+                    Modifier.border(border)
+                } else {
+                    Modifier
+                },
+            ),
     ) {
         content()
     }

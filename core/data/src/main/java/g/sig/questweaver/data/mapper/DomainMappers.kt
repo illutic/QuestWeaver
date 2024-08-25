@@ -23,6 +23,7 @@ import g.sig.questweaver.data.dto.PointDto
 import g.sig.questweaver.data.dto.RemoveAnnotationDto
 import g.sig.questweaver.data.dto.RequestGameStateDto
 import g.sig.questweaver.data.dto.SizeDto
+import g.sig.questweaver.data.dto.TransformationDataDto
 import g.sig.questweaver.data.dto.UserDto
 import g.sig.questweaver.domain.entities.DomainEntity
 import g.sig.questweaver.domain.entities.blocks.Color
@@ -33,6 +34,7 @@ import g.sig.questweaver.domain.entities.common.Annotation
 import g.sig.questweaver.domain.entities.common.Device
 import g.sig.questweaver.domain.entities.common.Game
 import g.sig.questweaver.domain.entities.common.RemoveAnnotation
+import g.sig.questweaver.domain.entities.common.TransformationData
 import g.sig.questweaver.domain.entities.common.User
 import g.sig.questweaver.domain.entities.io.File
 import g.sig.questweaver.domain.entities.io.FileMetadata
@@ -58,6 +60,7 @@ fun DomainEntity.toDto(): Dto =
         is GameState -> toDto()
         is RemoveAnnotation -> toDto()
         is RequestGameState -> RequestGameStateDto
+        is TransformationData -> toDto()
         else -> throw IllegalArgumentException("Unknown DomainEntity type: $this")
     }
 
@@ -99,6 +102,7 @@ fun Annotation.Drawing.toDto() =
         strokeSize = strokeSize.toDto(),
         colorDto = color.toDto(),
         path = path.map { it.toDto() },
+        transformationDataDto = transformationData.toDto(),
     )
 
 fun Annotation.Text.toDto() =
@@ -106,18 +110,18 @@ fun Annotation.Text.toDto() =
         id = id,
         createdBy = createdBy,
         text = text,
-        sizeDTO = size.toDto(),
         colorDTO = color.toDto(),
-        anchor = anchor.toDto(),
+        transformationDataDto = transformationData.toDto(),
     )
 
 fun Annotation.Image.toDto() =
     AnnotationDto.ImageDto(
         id = id,
         createdBy = createdBy,
-        size = size.toDto(),
-        anchor = anchor.toDto(),
         fileDto = FileDto(uri.toDto(), metadata.toDto()),
+        width = width,
+        height = height,
+        transformationDataDto = transformationData.toDto(),
     )
 
 fun Annotation.toDto() =
@@ -146,3 +150,10 @@ fun ConnectionState.toDto(): ConnectionStateDto =
     }
 
 fun RemoveAnnotation.toDto() = RemoveAnnotationDto(id)
+
+fun TransformationData.toDto() =
+    TransformationDataDto(
+        scale = scale,
+        anchor = anchor.toDto(),
+        rotation = rotation,
+    )

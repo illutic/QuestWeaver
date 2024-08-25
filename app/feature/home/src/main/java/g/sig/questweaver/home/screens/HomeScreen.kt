@@ -3,7 +3,6 @@ package g.sig.questweaver.home.screens
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,7 +25,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
@@ -34,10 +32,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -46,7 +42,6 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import g.sig.questweaver.common.ui.components.CenteredProgressBar
 import g.sig.questweaver.common.ui.components.ImageWithPlaceholder
 import g.sig.questweaver.common.ui.components.PermissionsAlert
-import g.sig.questweaver.common.ui.components.drawAnnotations
 import g.sig.questweaver.common.ui.layouts.ScreenScaffold
 import g.sig.questweaver.domain.entities.blocks.Uri
 import g.sig.questweaver.domain.entities.common.Game
@@ -140,20 +135,7 @@ private fun RecentGameCard(
         tonalElevation = smallSize,
         shape = MediumRoundedShape,
     ) {
-        val textMeasurer = rememberTextMeasurer()
-        val textStyle = LocalTextStyle.current
-        val context = LocalContext.current
-
         Box {
-            Canvas(modifier = Modifier.matchParentSize()) {
-                drawAnnotations(
-                    recentGameState?.annotations.orEmpty(),
-                    textMeasurer,
-                    textStyle,
-                    context,
-                )
-            }
-
             Row(
                 modifier =
                     Modifier

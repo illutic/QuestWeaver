@@ -17,4 +17,8 @@ data class Point(
         val dy = y - other.y
         return sqrt((dx * dx + dy * dy).toDouble()).toFloat()
     }
+
+    companion object {
+        val Zero = Point(0f, 0f)
+    }
 }

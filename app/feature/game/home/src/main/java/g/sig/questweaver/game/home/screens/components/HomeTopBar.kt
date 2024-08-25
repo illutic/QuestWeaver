@@ -16,7 +16,7 @@ internal fun GameHomeTopBar(
     title: String,
     modifier: Modifier = Modifier,
     icon: Painter? = null,
-    onBackPressed: () -> Unit = {},
+    onBackPress: () -> Unit = {},
 ) {
     TopAppBar(
         title = { Text(text = title) },
@@ -24,7 +24,7 @@ internal fun GameHomeTopBar(
         scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(),
         navigationIcon = {
             icon?.let {
-                IconButton(onClick = onBackPressed) {
+                IconButton(onClick = onBackPress) {
                     Icon(painter = it, contentDescription = "Back")
                 }
             }
