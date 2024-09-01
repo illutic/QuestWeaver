@@ -73,7 +73,12 @@ class GameHomeViewModel
                 GameHomeIntent.HideColorPicker -> setState { copy(showColorPicker = false) }
 
                 is GameHomeIntent.SelectOpacity -> {
-                    setState { copy(selectedColor = selectedColor.copy(alpha = intent.opacity)) }
+                    setState {
+                        copy(
+                            selectedColor = selectedColor.copy(alpha = intent.opacity),
+                            opacity = intent.opacity,
+                        )
+                    }
                 }
 
                 is GameHomeIntent.AddImage -> {
