@@ -12,11 +12,16 @@ import g.sig.questweaver.data.datasources.gamestate.GameStatesDataStore
 import g.sig.questweaver.data.repositories.GameStateRepositoryImpl
 import g.sig.questweaver.domain.repositories.GameStateRepository
 import g.sig.questweaver.domain.usecases.game.GetGameUseCase
+import g.sig.questweaver.domain.usecases.game.UpdateGameUseCase
 import g.sig.questweaver.domain.usecases.game.state.CreateGameStateUseCase
 import g.sig.questweaver.domain.usecases.game.state.CreateOrUpdateGameStateUseCase
 import g.sig.questweaver.domain.usecases.game.state.GetGameStateUseCase
+import g.sig.questweaver.domain.usecases.game.state.LoadGameStateUseCase
 import g.sig.questweaver.domain.usecases.game.state.RemoveGameStateUseCase
 import g.sig.questweaver.domain.usecases.game.state.UpdateGameStateUseCase
+import g.sig.questweaver.domain.usecases.nearby.OnPayloadReceivedUseCase
+import g.sig.questweaver.domain.usecases.nearby.SendPayloadUseCase
+import g.sig.questweaver.domain.usecases.user.GetUserUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Singleton
 
@@ -99,5 +104,28 @@ object GameStateModule {
             updateGameStateUseCase,
             getGameStateUseCase,
             defaultDispatcher,
+        )
+
+    @Provides
+    @Singleton
+    fun provideLoadGameStateUseCase(
+        getGameUseCase: GetGameUseCase,
+        getUserUseCase: GetUserUseCase,
+        getGameStateUseCase: GetGameStateUseCase,
+        sendPayloadUseCase: SendPayloadUseCase,
+        onPayloadReceived: OnPayloadReceivedUseCase,
+        createOrUpdateGameStateUseCase: CreateOrUpdateGameStateUseCase,
+        updateGameUseCase: UpdateGameUseCase,
+        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher,
+    ): LoadGameStateUseCase =
+        LoadGameStateUseCase(
+            getGameUseCase = getGameUseCase,
+            getUserUseCase = getUserUseCase,
+            getGameStateUseCase = getGameStateUseCase,
+            sendPayloadUseCase = sendPayloadUseCase,
+            onPayloadReceived = onPayloadReceived,
+            createOrUpdateGameStateUseCase = createOrUpdateGameStateUseCase,
+            updateGameUseCase = updateGameUseCase,
+            defaultDispatcher = defaultDispatcher,
         )
 }

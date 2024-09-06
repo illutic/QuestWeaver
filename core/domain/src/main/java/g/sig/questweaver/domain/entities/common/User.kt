@@ -5,4 +5,8 @@ import g.sig.questweaver.domain.entities.DomainEntity
 data class User(
     val name: String,
     val id: String,
-) : DomainEntity
+) : DomainEntity {
+    companion object {
+        val Empty = User("", "")
+    }
+}

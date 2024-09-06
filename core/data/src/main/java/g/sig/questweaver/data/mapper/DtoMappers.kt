@@ -18,7 +18,6 @@ import g.sig.questweaver.data.dto.FileMetadataDto
 import g.sig.questweaver.data.dto.GameDto
 import g.sig.questweaver.data.dto.GameStateDto
 import g.sig.questweaver.data.dto.PointDto
-import g.sig.questweaver.data.dto.RemoveAnnotationDto
 import g.sig.questweaver.data.dto.RequestGameStateDto
 import g.sig.questweaver.data.dto.SizeDto
 import g.sig.questweaver.data.dto.TransformationDataDto
@@ -31,7 +30,6 @@ import g.sig.questweaver.domain.entities.blocks.Uri
 import g.sig.questweaver.domain.entities.common.Annotation
 import g.sig.questweaver.domain.entities.common.Device
 import g.sig.questweaver.domain.entities.common.Game
-import g.sig.questweaver.domain.entities.common.RemoveAnnotation
 import g.sig.questweaver.domain.entities.common.TransformationData
 import g.sig.questweaver.domain.entities.common.User
 import g.sig.questweaver.domain.entities.io.File
@@ -62,7 +60,6 @@ fun Dto.toDomain(): DomainEntity =
         is GameStateDto -> toDomain()
         is ConnectionStateDto -> toDomain()
         is DeviceDto -> toDomain()
-        is RemoveAnnotationDto -> toDomain()
         is RequestGameStateDto -> RequestGameState
         is TransformationDataDto -> toDomain()
         else -> throw IllegalArgumentException("Unknown Dto type: $this")
@@ -160,8 +157,6 @@ fun ConnectionStateDto.toDomain(): ConnectionState =
         is ErrorDto.ConnectionRequestError -> Error.ConnectionRequestError(throwable)
         is ErrorDto.DisconnectionError -> Error.DisconnectionError(endpointId)
     }
-
-fun RemoveAnnotationDto.toDomain(): RemoveAnnotation = RemoveAnnotation(id)
 
 fun TransformationDataDto.toDomain() =
     TransformationData(

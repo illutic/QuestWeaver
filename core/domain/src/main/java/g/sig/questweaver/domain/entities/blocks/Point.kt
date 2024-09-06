@@ -22,3 +22,10 @@ data class Point(
         val Zero = Point(0f, 0f)
     }
 }
+
+fun List<Point>.optimize(): List<Point> =
+    runningReduce { acc, point ->
+        if (acc.distanceTo(point) > POINT_TOLERANCE) point else acc
+    }
+
+private const val POINT_TOLERANCE = 0.01f

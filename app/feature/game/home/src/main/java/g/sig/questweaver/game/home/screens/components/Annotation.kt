@@ -36,8 +36,8 @@ import g.sig.questweaver.game.home.data.Drawing
 import g.sig.questweaver.game.home.data.Image
 import g.sig.questweaver.game.home.data.Text
 import g.sig.questweaver.game.home.data.toUiItem
+import g.sig.questweaver.game.home.state.AnnotationMode
 import g.sig.questweaver.game.home.state.GameHomeIntent
-import g.sig.questweaver.game.home.state.GameHomeState
 import g.sig.questweaver.ui.MediumRoundedShape
 import g.sig.questweaver.ui.defaultAnimationSpec
 import kotlinx.coroutines.delay
@@ -47,7 +47,7 @@ private const val COMMIT_DELAY = 500L
 @Composable
 fun Annotation(
     annotation: Annotation,
-    mode: GameHomeState.AnnotationMode,
+    mode: AnnotationMode,
     isDm: Boolean,
     userId: String,
     modifier: Modifier = Modifier,
@@ -121,7 +121,7 @@ fun Annotation(
         is Text ->
             TextAnnotation(
                 modifier = modifier,
-                allowEditing = allowTransformations && mode == GameHomeState.AnnotationMode.TextMode,
+                allowEditing = allowTransformations && mode == AnnotationMode.TextMode,
                 allowTransformations = allowTransformations,
                 annotationUiItem = annotationUiItem,
                 onPositionChange = onPositionChange,
