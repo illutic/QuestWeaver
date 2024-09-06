@@ -3,24 +3,16 @@ package g.sig.questweaver.game.home.data
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import g.sig.questweaver.common.ui.mappers.toColor
-import g.sig.questweaver.common.ui.mappers.topLeft
-import g.sig.questweaver.domain.entities.blocks.Size
+import g.sig.questweaver.domain.entities.blocks.Point
 import g.sig.questweaver.domain.entities.common.Annotation
-import g.sig.questweaver.domain.entities.common.Game
 import g.sig.questweaver.domain.entities.common.RemoveAnnotation
-import g.sig.questweaver.domain.entities.common.TransformationData
 import g.sig.questweaver.domain.entities.states.GameState
-import g.sig.questweaver.domain.entities.states.RequestGameState
 import g.sig.questweaver.domain.usecases.game.GetGameUseCase
-import g.sig.questweaver.domain.usecases.game.UpdateGameUseCase
-import g.sig.questweaver.domain.usecases.game.state.CreateOrUpdateGameStateUseCase
-import g.sig.questweaver.domain.usecases.game.state.GetGameStateUseCase
-import g.sig.questweaver.domain.usecases.game.state.UpdateGameStateUseCase
+import g.sig.questweaver.domain.usecases.game.state.LoadGameStateUseCase
+import g.sig.questweaver.domain.usecases.game.state.LoadInitialGameStateUseCase
 import g.sig.questweaver.domain.usecases.nearby.BroadcastPayloadUseCase
-import g.sig.questweaver.domain.usecases.nearby.OnPayloadReceivedUseCase
-import g.sig.questweaver.domain.usecases.nearby.SendPayloadUseCase
 import g.sig.questweaver.domain.usecases.user.GetUserUseCase
+import g.sig.questweaver.game.home.state.AnnotationMode
 import g.sig.questweaver.game.home.state.GameHomeEvent
 import g.sig.questweaver.game.home.state.GameHomeIntent
 import g.sig.questweaver.game.home.state.GameHomeState
@@ -31,26 +23,19 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.UUID
 import javax.inject.Inject
-
-// TODO - Move logic to domain
 
 @HiltViewModel
 class GameHomeViewModel
     @Inject
     constructor(
-        private val broadcastPayload: BroadcastPayloadUseCase,
-        private val sendPayloadUseCase: SendPayloadUseCase,
-        private val onPayloadReceived: OnPayloadReceivedUseCase,
-        private val getGameState: GetGameStateUseCase,
-        private val createOrUpdateGameStateUseCase: CreateOrUpdateGameStateUseCase,
-        private val updateGameStateUseCase: UpdateGameStateUseCase,
-        private val updateGameUseCase: UpdateGameUseCase,
+        private val loadGameState: LoadGameStateUseCase,
+        private val loadInitialGameStateUseCase: LoadInitialGameStateUseCase,
         private val getGame: GetGameUseCase,
         private val getUser: GetUserUseCase,
+        private val broadcastPayload: BroadcastPayloadUseCase,
     ) : ViewModel() {
-        private val _state = MutableStateFlow<GameHomeState>(GameHomeState.Loading)
+        private val _state = MutableStateFlow(GameHomeState())
         private val _events = Channel<GameHomeEvent>()
         val events = _events.receiveAsFlow()
         val state = _state.asStateFlow()
@@ -59,102 +44,26 @@ class GameHomeViewModel
             when (intent) {
                 is GameHomeIntent.Back -> viewModelScope.launch { _events.send(GameHomeEvent.Back) }
                 is GameHomeIntent.Load -> loadHomeScreen()
-                is GameHomeIntent.AddDrawing -> addDrawing(intent)
-                is GameHomeIntent.AddText -> addText(intent)
-                is GameHomeIntent.SelectAnnotation -> selectAnnotation(intent)
-                is GameHomeIntent.SelectColor -> updateStateIfLoaded { copy(selectedColor = intent.color) }
-                is GameHomeIntent.SelectSize ->
-                    updateStateIfLoaded { copy(selectedSize = Size(intent.size, intent.size)) }
+                is GameHomeIntent.AddDrawing -> addDrawing(intent.path)
+                is GameHomeIntent.AddText -> addText(intent.anchor)
+                is GameHomeIntent.SelectAnnotation -> selectAnnotation(intent.annotation)
+                is GameHomeIntent.SelectSize -> setState { updateSize(intent.size) }
+                is GameHomeIntent.SelectOpacity -> setState { updateOpacity(intent.opacity) }
+                is GameHomeIntent.ChangeText -> updateText(intent.id, intent.text)
+                is GameHomeIntent.SelectColor -> setState { copy(selectedColor = intent.color) }
+                is GameHomeIntent.SelectPlayer -> setState { copy(selectedPlayer = intent.player) }
+                is GameHomeIntent.ChangeMode -> setState { copy(annotationMode = intent.mode) }
+                is GameHomeIntent.AddImage -> {}
+                GameHomeIntent.ShowColorPicker -> setState { copy(showColorPicker = true) }
+                GameHomeIntent.HideColorPicker -> setState { copy(showColorPicker = false) }
 
-                is GameHomeIntent.ChangeMode -> updateStateIfLoaded { copy(annotationMode = intent.mode) }
-                is GameHomeIntent.SelectPlayer -> updateStateIfLoaded { copy(selectedPlayer = intent.player) }
-                is GameHomeIntent.ChangeText -> updateText(intent)
-                GameHomeIntent.ShowColorPicker -> updateStateIfLoaded { copy(showColorPicker = true) }
-                GameHomeIntent.HideColorPicker -> updateStateIfLoaded { copy(showColorPicker = false) }
-
-                is GameHomeIntent.SelectOpacity -> {
-                    updateStateIfLoaded {
-                        copy(
-                            selectedColor = selectedColor.copy(alpha = intent.opacity),
-                            opacity = intent.opacity,
-                        )
-                    }
-                }
-
-                is GameHomeIntent.AddImage -> {
-                    // TODO Add image
-                }
-
-                is GameHomeIntent.CommitTransformation -> {
-                    updateAnnotationTransformationData(
-                        intent.id,
-                        TransformationData(
-                            scale = intent.scale,
-                            rotation = intent.rotation,
-                            anchor = intent.anchor,
-                        ),
+                is GameHomeIntent.CommitTransformation ->
+                    updateTransformation(
+                        id = intent.id,
+                        scale = intent.scale,
+                        rotation = intent.rotation,
+                        anchor = intent.anchor,
                     )
-                }
-            }
-        }
-
-        private fun addDrawing(intent: GameHomeIntent.AddDrawing) =
-            viewModelScope.launch {
-                val state = state.value
-                if (state !is GameHomeState.Loaded) return@launch
-
-                if (state.opacity < ALPHA_MIN) return@launch
-
-                val points =
-                    intent.path.runningReduce { acc, point ->
-                        if (acc.distanceTo(point) > POINT_TOLERANCE) point else acc
-                    }
-
-                val drawing =
-                    Annotation.Drawing(
-                        path = points,
-                        strokeSize = intent.strokeSize,
-                        color = state.selectedColor.toColor(),
-                        createdBy = state.currentUser.id,
-                        id = UUID.randomUUID().toString(),
-                        transformationData =
-                            TransformationData(
-                                scale = 1f,
-                                rotation = 0f,
-                                anchor = points.topLeft(),
-                            ),
-                    )
-                broadcastPayload(drawing)
-                addAnnotation(drawing)
-            }
-
-        private fun addText(intent: GameHomeIntent.AddText) =
-            viewModelScope.launch {
-                val state = state.value
-                if (state !is GameHomeState.Loaded) return@launch
-
-                val text =
-                    Annotation.Text(
-                        text = "",
-                        color = state.selectedColor.toColor(),
-                        createdBy = state.currentUser.id,
-                        id = UUID.randomUUID().toString(),
-                        transformationData = intent.transformationData,
-                    )
-                addAnnotation(text)
-            }
-
-        private fun updateText(intent: GameHomeIntent.ChangeText) {
-            val state = state.value
-            if (state !is GameHomeState.Loaded) return
-
-            val textAnnotation = state.annotations[intent.id] as? Annotation.Text ?: return
-            val updatedText = textAnnotation.copy(text = intent.text)
-
-            if (updatedText.text.isEmpty()) {
-                attemptRemoveAnnotation(updatedText.id)
-            } else {
-                updateAnnotation(updatedText)
             }
         }
 
@@ -167,71 +76,20 @@ class GameHomeViewModel
         private fun loadHomeScreen() =
             viewModelScope
                 .launch {
-                    _state.value = GameHomeState.Loaded(currentUser = getUser())
-                    updateGameState()
-                    onPayloadReceived {
-                        when (val data = it.payloadData.data) {
-                            is Annotation -> addAnnotation(data)
-
-                            is RemoveAnnotation -> removeAnnotation(data.id)
-
-                            is GameState -> {
-                                createOrUpdateGameStateUseCase(data)
-                                updateGameState(data)
-                            }
-
-                            is Game -> updateGameUseCase(data)
-
-                            else -> Unit
-                        }
-                    }
-                }.also { loadingJob = it }
-
-        private fun selectAnnotation(intent: GameHomeIntent.SelectAnnotation) =
-            viewModelScope.launch {
-                val state = state.value
-                if (state !is GameHomeState.Loaded) return@launch
-
-                when (state.annotationMode) {
-                    GameHomeState.AnnotationMode.RemoveMode -> attemptRemoveAnnotation(intent.annotation?.id)
-
-                    else -> updateStateIfLoaded { copy(selectedAnnotation = intent.annotation) }
+                    launch { loadGameState { updateGameState(it) } }
+                    loadInitialGameStateUseCase()
+                }.also {
+                    loadingJob = it
                 }
-            }
 
-        private fun attemptRemoveAnnotation(annotationId: String?) =
-            viewModelScope.launch {
-                val state = state.value
-                if (state !is GameHomeState.Loaded) return@launch
-
-                val user = state.currentUser
-                val annotation = state.annotations[annotationId] ?: return@launch
-                val canRemoveAnnotation = state.isDM || annotation.createdBy == user.id
-                if (canRemoveAnnotation) {
-                    val payload = RemoveAnnotation(annotation.id)
-                    broadcastPayload(payload)
-                    removeAnnotation(annotation.id)
-                }
-            }
-
-        private suspend fun updateGameState(gameStateReceived: GameState? = null) {
-            val game = getGame()
+        private suspend fun updateGameState(gameState: GameState) {
+            val game = getGame(gameState.gameId)
             val user = getUser()
-            val isDM = game?.dmId == user.id
-            val gameState =
-                when {
-                    isDM -> checkNotNull(getGameState())
-                    gameStateReceived != null -> gameStateReceived
-                    else -> {
-                        game?.hostDeviceId?.let { sendPayloadUseCase(it, RequestGameState) }
-                        return
-                    }
-                }
+            val isDM = game.dmId == user.id
 
-            updateStateIfLoaded {
+            setState {
                 copy(
                     isDM = isDM,
-                    currentUser = user,
                     users = gameState.connectedUsers,
                     annotations = gameState.annotations.associateBy { it.id },
                     allowAnnotations = gameState.allowEditing || isDM,
@@ -239,69 +97,71 @@ class GameHomeViewModel
             }
         }
 
-        private fun addAnnotation(annotation: Annotation) {
-            viewModelScope.launch {
-                val state = state.value
-                if (state !is GameHomeState.Loaded) return@launch
-
-                val updatedAnnotations = state.annotations.toMutableMap()
-                updatedAnnotations[annotation.id] = annotation
-                updateStateIfLoaded { copy(annotations = updatedAnnotations) }
-                updateGameStateUseCase(
-                    annotations = updatedAnnotations.values.toList(),
-                )
-            }
-        }
-
-        private fun updateAnnotation(annotation: Annotation) {
-            viewModelScope.launch {
-                addAnnotation(annotation)
-                broadcastPayload(annotation)
-            }
-        }
-
-        private fun updateAnnotationTransformationData(
-            id: String,
-            data: TransformationData,
-        ) {
-            val state = state.value
-            if (state !is GameHomeState.Loaded) return
-
-            val updatedAnnotations = state.annotations.toMutableMap()
-            val annotation = updatedAnnotations[id] ?: return
-            val updatedAnnotation =
-                when (annotation) {
-                    is Annotation.Text -> annotation.copy(transformationData = data)
-                    is Annotation.Drawing -> annotation.copy(transformationData = data)
-                    is Annotation.Image -> annotation.copy(transformationData = data)
+        private fun addDrawing(path: List<Point>) {
+            val annotation = state.value.makeDrawing(path)
+            if (annotation != null) {
+                setState { copy(annotations = annotations + (annotation.id to annotation)) }
+                viewModelScope.launch {
+                    broadcastPayload(annotation)
                 }
-            updatedAnnotations[id] = updatedAnnotation
-            updateStateIfLoaded { copy(annotations = updatedAnnotations) }
-            viewModelScope.launch {
-                broadcastPayload(updatedAnnotation)
-                updateGameStateUseCase(annotations = updatedAnnotations.values.toList())
             }
         }
 
-        private fun removeAnnotation(annotationId: String) {
+        private fun addText(anchor: Point) {
+            val annotation = state.value.makeText(anchor)
+            if (annotation != null) {
+                setState { copy(annotations = annotations + (annotation.id to annotation)) }
+                viewModelScope.launch {
+                    broadcastPayload(annotation)
+                }
+            }
+        }
+
+        private fun updateText(
+            id: String,
+            text: String,
+        ) {
+            val annotation = state.value.getUpdatedText(id, text)
+            if (annotation != null) {
+                when (annotation) {
+                    is RemoveAnnotation -> {
+                        setState { copy(annotations = annotations - annotation.id) }
+                    }
+                    is Annotation.Text -> {
+                        setState { copy(annotations = annotations + (annotation.id to annotation)) }
+                    }
+                }
+                viewModelScope.launch {
+                    broadcastPayload(annotation)
+                }
+            }
+        }
+
+        private fun selectAnnotation(annotation: Annotation) {
             val state = state.value
-            if (state !is GameHomeState.Loaded) return
-
-            val updatedAnnotations = state.annotations.toMutableMap()
-            updatedAnnotations.remove(annotationId)
-            updateStateIfLoaded { copy(annotations = updatedAnnotations) }
-            viewModelScope.launch {
-                updateGameStateUseCase(annotations = updatedAnnotations.values.toList())
+            val selectedAnnotation = state.annotations[annotation.id] ?: return
+            if (state.annotationMode == AnnotationMode.RemoveMode) {
+                setState { copy(annotations = state.annotations - annotation.id) }
+                viewModelScope.launch {
+                    broadcastPayload(RemoveAnnotation(selectedAnnotation.id))
+                }
             }
         }
 
-        private inline fun updateStateIfLoaded(block: GameHomeState.Loaded.() -> GameHomeState) =
-            _state.update {
-                if (it is GameHomeState.Loaded) it.block() else it
+        private fun updateTransformation(
+            id: String,
+            scale: Float,
+            rotation: Float,
+            anchor: Point,
+        ) {
+            val annotation = state.value.updateTransformation(id, scale, rotation, anchor)
+            if (annotation != null) {
+                setState { copy(annotations = annotations + (annotation.id to annotation)) }
+                viewModelScope.launch {
+                    broadcastPayload(annotation)
+                }
             }
-
-        companion object {
-            private const val ALPHA_MIN = 0.1f
-            private const val POINT_TOLERANCE = 0.01f
         }
+
+        private inline fun setState(block: GameHomeState.() -> GameHomeState) = _state.update(block)
     }
