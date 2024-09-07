@@ -2,6 +2,7 @@ package g.sig.questweaver.game.home.state
 
 import androidx.compose.ui.graphics.Color
 import g.sig.questweaver.domain.entities.blocks.Point
+import g.sig.questweaver.domain.entities.blocks.Size
 import g.sig.questweaver.domain.entities.common.Annotation
 import g.sig.questweaver.domain.entities.common.TransformationData
 import g.sig.questweaver.domain.entities.common.User
@@ -12,15 +13,16 @@ sealed interface GameHomeIntent {
     data object Load : GameHomeIntent
 
     data class ChangeMode(
-        val mode: AnnotationMode,
+        val mode: GameHomeState.AnnotationMode,
     ) : GameHomeIntent
 
     data class AddText(
-        val anchor: Point,
+        val transformationData: TransformationData,
     ) : GameHomeIntent
 
     data class AddDrawing(
         val path: List<Point>,
+        val strokeSize: Size,
     ) : GameHomeIntent
 
     data class AddImage(
@@ -43,7 +45,7 @@ sealed interface GameHomeIntent {
     ) : GameHomeIntent
 
     data class SelectAnnotation(
-        val annotation: Annotation,
+        val annotation: Annotation?,
     ) : GameHomeIntent
 
     data class SelectPlayer(

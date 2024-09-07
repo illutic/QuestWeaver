@@ -23,7 +23,7 @@ private const val LABEL_WIDTH_PERCENT = 0.2f
 
 @Composable
 fun HomeEditControls(
-    state: GameHomeState,
+    state: GameHomeState.Loaded,
     postIntent: (GameHomeIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
