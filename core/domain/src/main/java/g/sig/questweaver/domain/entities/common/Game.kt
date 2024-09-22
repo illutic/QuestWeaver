@@ -12,4 +12,14 @@ data class Game(
     val maxPlayers: Int,
     val dmId: String? = null,
     val hostDeviceId: String? = null,
-) : DomainEntity
+) : DomainEntity {
+    companion object {
+        val Empty =
+            Game(
+                gameId = "",
+                title = "",
+                description = "",
+                maxPlayers = 0,
+            )
+    }
+}

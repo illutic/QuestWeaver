@@ -32,13 +32,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpSize
 import androidx.core.view.HapticFeedbackConstantsCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import g.sig.questweaver.common.ui.components.CenteredProgressBar
 import g.sig.questweaver.common.ui.mappers.getStrokeWidth
 import g.sig.questweaver.common.ui.mappers.toPath
 import g.sig.questweaver.common.ui.mappers.toPoint
 import g.sig.questweaver.domain.entities.blocks.Point
-import g.sig.questweaver.domain.entities.common.TransformationData
-import g.sig.questweaver.domain.entities.common.User
 import g.sig.questweaver.game.home.R
 import g.sig.questweaver.game.home.data.GameHomeViewModel
 import g.sig.questweaver.game.home.screens.components.Annotation
@@ -46,6 +43,7 @@ import g.sig.questweaver.game.home.screens.components.AnnotationTools
 import g.sig.questweaver.game.home.screens.components.ColorPicker
 import g.sig.questweaver.game.home.screens.components.GameHomeTopBar
 import g.sig.questweaver.game.home.screens.components.HomeEditControls
+import g.sig.questweaver.game.home.state.AnnotationMode
 import g.sig.questweaver.game.home.state.GameHomeEvent
 import g.sig.questweaver.game.home.state.GameHomeIntent
 import g.sig.questweaver.game.home.state.GameHomeState
@@ -88,42 +86,34 @@ internal fun GameHomeScreen(
             )
         },
         sheetContent = {
-            when (state) {
-                is GameHomeState.Loaded -> GameHomeScreenSheetContent(state, postIntent)
-                is GameHomeState.Loading -> Unit
-            }
+            if (state.isLoading) return@BottomSheetScaffold
+            GameHomeScreenSheetContent(state, postIntent)
         },
     ) { padding ->
-        when (state) {
-            is GameHomeState.Loaded -> {
-                if (state.showColorPicker) {
-                    ColorPicker(
-                        initialColor = state.selectedColor,
-                        onDismiss = { postIntent(GameHomeIntent.HideColorPicker) },
-                        onColorSelect = { postIntent(GameHomeIntent.SelectColor(it)) },
-                    )
-                }
-
-                GameHomeBottomSheetControls(bottomSheetScaffoldState = scaffoldState, state = state)
-
-                GameHomeScreenContent(
-                    state = state,
-                    postIntent = postIntent,
-                    modifier =
-                        Modifier
-                            .fillMaxSize()
-                            .padding(padding),
-                )
-            }
-
-            is GameHomeState.Loading -> CenteredProgressBar()
+        if (state.showColorPicker) {
+            ColorPicker(
+                initialColor = state.selectedColor,
+                onDismiss = { postIntent(GameHomeIntent.HideColorPicker) },
+                onColorSelect = { postIntent(GameHomeIntent.SelectColor(it)) },
+            )
         }
+
+        GameHomeBottomSheetControls(bottomSheetScaffoldState = scaffoldState, state = state)
+
+        GameHomeScreenContent(
+            state = state,
+            postIntent = postIntent,
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(padding),
+        )
     }
 }
 
 @Composable
 private fun GameHomeScreenContent(
-    state: GameHomeState.Loaded,
+    state: GameHomeState,
     postIntent: (GameHomeIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -133,22 +123,21 @@ private fun GameHomeScreenContent(
 
     BoxWithConstraints(
         modifier =
-            modifier
-                .annotateDrawing(
-                    state,
-                    canvasSize,
-                    currentlyDrawnPoints,
-                    postIntent,
-                ).pointerInput(state) {
-                    detectTapGestures {
-                        if (state.annotationMode != GameHomeState.AnnotationMode.TextMode) return@detectTapGestures
+        modifier
+            .annotateDrawing(
+                state,
+                canvasSize,
+                currentlyDrawnPoints,
+                postIntent,
+            )
+            .pointerInput(state) {
+                detectTapGestures {
+                        if (state.annotationMode != AnnotationMode.TextMode) return@detectTapGestures
                         postIntent(
-                            GameHomeIntent.AddText(
-                                TransformationData(anchor = it.toPoint(canvasSize)),
-                            ),
+                            GameHomeIntent.AddText(anchor = it.toPoint(canvasSize)),
                         )
                     }
-                },
+            },
     ) {
         val size = remember(maxWidth, maxHeight) { DpSize(maxWidth, maxHeight) }
         canvasSize = remember(density, size) { with(density) { size.toSize() } }
@@ -158,7 +147,7 @@ private fun GameHomeScreenContent(
                 annotation,
                 canvasSize = canvasSize,
                 mode = state.annotationMode,
-                userId = state.currentUser.id,
+                userId = state.user.id,
                 isDm = state.isDM,
                 postIntent = postIntent,
             )
@@ -166,11 +155,11 @@ private fun GameHomeScreenContent(
 
         Canvas(
             modifier =
-                Modifier
-                    .matchParentSize()
-                    .annotateDrawing(state, canvasSize, currentlyDrawnPoints, postIntent),
+            Modifier
+                .matchParentSize()
+                .annotateDrawing(state, canvasSize, currentlyDrawnPoints, postIntent),
         ) {
-            if (state.annotationMode == GameHomeState.AnnotationMode.DrawingMode) {
+            if (state.annotationMode == AnnotationMode.DrawingMode) {
                 drawPath(
                     path = currentlyDrawnPoints.toPath(canvasSize),
                     color = state.selectedColor,
@@ -184,7 +173,7 @@ private fun GameHomeScreenContent(
 
 @Composable
 private fun GameHomeScreenSheetContent(
-    state: GameHomeState.Loaded,
+    state: GameHomeState,
     postIntent: (GameHomeIntent) -> Unit,
 ) {
     Column(
@@ -202,8 +191,9 @@ private fun GameHomeScreenSheetContent(
         )
 
         when (state.annotationMode) {
-            GameHomeState.AnnotationMode.TextMode,
-            GameHomeState.AnnotationMode.DrawingMode -> {
+            AnnotationMode.TextMode,
+            AnnotationMode.DrawingMode,
+            -> {
                 HomeEditControls(
                     state = state,
                     postIntent = postIntent,
@@ -211,27 +201,28 @@ private fun GameHomeScreenSheetContent(
                 )
             }
 
-            GameHomeState.AnnotationMode.Idle,
-            GameHomeState.AnnotationMode.RemoveMode -> Unit
+            AnnotationMode.Idle,
+            AnnotationMode.RemoveMode,
+            -> Unit
 
-            GameHomeState.AnnotationMode.DMMode -> TODO()
+            AnnotationMode.DMMode -> TODO()
         }
     }
 }
 
 private fun Modifier.annotateDrawing(
-    state: GameHomeState.Loaded,
+    state: GameHomeState,
     canvasSize: Size,
     drawnPoints: MutableList<Point>,
     postIntent: (GameHomeIntent) -> Unit,
 ) = composed {
     val view = LocalView.current
-    if (state.annotationMode != GameHomeState.AnnotationMode.DrawingMode) return@composed this
+    if (state.annotationMode != AnnotationMode.DrawingMode) return@composed this
 
     pointerInput(state.annotationMode) {
         detectDragGestures(
             onDragEnd = {
-                postIntent(GameHomeIntent.AddDrawing(drawnPoints, state.selectedSize))
+                postIntent(GameHomeIntent.AddDrawing(drawnPoints))
                 drawnPoints.clear()
             },
             onDragStart = { drawnPoints.clear() },
@@ -248,15 +239,15 @@ private fun Modifier.annotateDrawing(
 @Composable
 private fun GameHomeBottomSheetControls(
     bottomSheetScaffoldState: BottomSheetScaffoldState,
-    state: GameHomeState.Loaded,
+    state: GameHomeState,
 ) {
     val bottomSheetState = bottomSheetScaffoldState.bottomSheetState
     val keyboardController = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(state.annotationMode) {
         when (state.annotationMode) {
-            GameHomeState.AnnotationMode.TextMode,
-            GameHomeState.AnnotationMode.DrawingMode,
+            AnnotationMode.TextMode,
+            AnnotationMode.DrawingMode,
             -> bottomSheetState.expand()
 
             else -> bottomSheetState.expand()
@@ -271,5 +262,5 @@ private fun GameHomeBottomSheetControls(
 @Preview
 @Composable
 internal fun GameHomePreview() {
-    AppTheme { GameHomeScreen(GameHomeState.Loaded(User("", ""))) {} }
+    AppTheme { GameHomeScreen(GameHomeState()) {} }
 }

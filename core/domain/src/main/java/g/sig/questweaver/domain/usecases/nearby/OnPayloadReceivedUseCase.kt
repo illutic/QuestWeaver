@@ -14,8 +14,8 @@ class OnPayloadReceivedUseCase(
     suspend inline operator fun invoke(crossinline onPayload: suspend (IncomingPayload) -> Unit) =
         withContext(defaultDispatcher) {
             payloadRepository.data.collect {
-                onPayload(it)
                 handleDmPayloadUseCase(it)
+                onPayload(it)
             }
         }
 }

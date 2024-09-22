@@ -15,8 +15,14 @@ import g.sig.questweaver.domain.usecases.game.GetGameUseCase
 import g.sig.questweaver.domain.usecases.game.state.CreateGameStateUseCase
 import g.sig.questweaver.domain.usecases.game.state.CreateOrUpdateGameStateUseCase
 import g.sig.questweaver.domain.usecases.game.state.GetGameStateUseCase
+import g.sig.questweaver.domain.usecases.game.state.LoadGameStateUseCase
+import g.sig.questweaver.domain.usecases.game.state.LoadInitialGameStateUseCase
 import g.sig.questweaver.domain.usecases.game.state.RemoveGameStateUseCase
 import g.sig.questweaver.domain.usecases.game.state.UpdateGameStateUseCase
+import g.sig.questweaver.domain.usecases.nearby.BroadcastPayloadUseCase
+import g.sig.questweaver.domain.usecases.nearby.OnPayloadReceivedUseCase
+import g.sig.questweaver.domain.usecases.nearby.SendPayloadUseCase
+import g.sig.questweaver.domain.usecases.user.GetUserUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Singleton
 
@@ -99,5 +105,39 @@ object GameStateModule {
             updateGameStateUseCase,
             getGameStateUseCase,
             defaultDispatcher,
+        )
+
+    @Provides
+    @Singleton
+    fun provideLoadGameStateUseCase(
+        updateGameStateUseCase: UpdateGameStateUseCase,
+        getGameStateUseCase: GetGameStateUseCase,
+        onPayloadReceived: OnPayloadReceivedUseCase,
+        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher,
+    ): LoadGameStateUseCase =
+        LoadGameStateUseCase(
+            getGameStateUseCase = getGameStateUseCase,
+            onPayloadReceived = onPayloadReceived,
+            updateGameStateUseCase = updateGameStateUseCase,
+            defaultDispatcher = defaultDispatcher,
+        )
+
+    @Provides
+    @Singleton
+    fun provideLoadInitialGameStateUseCase(
+        getGameStateUseCase: GetGameStateUseCase,
+        getGameUseCase: GetGameUseCase,
+        getUserUseCase: GetUserUseCase,
+        broadcastPayloadUseCase: BroadcastPayloadUseCase,
+        sendPayloadUseCase: SendPayloadUseCase,
+        @DefaultDispatcher defaultDispatcher: CoroutineDispatcher,
+    ): LoadInitialGameStateUseCase =
+        LoadInitialGameStateUseCase(
+            getGameStateUseCase = getGameStateUseCase,
+            getGameUseCase = getGameUseCase,
+            getUserUseCase = getUserUseCase,
+            broadcastPayloadUseCase = broadcastPayloadUseCase,
+            sendPayloadUseCase = sendPayloadUseCase,
+            defaultDispatcher = defaultDispatcher,
         )
 }

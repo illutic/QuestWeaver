@@ -14,6 +14,6 @@ class GetGameStateUseCase(
     suspend operator fun invoke(gameId: String? = null): GameState? =
         withContext(defaultDispatcher) {
             gameId?.let { gameStateRepository.getGameState(it) }
-                ?: getGameUseCase()?.let { gameStateRepository.getGameState(it.gameId) }
+                ?: gameStateRepository.getGameState(getGameUseCase().gameId)
         }
 }

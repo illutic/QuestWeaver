@@ -22,6 +22,7 @@ import g.sig.questweaver.domain.usecases.game.UpdateGameUseCase
 import g.sig.questweaver.domain.usecases.game.state.CreateGameStateUseCase
 import g.sig.questweaver.domain.usecases.game.state.GetGameStateUseCase
 import g.sig.questweaver.domain.usecases.game.state.RemoveGameStateUseCase
+import g.sig.questweaver.domain.usecases.game.state.UpdateGameStateUseCase
 import g.sig.questweaver.domain.usecases.nearby.BroadcastPayloadUseCase
 import g.sig.questweaver.domain.usecases.nearby.RequestConnectionUseCase
 import g.sig.questweaver.domain.usecases.nearby.SendPayloadUseCase
@@ -97,6 +98,7 @@ object GamesModule {
         broadcastPayloadUseCase: BroadcastPayloadUseCase,
         sendPayloadUseCase: SendPayloadUseCase,
         getGameStateUseCase: GetGameStateUseCase,
+        updateGameStateUseCase: UpdateGameStateUseCase,
         @DefaultDispatcher defaultDispatcher: CoroutineDispatcher,
     ): HandleDmPayloadUseCase =
         HandleDmPayloadUseCase(
@@ -105,6 +107,7 @@ object GamesModule {
             broadcastPayloadUseCase,
             sendPayloadUseCase,
             getGameStateUseCase,
+            updateGameStateUseCase,
             defaultDispatcher,
         )
 
