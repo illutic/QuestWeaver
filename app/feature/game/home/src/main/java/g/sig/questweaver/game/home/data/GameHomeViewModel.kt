@@ -62,18 +62,18 @@ class GameHomeViewModel
                 is GameHomeIntent.AddDrawing -> addDrawing(intent)
                 is GameHomeIntent.AddText -> addText(intent)
                 is GameHomeIntent.SelectAnnotation -> selectAnnotation(intent)
-                is GameHomeIntent.SelectColor -> setState { copy(selectedColor = intent.color) }
+                is GameHomeIntent.SelectColor -> updateStateIfLoaded { copy(selectedColor = intent.color) }
                 is GameHomeIntent.SelectSize ->
-                    setState { copy(selectedSize = Size(intent.size, intent.size)) }
+                    updateStateIfLoaded { copy(selectedSize = Size(intent.size, intent.size)) }
 
-                is GameHomeIntent.ChangeMode -> setState { copy(annotationMode = intent.mode) }
-                is GameHomeIntent.SelectPlayer -> setState { copy(selectedPlayer = intent.player) }
+                is GameHomeIntent.ChangeMode -> updateStateIfLoaded { copy(annotationMode = intent.mode) }
+                is GameHomeIntent.SelectPlayer -> updateStateIfLoaded { copy(selectedPlayer = intent.player) }
                 is GameHomeIntent.ChangeText -> updateText(intent)
-                GameHomeIntent.ShowColorPicker -> setState { copy(showColorPicker = true) }
-                GameHomeIntent.HideColorPicker -> setState { copy(showColorPicker = false) }
+                GameHomeIntent.ShowColorPicker -> updateStateIfLoaded { copy(showColorPicker = true) }
+                GameHomeIntent.HideColorPicker -> updateStateIfLoaded { copy(showColorPicker = false) }
 
                 is GameHomeIntent.SelectOpacity -> {
-                    setState {
+                    updateStateIfLoaded {
                         copy(
                             selectedColor = selectedColor.copy(alpha = intent.opacity),
                             opacity = intent.opacity,
@@ -195,7 +195,7 @@ class GameHomeViewModel
                 when (state.annotationMode) {
                     GameHomeState.AnnotationMode.RemoveMode -> attemptRemoveAnnotation(intent.annotation?.id)
 
-                    else -> setState { copy(selectedAnnotation = intent.annotation) }
+                    else -> updateStateIfLoaded { copy(selectedAnnotation = intent.annotation) }
                 }
             }
 
@@ -228,7 +228,7 @@ class GameHomeViewModel
                     }
                 }
 
-            setState {
+            updateStateIfLoaded {
                 copy(
                     isDM = isDM,
                     currentUser = user,
@@ -246,7 +246,7 @@ class GameHomeViewModel
 
                 val updatedAnnotations = state.annotations.toMutableMap()
                 updatedAnnotations[annotation.id] = annotation
-                setState { copy(annotations = updatedAnnotations) }
+                updateStateIfLoaded { copy(annotations = updatedAnnotations) }
                 updateGameStateUseCase(
                     annotations = updatedAnnotations.values.toList(),
                 )
@@ -276,7 +276,7 @@ class GameHomeViewModel
                     is Annotation.Image -> annotation.copy(transformationData = data)
                 }
             updatedAnnotations[id] = updatedAnnotation
-            setState { copy(annotations = updatedAnnotations) }
+            updateStateIfLoaded { copy(annotations = updatedAnnotations) }
             viewModelScope.launch {
                 broadcastPayload(updatedAnnotation)
                 updateGameStateUseCase(annotations = updatedAnnotations.values.toList())
@@ -289,13 +289,13 @@ class GameHomeViewModel
 
             val updatedAnnotations = state.annotations.toMutableMap()
             updatedAnnotations.remove(annotationId)
-            setState { copy(annotations = updatedAnnotations) }
+            updateStateIfLoaded { copy(annotations = updatedAnnotations) }
             viewModelScope.launch {
                 updateGameStateUseCase(annotations = updatedAnnotations.values.toList())
             }
         }
 
-        private inline fun setState(block: GameHomeState.Loaded.() -> GameHomeState) =
+        private inline fun updateStateIfLoaded(block: GameHomeState.Loaded.() -> GameHomeState) =
             _state.update {
                 if (it is GameHomeState.Loaded) it.block() else it
             }
