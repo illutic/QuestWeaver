@@ -140,3 +140,5 @@ internal val appTypography =
         labelMedium = labelMedium,
         labelSmall = labelSmall,
     )
+
+    
