@@ -61,7 +61,7 @@ jobs:
         run: |
           echo "Running KtLint with Compose ruleset: $COMPOSE_RULESET_JAR"
           echo "Files to lint: $CHANGED_FILES"
-          ./ktlint --reporter=html,output=build/reports/ktlint/ktlint-report.html --ruleset=$COMPOSE_RULESET_JAR $CHANGED_FILES
+          ./ktlint --reporter=plain-summary --reporter=html,output=build/reports/ktlint/ktlint-report.html --ruleset=$COMPOSE_RULESET_JAR $CHANGED_FILES
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
