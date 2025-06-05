@@ -10,17 +10,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: ${{ github.event_name == 'pull_request' && 2 || 0 }}
+          fetch-depth: 0
       - name: Get changed files
         id: changed-files
-        run: |
-          echo "$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | xargs)"
-          
-          if ${{ github.event_name == 'pull_request' }}; then
-              echo "FILES=$(git diff --name-only -r HEAD^1 HEAD | xargs)" >> $GITHUB_OUTPUT
-          else
-              echo "FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | xargs)" >> $GITHUB_OUTPUT
-          fi
+        run: echo "FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | xargs)" >> $GITHUB_OUTPUT
   kt_lint:
     runs-on: ubuntu-latest
     needs: get_changed_files
