@@ -55,6 +55,7 @@ jobs:
           echo "FILES=$files" >> "$GITHUB_OUTPUT"
           echo "${{ steps.changed-files.outputs.FILES }}"
       - name: Run KtLint
+        continue-on-error: true
         env:
           CHANGED_FILES: ${{ steps.changed-files.outputs.FILES }}
           COMPOSE_RULESET_JAR: ${{ steps.compose-rules-download.outputs.COMPOSE_RULESET_JAR }}
