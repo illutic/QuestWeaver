@@ -2,7 +2,7 @@ name: Code Static Analysis
 
 on:
   pull_request:
-    branches: [ "development" ]
+    branches: [ "master" ]
 
 jobs:
   detekt:
