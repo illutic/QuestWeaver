@@ -1,34 +1,70 @@
-# This is a basic workflow to help you get started with Actions
-
 name: Code Static Analysis
 
 on:
-  push:
-    branches: [ "master" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "development" ]
 
 jobs:
   detekt:
     runs-on: ubuntu-latest
-    environment: "Development"
     env:
-      DETEKT_VERSION: ${{ vars.DETEKT_VERSION }}
+      KT_LINT_VERSION: ${{ vars.KT_LINT_VERSION }}
     steps:
       - uses: actions/checkout@v4
       - name: Get dependencies
         run: sudo apt-get install -y curl unzip
-      - name: Verify Detekt Version
-        run: echo "Detekt version - $DETEKT_VERSION"
-      - name: Fetch detekt jar
-        run: curl -sSLO "https://github.com/detekt/detekt/releases/download/v$DETEKT_VERSION/detekt-cli-$DETEKT_VERSION.zip"
-      - name: Unzip detekt
-        run: unzip detekt-cli-$DETEKT_VERSION.zip
-      - name: Run detekt 
-        run: ./detekt-cli-$DETEKT_VERSION/bin/detekt-cli --report html:reports/detekt.html -c ./detekt.yml --plugins lint/detekt-compose-0.4.5-all.jar
+      - name: Get latest KtLint version
+        id: kt-lint-version
+        run: |
+          version=$(curl -Ls -o /dev/null -w %{url_effective} https://github.com/pinterest/ktlint/releases/latest)
+          version=${version##*/}
+          
+          echo "VERSION=$version" >> "$GITHUB_OUTPUT"
+      - name: Get latest KtLint
+        id: kt-lint-download
+        env:
+          KT_LINT_VERSION: ${{ steps.kt-lint.outputs.VERSION }}
+        run: |
+          echo "Fetching ktlint: $KT_LINT_VERSION"
+          curl -sSLO https://github.com/pinterest/ktlint/releases/download/$KT_LINT_VERSION/ktlint && chmod a+x ktlint
+      - name: Get latest Jetpack Compose Lint ruleset version
+        id: compose-rules-version
+        run: |
+          version=$(curl -Ls -o /dev/null -w %{url_effective} https://github.com/mrmans0n/compose-rules/releases/latest)
+          version=${version##*/}
+          version_numeric=$(echo "$version" | sed 's/[^0-9.]*//g')
+          
+          echo "VERSION=$version" >> "$GITHUB_OUTPUT"
+          echo "VERSION_NUMERIC=$version_numeric" >> "$GITHUB_OUTPUT"
+      - name: Get latest Jetpack Compose Lint ruleset
+        id: compose-rules-download
+        env:
+          COMPOSE_RULES_TAG: ${{ steps.compose-rules-version.outputs.VERSION }}
+          COMPOSE_RULES_VERSION_NUMERIC: ${{ steps.compose-rules-version.outputs.VERSION_NUMERIC }}
+        run: |
+          echo "Fetching compose ruleset tag: $COMPOSE_RULES_TAG"
+          echo "Using numeric version for jar name: $COMPOSE_RULES_VERSION_NUMERIC"
+          compose_ruleset_jar=ktlint-compose-$COMPOSE_RULES_VERSION_NUMERIC-all.jar
+          
+          curl -sSLO https://github.com/mrmans0n/compose-rules/releases/download/$COMPOSE_RULES_TAG/$compose_ruleset_jar && chmod a+x $compose_ruleset_jar
+          echo "COMPOSE_RULESET_JAR=$compose_ruleset_jar" >> "$GITHUB_OUTPUT"
+      - name: Get changed files
+        id: changed-files
+        run: |
+          files=$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | xargs)
+          echo "FILES=$files" >> "$GITHUB_OUTPUT"
+          echo "${{ steps.changed-files.outputs.FILES }}"
+      - name: Run KtLint
+        env:
+          CHANGED_FILES: ${{ steps.changed-files.outputs.FILES }}
+          COMPOSE_RULESET_JAR: ${{ steps.compose-rules-download.outputs.COMPOSE_RULESET_JAR }}
+        run: |
+          echo "Running KtLint with Compose ruleset: $COMPOSE_RULESET_JAR"
+          echo "Files to lint: $CHANGED_FILES"
+          ./ktlint --reporter=html,output=build/reports/ktlint/ktlint-report.html --ruleset=$COMPOSE_RULESET_JAR $CHANGED_FILES
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: detekt-report
+          name: ktlint-report
           path: |
-            **reports/*.html
+            build/reports/ktlint/ktlint-report.html
