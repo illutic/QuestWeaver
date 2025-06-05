@@ -23,7 +23,7 @@ jobs:
       - name: Get latest KtLint
         id: kt-lint-download
         env:
-          KT_LINT_VERSION: ${{ steps.kt-lint.outputs.VERSION }}
+          KT_LINT_VERSION: ${{ steps.kt-lint-version.outputs.VERSION }}
         run: |
           echo "Fetching ktlint: $KT_LINT_VERSION"
           curl -sSLO https://github.com/pinterest/ktlint/releases/download/$KT_LINT_VERSION/ktlint && chmod a+x ktlint
