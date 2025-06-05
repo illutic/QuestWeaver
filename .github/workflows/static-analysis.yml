@@ -17,38 +17,20 @@ jobs:
           sh
           #!/bin/bash
 
-          # Function to get changed files, primarily designed for Pull Request contexts in GitHub Actions
           function get_changed_files_in_github_actions() {
             echo "Running in GitHub Actions context."
 
-            # Ensure we have enough git history. This might be needed if checkout was shallow.
-            # Consider adding `fetch-depth: 0` to your actions/checkout step in the workflow YAML.
-            # Alternatively, try to unshallow if needed (more complex to do conditionally here).
-            # git fetch --unshallow --quiet || git fetch --depth=1000 --quiet # Example, adjust as needed
-
             if [[ -n "$GITHUB_BASE_REF" && -n "$GITHUB_HEAD_REF" ]]; then
-              # This context is typically for a pull_request event
               echo "Detected GITHUB_BASE_REF: $GITHUB_BASE_REF"
               echo "Detected GITHUB_HEAD_REF: $GITHUB_HEAD_REF (current branch of the PR)"
 
-              # Make sure local branches are up-to-date with what would be the PR's base and head
-              # It's generally better to compare against origin/refs to avoid ambiguity with local branch names,
-              # but GITHUB_BASE_REF and GITHUB_HEAD_REF are usually just the short branch names.
-              # Fetching ensures we have the objects for these refs from the remote.
               git fetch origin "$GITHUB_BASE_REF":"refs/remotes/origin/$GITHUB_BASE_REF" --quiet
-              git fetch origin "$GITHUB_HEAD_REF":"refs/remotes/origin/$GITHUB_HEAD_REF" --quiet # Usually the current branch is already up-to-date
+              git fetch origin "$GITHUB_HEAD_REF":"refs/remotes/origin/$GITHUB_HEAD_REF" --quiet
 
-              # Using the three-dot diff, which is often what you want for "changes in the PR"
-              # It compares the tip of the head branch with the common ancestor of base and head.
-              # Equivalent to `git diff $(git merge-base origin/$GITHUB_BASE_REF origin/$GITHUB_HEAD_REF) origin/$GITHUB_HEAD_REF`
               echo "Comparing origin/$GITHUB_BASE_REF...origin/$GITHUB_HEAD_REF"
               git diff "origin/$GITHUB_BASE_REF"..."origin/$GITHUB_HEAD_REF" --name-only
             elif [[ -n "$GITHUB_REF_NAME" && "$GITHUB_EVENT_NAME" == "push" ]]; then
-              # This context is for a push event to a branch (not a PR merge)
-              # Here, we usually compare against the previous state of the same branch or its default base.
-              # This example compares against where this branch likely diverged from 'main' or 'master'.
-              # You might need to adjust 'main' to your repository's default branch.
-              DEFAULT_BASE_BRANCH="main" # Or master, develop, etc.
+              DEFAULT_BASE_BRANCH="master"
               echo "Detected GITHUB_REF_NAME: $GITHUB_REF_NAME (pushed branch)"
               echo "Assuming base branch for comparison is: $DEFAULT_BASE_BRANCH"
 
@@ -63,38 +45,18 @@ jobs:
               echo "GITHUB_HEAD_REF: $GITHUB_HEAD_REF"
               echo "GITHUB_REF_NAME: $GITHUB_REF_NAME"
               echo "GITHUB_EVENT_NAME: $GITHUB_EVENT_NAME"
-              echo "Falling back to local method (if applicable and makes sense)."
-              # Fallback to local method if it's defined and useful, or exit with error.
-              # For CI, usually one of the above conditions should be met.
-              # get_changed_files_locally # Uncomment if you have a robust local version
-              exit 1 # Or handle fallback differently
+          
+              exit 1
             fi
           }
-
-          # Function to get changed files locally (same as your original)
-          # This can be kept as a fallback or for local testing of the script.
+          
           function get_changed_files_locally() {
             echo "Running in local context."
-            # The way we work allows us to figure out the branch's base since
-            # our feature branches always look like this (in respect with the main branch):
-            # ... (rest of your original local function)
 
             number_of_branches_for_head=$(git branch --contains HEAD | wc -l)
             if [ "$number_of_branches_for_head" -gt 1 ]; then
-              # Assuming there are no commits yet on the feature branch relative to its tracked remote
-              # Or HEAD is already merged / on a shared commit.
-              # For a newly created local branch from main, this might be > 1 if main also contains HEAD.
-              # Consider what "no commits yet" really means in your workflow.
-              # An alternative is to see if HEAD has a remote tracking branch and if it's ahead.
               echo "HEAD is part of multiple branches. This might mean no new commits or already on a shared commit."
-              # If you want to list files changed since the remote version of this branch:
-              # current_branch=$(git rev-parse --abbrev-ref HEAD)
-              # remote_branch=$(git rev-parse --abbrev-ref "$current_branch@{u}" 2>/dev/null)
-              # if [ -n "$remote_branch" ]; then
-              #   git diff "$remote_branch...HEAD" --name-only
-              #   exit 0
-              # fi
-              exit 0 # Exit successfully, assuming no "new" unpushed changes against a base
+              exit 0
             fi
 
             number_of_branches=0
@@ -115,11 +77,12 @@ jobs:
           }
 
           # Main execution block
-          if [[ -n "$GITHUB_ACTIONS" ]]; then # GITHUB_ACTIONS is "true" when running in GitHub Actions
-            echo "FILES=$(get_changed_files_in_github_actions)" >> $GITHUB_OUTPUT
+          if [[ -n "$GITHUB_ACTIONS" ]];
+            echo "FILES=${get_changed_files_in_github_actions}" >> $GITHUB_OUTPUT
           else
-            echo "FILES=$(get_changed_files_locally)" >> $GITHUB_OUTPUT
+            echo "FILES=${get_changed_files_locally}" >> $GITHUB_OUTPUT
           fi
+
 
   kt_lint:
     runs-on: ubuntu-latest
